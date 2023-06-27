@@ -1,0 +1,436 @@
+{
+  "format": 1,
+  "restore": {
+    "E:\\dev\\source\\Git_Repository\\WorkSpace\\CleanArchitecture\\Tests\\CleanArchitecture.UnitTest\\CleanArchitecture.UnitTest.csproj": {}
+  },
+  "projects": {
+    "E:\\dev\\source\\Git_Repository\\WorkSpace\\CleanArchitecture\\CleanArchitecture\\CleanArchitecture.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "E:\\dev\\source\\Git_Repository\\WorkSpace\\CleanArchitecture\\CleanArchitecture\\CleanArchitecture.csproj",
+        "projectName": "CleanArchitecture",
+        "projectPath": "E:\\dev\\source\\Git_Repository\\WorkSpace\\CleanArchitecture\\CleanArchitecture\\CleanArchitecture.csproj",
+        "packagesPath": "C:\\Users\\JDG\\.nuget\\packages\\",
+        "outputPath": "E:\\dev\\source\\Git_Repository\\WorkSpace\\CleanArchitecture\\CleanArchitecture\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\JDG\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net7.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\sdk\\7.0.304\\Sdks\\Microsoft.NET.Sdk.Web\\library-packs": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net7.0": {
+            "targetAlias": "net7.0",
+            "projectReferences": {
+              "E:\\dev\\source\\Git_Repository\\WorkSpace\\CleanArchitecture\\Core\\Application\\Application.csproj": {
+                "projectPath": "E:\\dev\\source\\Git_Repository\\WorkSpace\\CleanArchitecture\\Core\\Application\\Application.csproj"
+              },
+              "E:\\dev\\source\\Git_Repository\\WorkSpace\\CleanArchitecture\\Infrastructure\\Infrastructure.Protos\\Infrastructure.Protos.csproj": {
+                "projectPath": "E:\\dev\\source\\Git_Repository\\WorkSpace\\CleanArchitecture\\Infrastructure\\Infrastructure.Protos\\Infrastructure.Protos.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net7.0": {
+          "targetAlias": "net7.0",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.AspNetCore.App": {
+              "privateAssets": "none"
+            },
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.304\\RuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "E:\\dev\\source\\Git_Repository\\WorkSpace\\CleanArchitecture\\Core\\Application\\Application.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "E:\\dev\\source\\Git_Repository\\WorkSpace\\CleanArchitecture\\Core\\Application\\Application.csproj",
+        "projectName": "Application",
+        "projectPath": "E:\\dev\\source\\Git_Repository\\WorkSpace\\CleanArchitecture\\Core\\Application\\Application.csproj",
+        "packagesPath": "C:\\Users\\JDG\\.nuget\\packages\\",
+        "outputPath": "E:\\dev\\source\\Git_Repository\\WorkSpace\\CleanArchitecture\\Core\\Application\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\JDG\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net7.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net7.0": {
+            "targetAlias": "net7.0",
+            "projectReferences": {
+              "E:\\dev\\source\\Git_Repository\\WorkSpace\\CleanArchitecture\\Core\\Domain\\Domain.csproj": {
+                "projectPath": "E:\\dev\\source\\Git_Repository\\WorkSpace\\CleanArchitecture\\Core\\Domain\\Domain.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net7.0": {
+          "targetAlias": "net7.0",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.304\\RuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "E:\\dev\\source\\Git_Repository\\WorkSpace\\CleanArchitecture\\Core\\Domain\\Domain.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "E:\\dev\\source\\Git_Repository\\WorkSpace\\CleanArchitecture\\Core\\Domain\\Domain.csproj",
+        "projectName": "Domain",
+        "projectPath": "E:\\dev\\source\\Git_Repository\\WorkSpace\\CleanArchitecture\\Core\\Domain\\Domain.csproj",
+        "packagesPath": "C:\\Users\\JDG\\.nuget\\packages\\",
+        "outputPath": "E:\\dev\\source\\Git_Repository\\WorkSpace\\CleanArchitecture\\Core\\Domain\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\JDG\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net7.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net7.0": {
+            "targetAlias": "net7.0",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net7.0": {
+          "targetAlias": "net7.0",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.304\\RuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "E:\\dev\\source\\Git_Repository\\WorkSpace\\CleanArchitecture\\Infrastructure\\Infrastructure.Protos\\Infrastructure.Protos.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "E:\\dev\\source\\Git_Repository\\WorkSpace\\CleanArchitecture\\Infrastructure\\Infrastructure.Protos\\Infrastructure.Protos.csproj",
+        "projectName": "Infrastructure.Protos",
+        "projectPath": "E:\\dev\\source\\Git_Repository\\WorkSpace\\CleanArchitecture\\Infrastructure\\Infrastructure.Protos\\Infrastructure.Protos.csproj",
+        "packagesPath": "C:\\Users\\JDG\\.nuget\\packages\\",
+        "outputPath": "E:\\dev\\source\\Git_Repository\\WorkSpace\\CleanArchitecture\\Infrastructure\\Infrastructure.Protos\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\JDG\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net7.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net7.0": {
+            "targetAlias": "net7.0",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net7.0": {
+          "targetAlias": "net7.0",
+          "dependencies": {
+            "Google.Protobuf": {
+              "target": "Package",
+              "version": "[3.23.3, )"
+            },
+            "Grpc.AspNetCore": {
+              "target": "Package",
+              "version": "[2.54.0, )"
+            },
+            "Grpc.Net.ClientFactory": {
+              "target": "Package",
+              "version": "[2.54.0, )"
+            },
+            "Grpc.Tools": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[2.56.0, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.304\\RuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "E:\\dev\\source\\Git_Repository\\WorkSpace\\CleanArchitecture\\Tests\\CleanArchitecture.UnitTest\\CleanArchitecture.UnitTest.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "E:\\dev\\source\\Git_Repository\\WorkSpace\\CleanArchitecture\\Tests\\CleanArchitecture.UnitTest\\CleanArchitecture.UnitTest.csproj",
+        "projectName": "CleanArchitecture.UnitTest",
+        "projectPath": "E:\\dev\\source\\Git_Repository\\WorkSpace\\CleanArchitecture\\Tests\\CleanArchitecture.UnitTest\\CleanArchitecture.UnitTest.csproj",
+        "packagesPath": "C:\\Users\\JDG\\.nuget\\packages\\",
+        "outputPath": "E:\\dev\\source\\Git_Repository\\WorkSpace\\CleanArchitecture\\Tests\\CleanArchitecture.UnitTest\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\JDG\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net7.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net7.0": {
+            "targetAlias": "net7.0",
+            "projectReferences": {
+              "E:\\dev\\source\\Git_Repository\\WorkSpace\\CleanArchitecture\\Core\\Domain\\Domain.csproj": {
+                "projectPath": "E:\\dev\\source\\Git_Repository\\WorkSpace\\CleanArchitecture\\Core\\Domain\\Domain.csproj"
+              },
+              "E:\\dev\\source\\Git_Repository\\WorkSpace\\CleanArchitecture\\Tests\\Common\\Common.csproj": {
+                "projectPath": "E:\\dev\\source\\Git_Repository\\WorkSpace\\CleanArchitecture\\Tests\\Common\\Common.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net7.0": {
+          "targetAlias": "net7.0",
+          "dependencies": {
+            "Microsoft.NET.Test.Sdk": {
+              "target": "Package",
+              "version": "[17.5.0, )"
+            },
+            "coverlet.collector": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[3.2.0, )"
+            },
+            "xunit": {
+              "target": "Package",
+              "version": "[2.4.2, )"
+            },
+            "xunit.runner.visualstudio": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[2.4.5, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.304\\RuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "E:\\dev\\source\\Git_Repository\\WorkSpace\\CleanArchitecture\\Tests\\Common\\Common.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "E:\\dev\\source\\Git_Repository\\WorkSpace\\CleanArchitecture\\Tests\\Common\\Common.csproj",
+        "projectName": "Common",
+        "projectPath": "E:\\dev\\source\\Git_Repository\\WorkSpace\\CleanArchitecture\\Tests\\Common\\Common.csproj",
+        "packagesPath": "C:\\Users\\JDG\\.nuget\\packages\\",
+        "outputPath": "E:\\dev\\source\\Git_Repository\\WorkSpace\\CleanArchitecture\\Tests\\Common\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\JDG\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net7.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net7.0": {
+            "targetAlias": "net7.0",
+            "projectReferences": {
+              "E:\\dev\\source\\Git_Repository\\WorkSpace\\CleanArchitecture\\CleanArchitecture\\CleanArchitecture.csproj": {
+                "projectPath": "E:\\dev\\source\\Git_Repository\\WorkSpace\\CleanArchitecture\\CleanArchitecture\\CleanArchitecture.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net7.0": {
+          "targetAlias": "net7.0",
+          "dependencies": {
+            "FluentAssertions": {
+              "target": "Package",
+              "version": "[6.11.0, )"
+            },
+            "Microsoft.AspNetCore.Mvc.Testing": {
+              "target": "Package",
+              "version": "[7.0.8, )"
+            },
+            "Microsoft.NET.Test.Sdk": {
+              "target": "Package",
+              "version": "[17.5.0, )"
+            },
+            "coverlet.collector": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[3.2.0, )"
+            },
+            "xunit": {
+              "target": "Package",
+              "version": "[2.4.2, )"
+            },
+            "xunit.runner.visualstudio": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[2.4.5, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.304\\RuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}
