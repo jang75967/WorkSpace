@@ -1,0 +1,16 @@
+{
+  "version": 2,
+  "dgSpecHash": "TwUTD8GIshK6pTw9iRNaShZDfVTjZod8KT03kaINJF/Jw8HNJEB48kMkN8hgTMJXIn9rOmN8gEmrphO/ua2bdQ==",
+  "success": true,
+  "projectFilePath": "E:\\dev\\source\\Git_Repository\\WorkSpace\\CleanArchitecture\\CleanArchitecture.Client\\ConsoleApp1\\GrpcClient.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\JDG\\.nuget\\packages\\google.protobuf\\3.23.3\\google.protobuf.3.23.3.nupkg.sha512",
+    "C:\\Users\\JDG\\.nuget\\packages\\grpc.core.api\\2.54.0\\grpc.core.api.2.54.0.nupkg.sha512",
+    "C:\\Users\\JDG\\.nuget\\packages\\grpc.net.client\\2.54.0\\grpc.net.client.2.54.0.nupkg.sha512",
+    "C:\\Users\\JDG\\.nuget\\packages\\grpc.net.common\\2.54.0\\grpc.net.common.2.54.0.nupkg.sha512",
+    "C:\\Users\\JDG\\.nuget\\packages\\grpc.tools\\2.56.0\\grpc.tools.2.56.0.nupkg.sha512",
+    "C:\\Users\\JDG\\.nuget\\packages\\microsoft.extensions.logging.abstractions\\3.0.3\\microsoft.extensions.logging.abstractions.3.0.3.nupkg.sha512",
+    "C:\\Users\\JDG\\.nuget\\packages\\system.memory\\4.5.3\\system.memory.4.5.3.nupkg.sha512"
+  ],
+  "logs": []
+}
