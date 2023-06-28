@@ -1,6 +1,0 @@
-{
-  "Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null": "E:\\dev\\source\\Git_Repository\\WorkSpace\\CleanArchitecture\\Core\\Application",
-  "CleanArchitecture, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null": "E:\\dev\\source\\Git_Repository\\WorkSpace\\CleanArchitecture\\CleanArchitecture",
-  "Domain, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null": "E:\\dev\\source\\Git_Repository\\WorkSpace\\CleanArchitecture\\Core\\Domain",
-  "Infrastructure.Protos, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null": "E:\\dev\\source\\Git_Repository\\WorkSpace\\CleanArchitecture\\Infrastructure\\Infrastructure.Protos"
-}
