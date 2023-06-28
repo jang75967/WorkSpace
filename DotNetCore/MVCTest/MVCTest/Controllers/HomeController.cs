@@ -12,13 +12,16 @@ namespace MVCTest.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly PubsDbContext _pubsDbContext;
 
         // DI 사용
         // 생성자에서 인터페이스를 파라미터로 지정했을 때, 인터페이스가 asp.net 프레임워크에 등록되어 있으면 객체 생성해서 전달
-        public HomeController(ILogger<HomeController> logger, IWebHostEnvironment webHostEnvironment)
+        // PubsDbContext 도 DI
+        public HomeController(ILogger<HomeController> logger, IWebHostEnvironment webHostEnvironment, PubsDbContext pubsDbContext)
         {
             _logger = logger;
             _webHostEnvironment = webHostEnvironment;
+            _pubsDbContext = pubsDbContext;
         }
 
         // localhost:port/home/index
@@ -36,10 +39,18 @@ namespace MVCTest.Controllers
         // localhost:port/home/authorList
         public IActionResult AuthorList()
         {
-            string path = Path.Combine(_webHostEnvironment.ContentRootPath, "authors.txt");
-            string json = System.IO.File.ReadAllText(path);
+            //string path = Path.Combine(_webHostEnvironment.ContentRootPath, "authors.txt");
+            //string json = System.IO.File.ReadAllText(path);
 
-            var authors = JsonSerializer.Deserialize<List<Author>>(json);
+            //var authors = JsonSerializer.Deserialize<List<Author>>(json);
+
+            //return View(authors);
+
+
+
+
+            // EF Core
+            var authors = _pubsDbContext.Author.ToList(); // View 에서 List model 로 받기 때문에
 
             return View(authors);
         }

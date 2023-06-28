@@ -1,3 +1,6 @@
+using Microsoft.EntityFrameworkCore;
+using MVCTest.Models;
+
 namespace MVCTest
 {
     public class Program
@@ -8,6 +11,16 @@ namespace MVCTest
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+
+            // EF Core
+            string conn = builder.Configuration["ConnectionStrings:Pubs"];
+            builder.Services.AddDbContext<PubsDbContext>(options =>
+            {
+                options.UseOracle(conn);
+            });
+
+
+
 
             var app = builder.Build();
 
