@@ -39,6 +39,7 @@ namespace MVCTest.Controllers
         // localhost:port/home/authorList
         public IActionResult AuthorList()
         {
+            //// json 파싱
             //string path = Path.Combine(_webHostEnvironment.ContentRootPath, "authors.txt");
             //string json = System.IO.File.ReadAllText(path);
 
@@ -48,8 +49,7 @@ namespace MVCTest.Controllers
 
 
 
-
-            // EF Core
+            // EF Core - Oracle
             var authors = _pubsDbContext.Author.ToList(); // View 에서 List model 로 받기 때문에
 
             return View(authors);

@@ -30,17 +30,9 @@ namespace MVCTest.Migrations
                         .IsRequired()
                         .HasColumnType("NVARCHAR2(2000)");
 
-                    b.Property<string>("more1")
-                        .IsRequired()
-                        .HasColumnType("NVARCHAR2(2000)");
-
-                    b.Property<string>("more2")
-                        .IsRequired()
-                        .HasColumnType("NVARCHAR2(2000)");
-
                     b.HasKey("quote");
 
-                    b.ToTable("Author");
+                    b.ToTable("AUTHOR");
                 });
 #pragma warning restore 612, 618
         }

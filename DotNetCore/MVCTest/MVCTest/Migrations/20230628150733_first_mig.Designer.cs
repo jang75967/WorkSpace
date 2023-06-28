@@ -11,8 +11,8 @@ using Oracle.EntityFrameworkCore.Metadata;
 namespace MVCTest.Migrations
 {
     [DbContext(typeof(PubsDbContext))]
-    [Migration("20230628141616_second")]
-    partial class second
+    [Migration("20230628150733_first_mig")]
+    partial class first_mig
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -33,17 +33,9 @@ namespace MVCTest.Migrations
                         .IsRequired()
                         .HasColumnType("NVARCHAR2(2000)");
 
-                    b.Property<string>("more1")
-                        .IsRequired()
-                        .HasColumnType("NVARCHAR2(2000)");
-
-                    b.Property<string>("more2")
-                        .IsRequired()
-                        .HasColumnType("NVARCHAR2(2000)");
-
                     b.HasKey("quote");
 
-                    b.ToTable("Author");
+                    b.ToTable("AUTHOR");
                 });
 #pragma warning restore 612, 618
         }

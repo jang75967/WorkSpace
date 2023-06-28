@@ -5,13 +5,13 @@
 namespace MVCTest.Migrations
 {
     /// <inheritdoc />
-    public partial class first : Migration
+    public partial class first_mig : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Author",
+                name: "AUTHOR",
                 columns: table => new
                 {
                     quote = table.Column<string>(type: "NVARCHAR2(450)", nullable: false),
@@ -19,7 +19,7 @@ namespace MVCTest.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Author", x => x.quote);
+                    table.PrimaryKey("PK_AUTHOR", x => x.quote);
                 });
         }
 
@@ -27,7 +27,7 @@ namespace MVCTest.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Author");
+                name: "AUTHOR");
         }
     }
 }
