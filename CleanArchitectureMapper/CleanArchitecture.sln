@@ -23,10 +23,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CleanArchitecture.UnitTest"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infrastructure.Mappers", "Infrastructure\Infrastructure.Mappers\Infrastructure.Mappers.csproj", "{D7A4A4D0-E363-4CDA-A960-934885FA6E80}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructures", "Infrastructures", "{7518A824-C365-43FB-A2BB-F329B108910F}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure.Mappers.UnitTest", "Tests\Infrastructures\Infrastructure.Mappers.UnitTest\Infrastructure.Mappers.UnitTest.csproj", "{4731CB15-7EAB-4261-9E58-1C532B6E31B0}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -61,10 +57,6 @@ Global
 		{D7A4A4D0-E363-4CDA-A960-934885FA6E80}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D7A4A4D0-E363-4CDA-A960-934885FA6E80}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D7A4A4D0-E363-4CDA-A960-934885FA6E80}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4731CB15-7EAB-4261-9E58-1C532B6E31B0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4731CB15-7EAB-4261-9E58-1C532B6E31B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4731CB15-7EAB-4261-9E58-1C532B6E31B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4731CB15-7EAB-4261-9E58-1C532B6E31B0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -76,8 +68,6 @@ Global
 		{CF053431-3D89-4A5C-B9FD-2E1EEFB434DD} = {96C7BC00-7653-49FC-B4A0-D6EF0E9F6919}
 		{4A17E662-E6FF-4E72-9F83-328D43051F32} = {96C7BC00-7653-49FC-B4A0-D6EF0E9F6919}
 		{D7A4A4D0-E363-4CDA-A960-934885FA6E80} = {2EEB217E-D5F9-4C31-946F-01FFE0A94B27}
-		{7518A824-C365-43FB-A2BB-F329B108910F} = {96C7BC00-7653-49FC-B4A0-D6EF0E9F6919}
-		{4731CB15-7EAB-4261-9E58-1C532B6E31B0} = {7518A824-C365-43FB-A2BB-F329B108910F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6D4565CA-FB81-4431-95F7-C4B340399022}

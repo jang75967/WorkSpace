@@ -50,7 +50,7 @@ public class TestFactory<TProgram> : WebApplicationFactory<TProgram>, IAsyncLife
         });
     }
 
-
+    // 설명에 나와있듯이, "클래스를 만든 직후 사용하기 전 호출" (Called immediately after the class has been created, before it is used.)
     // 디버깅 제일 처음, TestFactory<Program> 이라서 Program.cs 실행되면 TestFactory 생성자 지난 후,
     // IAsyncLifetime 를 구현했기 때문에, InitializeAsync 실행 (비동기)
     public Task InitializeAsync()
