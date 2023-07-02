@@ -5,11 +5,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CleanMovie.Application
+namespace CleanMovie.Application.Interface
 {
-    // use Case
-    public interface IMovieService
+    // Dependency Injection
+    public interface IMovieRepository
     {
         List<Movie> GetAllMovies();
+        Movie CraeteMovie(Movie movie);
     }
 }

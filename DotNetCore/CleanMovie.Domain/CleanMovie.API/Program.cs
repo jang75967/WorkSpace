@@ -1,6 +1,8 @@
 
 using CleanMovie.Application;
+using CleanMovie.Application.Interface;
 using CleanMovie.Infrastructure;
+using Microsoft.EntityFrameworkCore;
 
 namespace CleanMovie.API
 {
@@ -10,6 +12,12 @@ namespace CleanMovie.API
         {
             var builder = WebApplication.CreateBuilder(args);
 
+
+            // Configuration 등록
+            ConfigurationManager configuration = builder.Configuration;
+            //
+
+
             // Add services to the container.
 
             builder.Services.AddControllers();
@@ -18,11 +26,14 @@ namespace CleanMovie.API
             builder.Services.AddSwaggerGen();
 
 
-            // DI
+            // DB 서비스 추가
+            builder.Services.AddDbContext<MovieDbContext>(option => option.UseSqlServer(configuration.GetConnectionString("DefaultConnection"), 
+                                                          build => build.MigrationsAssembly("CleanMovie.API")));
+            //
 
+            // Dependency Injection 
             builder.Services.AddScoped<IMovieService, MovieService>();
             builder.Services.AddScoped<IMovieRepository, MovieRepository>();
-
             //
 
 

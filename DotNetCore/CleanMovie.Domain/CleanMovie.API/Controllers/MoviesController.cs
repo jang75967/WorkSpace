@@ -1,4 +1,4 @@
-﻿using CleanMovie.Application;
+﻿using CleanMovie.Application.Interface;
 using CleanMovie.Domain;
 using Microsoft.AspNetCore.Mvc;
 
@@ -23,6 +23,14 @@ namespace CleanMovie.API.Controllers
             var moviesFromServie = _service.GetAllMovies();
 
             return Ok(moviesFromServie);
+        }
+
+        [HttpPost]
+        public ActionResult<Movie> PostMovie(Movie movie)
+        {
+            var Movie = _service.CreateMovie(movie);
+
+            return Ok(Movie);
         }
     }
 }

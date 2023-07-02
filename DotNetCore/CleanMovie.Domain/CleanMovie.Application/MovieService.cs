@@ -1,4 +1,5 @@
-﻿using CleanMovie.Domain;
+﻿using CleanMovie.Application.Interface;
+using CleanMovie.Domain;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +16,12 @@ namespace CleanMovie.Application
         public MovieService(IMovieRepository movieRepository)
         {
             _movieRepository = movieRepository;
+        }
+
+        public Movie CreateMovie(Movie movie)
+        {
+            _movieRepository.CraeteMovie(movie);
+            return movie;
         }
 
         public List<Movie> GetAllMovies()
