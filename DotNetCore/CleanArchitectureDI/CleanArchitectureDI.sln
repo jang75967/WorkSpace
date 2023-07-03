@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.6.33815.320
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CleanArchitecture.Infrastructure", "CleanArchitecture.Infrastructure\CleanArchitecture.Infrastructure.csproj", "{6EB9E51E-2D6A-4F00-BAAB-A6B29420356D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CleanArchitecture.API", "CleanArchitecture.API\CleanArchitecture.API.csproj", "{6A955889-C1AA-44D5-863A-3434D5D66EB7}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6EB9E51E-2D6A-4F00-BAAB-A6B29420356D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6EB9E51E-2D6A-4F00-BAAB-A6B29420356D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6EB9E51E-2D6A-4F00-BAAB-A6B29420356D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6EB9E51E-2D6A-4F00-BAAB-A6B29420356D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6A955889-C1AA-44D5-863A-3434D5D66EB7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6A955889-C1AA-44D5-863A-3434D5D66EB7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6A955889-C1AA-44D5-863A-3434D5D66EB7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6A955889-C1AA-44D5-863A-3434D5D66EB7}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {86FB437A-1E28-470C-B78C-C89D933EFFCE}
+	EndGlobalSection
+EndGlobal
