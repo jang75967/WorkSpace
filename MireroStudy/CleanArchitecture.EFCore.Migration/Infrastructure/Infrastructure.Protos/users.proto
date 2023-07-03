@@ -1,0 +1,34 @@
+syntax = "proto3";
+package api.users;
+
+option csharp_namespace = "Api.Users";
+
+service UsersGrpc {
+	rpc GetUsers(GetUserRequest) returns (GetUserReply);
+	rpc GetGroups(GetGroupRequest) returns (GetGroupReply);
+}
+
+message User {
+	string id = 1;
+	string name = 2;
+	string email = 3;
+}
+
+message GetUserRequest {
+}
+
+message GetUserReply {
+  repeated User users = 1;
+}
+
+message Group {
+	string id = 1;
+	string name = 2;
+}
+
+message GetGroupRequest {
+}
+
+message GetGroupReply {
+  repeated Group groups = 1;
+}
