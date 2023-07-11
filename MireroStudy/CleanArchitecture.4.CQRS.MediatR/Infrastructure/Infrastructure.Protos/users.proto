@@ -1,0 +1,64 @@
+syntax = "proto3";
+package api.users;
+
+option csharp_namespace = "Api.Users";
+
+service UsersGrpc {
+	rpc GetAllUsers(GetAllUsersRequest) returns (GetAllUsersReply);
+	rpc GetUserById(GetUserByIdRequest) returns (GetUserByIdReply);
+	rpc GetMemebersByGroupId(GetMemebersByGroupIdRequest) returns (GetMemebersByGroupIdReply);
+
+	rpc CreateUser(CreateUserRequest) returns (CreateUserReply);
+	rpc DeleteUser(DeleteUserRequest) returns (DeleteUserReply);
+	rpc UpdateUser(UpdateUserRequest) returns (UpdateUserReply);
+	
+	
+}
+
+message User {
+	int64 id = 1;
+	string name = 2;
+	string password = 3;
+	string email = 4;
+}
+
+message GetAllUsersRequest { }
+
+message GetAllUsersReply {
+  repeated User users = 1;
+}
+
+message GetUserByIdRequest {
+	int64 id = 1;
+}
+message GetUserByIdReply {
+	User user = 1;
+}
+message GetMemebersByGroupIdRequest{
+	int64 id = 1;
+}
+
+message GetMemebersByGroupIdReply{
+	repeated User users = 1;
+}
+
+message CreateUserRequest {
+	User user = 1;
+}
+message CreateUserReply{
+	User user = 1;
+}
+
+message DeleteUserRequest {
+	User user = 1;
+}
+message DeleteUserReply {
+	bool result = 1;
+}
+
+message UpdateUserRequest {
+	User user = 1;
+}
+message UpdateUserReply{
+	User user = 1;
+}
