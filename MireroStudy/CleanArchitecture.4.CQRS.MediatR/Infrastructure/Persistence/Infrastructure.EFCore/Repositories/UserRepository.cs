@@ -69,7 +69,8 @@ public class UserRepository : IUserRepository
         if (findEntity == null)
             throw new NullReferenceException(nameof(entity));
 
-        findEntity = entity;
+        findEntity.Name = entity.Name;
+        _dbContext.Users.Update(findEntity);
         await _dbContext.SaveChangesAsync();
         return findEntity;
     }

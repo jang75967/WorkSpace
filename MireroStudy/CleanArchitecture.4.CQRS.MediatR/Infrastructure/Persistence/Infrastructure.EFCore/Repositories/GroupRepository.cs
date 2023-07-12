@@ -65,7 +65,8 @@ public class GroupRepository : IGroupRepository
         if (findEntity == null)
             throw new NullReferenceException(nameof(entity));
 
-        findEntity = entity;
+        findEntity.Name = entity.Name;
+        _dbContext.Groups.Update(findEntity);
         await _dbContext.SaveChangesAsync();
         return findEntity;
     }
