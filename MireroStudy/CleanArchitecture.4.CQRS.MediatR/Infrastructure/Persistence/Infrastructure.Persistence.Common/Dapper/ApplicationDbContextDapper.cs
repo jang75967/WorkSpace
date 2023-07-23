@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Infrastructure.Persistence.Common
+namespace Infrastructure.Persistence.Common.Dapper
 {
-    internal class ApplicationDbContextDapper
+    public class ApplicationDbContextDapper
     {
     }
 }
