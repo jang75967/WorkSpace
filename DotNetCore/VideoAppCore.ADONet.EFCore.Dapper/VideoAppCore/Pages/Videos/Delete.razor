@@ -1,0 +1,76 @@
+﻿@page "/Videos/Delete/{id}"
+
+@inject IVideoRepositoryAsync repository
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JSRuntime
+
+<h3>Delete</h3>
+
+<form>
+    <div class="row">
+        <div class="col-md-8">
+            <div class="form-group">
+                <label>ID: </label>
+                @video.Id
+            </div>
+            <div class="form-group">
+                <label>Title: </label>
+                @video.Title
+            </div>
+            <div class="form-group">
+                <label>ID: </label>
+                @video.Url
+            </div>
+            <div class="form-group">
+                <label>Title: </label>
+                @video.Name
+            </div>
+            <div class="form-group">
+                <label>ID: </label>
+                @video.Created.ToShortTimeString()
+            </div>
+            <div class="form-group">
+                <input type="button" value="Delete" id="btnDelete_Click" @onclick="@btnDelete_Click" />
+                <input type="button" value="Cancel" id="btnCancel_Click" @onclick="@btnCancel_Click" />
+            </div>
+        </div>
+    </div>
+</form>
+
+@code {
+    [Parameter]
+    public string Id { get; set; }
+
+    Video video = new Video();
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (int.TryParse(Id, out int id))
+        {
+
+        }
+        video = await repository.GetVideoByIdAsync(id);
+    }
+
+    protected async Task btnDelete_Click()
+    {
+        bool isDelete = await JSRuntime.InvokeAsync<bool>("confirm", "정말로 삭제하시겠습니까?");
+
+        if (isDelete)
+        {
+            if (int.TryParse(Id, out int id)) { }
+            await repository.RemoveVideoAsync(id);
+
+            NavigationManager.NavigateTo("/Videos"); // 리스트 페이지로 이동
+        }
+        else
+        {
+            await JSRuntime.InvokeAsync<object>("alert", "취소되었습니다.");
+        }
+    }
+
+    protected void btnCancel_Click()
+    {
+        NavigationManager.NavigateTo("/Videos"); // 리스트 페이지로 이동
+    }
+}

@@ -1,0 +1,65 @@
+﻿@page "/Videos/Edit/{id}"
+
+@inject IVideoRepositoryAsync repository
+@inject NavigationManager navigationManger
+
+<h3>Edit</h3>
+
+<form>
+    <div class="row">
+        <div class="col-md-8">
+            <div class="form-group">
+                <label>ID: </label>
+                @video.Id
+            </div>
+            <div class="form-group">
+                <label>Title: </label>
+                <input type="text" name="name" @bind="@video.Title" />
+            </div>
+            <div class="form-group">
+                <label>URL: </label>
+                <input type="text" name="name" @bind="@video.Url" />
+            </div>
+            <div class="form-group">
+                <label>Name: </label>
+                <input type="text" name="name" @bind="@video.Name" />
+            </div>
+            <div class="form-group">
+                <label>ID: </label>
+                @video.Created.ToShortTimeString()
+            </div>
+            <div class="form-group">
+                <input type="button" value="Edit" id="btnEdit_Click" @onclick="@btnEdit_Click" />
+                <input type="button" value="Cancel" id="btnCancel_Click" @onclick="@btnCancel_Click" />
+            </div>
+        </div>
+    </div>
+</form>
+
+@code {
+    [Parameter]
+    public string Id { get; set; }
+
+    Video video = new Video();
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (int.TryParse(Id, out int id))
+        {
+
+        }
+        video = await repository.GetVideoByIdAsync(id);
+    }
+
+    protected async Task btnEdit_Click()
+    {
+        await repository.UpdateVideoAsync(video);
+
+        navigationManger.NavigateTo($"/Videos/Details/{Id}"); // 상세보기 페이지로 이동
+    }
+
+    protected void btnCancel_Click()
+    {
+        navigationManger.NavigateTo("/Videos"); // 리스트 페이지로 이동
+    }
+}

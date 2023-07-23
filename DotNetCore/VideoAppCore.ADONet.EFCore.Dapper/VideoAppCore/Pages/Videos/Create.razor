@@ -1,0 +1,51 @@
+﻿@page "/Videos/Create"
+
+@inject IVideoRepositoryAsync repository
+@inject NavigationManager navigationManager
+
+<h3>Create</h3>
+
+<form>
+    <div class="row">
+        <div class="col-md-8">
+            <div class="form-group">
+                <label for="Title" class="control-label">Title</label>
+                <input type="text" @bind="@video.Title" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label for="Url" class="control-label">URL</label>
+                <input type="text" @bind="@video.Url" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label for="Name" class="control-label">Name</label>
+                <input type="text" @bind="@video.Name" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label for="Company" class="control-label">Company</label>
+                <input type="text" @bind="@video.Company" class="form-control" />
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <input type="button" id="btnSave" value="Save" @onclick="@btnSave_Click" class="btn btn-primary" />
+        </div>
+    </div>
+</form>
+
+@code {
+    Video video = new Video();
+
+    protected async Task btnSave_Click()
+    {
+        //video.Created = DateTime.Now;
+        video.CreatedBy = "Test";
+        video.Modified = null;
+        video.ModifiedBy = null;
+
+        // 저장
+        await repository.AddVideoAsync(video);
+        // 리스트 페이지로 이동
+        navigationManager.NavigateTo("/Videos/Index");
+    }
+}

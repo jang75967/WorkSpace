@@ -1,0 +1,57 @@
+﻿@page "/Videos"
+@page "/Videos/Index"
+
+@inject IVideoRepositoryAsync _repository
+
+<h3>Videos List</h3>
+
+<div>
+    <a href="/Videos/Create" class="btn btn-primary">Create</a>
+</div>
+
+@if (videos == null)
+{
+    <p>Loading...</p>
+}
+else if (videos.Count == 0)
+{
+    <p>No Data...</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Title</th>
+                <th>URL</th>
+                <th>&nbsp;</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var video in videos)
+            {
+                <tr>
+                    <td>@video.Id</td>
+                    <td>@video.Title</td>
+                    <td><a href="@video.Url">@video.Url</a></td>
+                    <td>
+                        <a href="/Videos/Details/@video.Id">Details</a>
+                        <a href="/Videos/Edit/@video.Id">Edit</a>
+                        <a href="/Videos/Delete/@video.Id">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    List<Video> videos;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Task.Delay(500); // 3초 대기 
+        videos = await _repository.GetVideosAsync();
+    }
+}
