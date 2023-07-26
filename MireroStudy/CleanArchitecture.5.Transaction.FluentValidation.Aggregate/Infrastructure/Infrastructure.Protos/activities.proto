@@ -1,0 +1,108 @@
+syntax = "proto3";
+package api.activities;
+
+option csharp_namespace = "Api.Activities";
+message Attendant {
+	int64 id = 1;
+	int64 activity_id = 2;
+	int64 user_id = 3;
+}
+message Expense {
+	int64 id = 1;
+	int64 activity_id = 2;
+	float payment = 3;
+}
+message Activity{
+	int64 id = 1;
+	string title = 2;
+	int64 group_id = 3;
+	float total_payment = 4;
+	repeated Expense expenses = 5;
+	repeated Attendant attendees = 6;
+}
+
+service ActivitiesGrpc {
+	rpc GetAllActivities(GetAllActivitiesRequest) returns (GetAllActivitiesReply);
+
+	rpc CreateActivity(CreateActivityRequest) returns (CreateActivityReply);
+	rpc DeleteActivity(DeleteActivityRequest) returns (DeleteActivityReply);
+	rpc UpdateActivityTitle(UpdateActivityTitleRequest) returns (UpdateActivityTitleReply);
+
+	rpc AddExpense(AddExpenseRequest) returns (AddExpenseReply);
+	rpc RemoveExpense(RemoveExpenseRequest) returns (RemoveExpenseReply);
+	rpc UpdateExpense(UpdateExpenseRequest) returns (UpdateExpenseReply);
+
+	rpc AddAttendant(AddAttendantRequest) returns (AddAttendantReply);
+	rpc RemoveAttendant(RemoveAttendantRequest) returns (RemoveAttendantReply);
+}
+
+
+message GetAllActivitiesRequest { }
+message GetAllActivitiesReply {
+	repeated Activity activities = 1;
+}
+
+message CreateActivityRequest {
+	string title = 1;
+	int64 group_id = 2;
+	repeated Expense expenses = 3;
+	repeated Attendant attendees = 4;
+}
+message CreateActivityReply {
+	Activity activity = 1;
+}
+
+message DeleteActivityRequest {
+	int64 activity_id = 1;
+}
+message DeleteActivityReply{
+	bool result = 1;
+}
+
+message UpdateActivityTitleRequest {
+	int64 activity_id = 1;
+	string title = 2;
+}
+message UpdateActivityTitleReply {
+	Activity activity = 1;
+}
+
+message AddExpenseRequest {
+	int64 activity_id = 1;
+	Expense Expense = 2;
+}
+message AddExpenseReply {
+	Activity activity = 1;
+}
+
+message RemoveExpenseRequest {
+	int64 activity_id = 1;
+	Expense Expense = 2;
+}
+message RemoveExpenseReply{
+	Activity activity = 1;
+}
+
+message UpdateExpenseRequest {
+	int64 activity_id = 1;
+	Expense Expense = 2;
+}
+message UpdateExpenseReply {
+	Activity activity = 1;
+}
+
+message AddAttendantRequest {
+	int64 activity_id = 1;
+	Attendant attendant = 2;
+}
+message AddAttendantReply {
+	Activity activity = 1;
+}
+
+message RemoveAttendantRequest {
+	int64 activity_id = 1;
+	Attendant attendant = 2;
+}
+message RemoveAttendantReply{
+	Activity activity = 1;
+}

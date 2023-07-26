@@ -1,0 +1,61 @@
+syntax = "proto3";
+package api.groups;
+
+option csharp_namespace = "Api.Groups";
+
+service GroupsGrpc {
+	rpc GetAllGroups(GetAllGroupsRequest) returns (GetAllGroupsReply);
+	rpc GetGroupById(GetGroupByIdRequest) returns (GetGroupByIdReply);
+	rpc GetGroupsByUserId(GetGroupsByUserIdRequest) returns (GetGroupsByUserIdReply);
+
+	rpc CreateGroup(CreateGroupRequest) returns (CreateGroupReply);
+	rpc DeleteGroup(DeleteGroupRequest) returns (DeleteGroupReply);
+	rpc UpdateGroup(UpdateGroupRequest) returns (UpdateGroupReply);
+	
+}
+
+message Group {
+	int64 id = 1;
+	string name = 2;
+}
+
+message GetAllGroupsRequest { }
+message GetAllGroupsReply {
+  repeated Group groups = 1;
+}
+
+message GetGroupByIdRequest{
+	int64 id = 1;
+}
+message GetGroupByIdReply {
+  Group group = 1;
+}
+
+message GetGroupsByUserIdRequest{
+	int64 id = 1;
+}
+message GetGroupsByUserIdReply{
+	repeated Group groups = 1;
+}
+
+
+message CreateGroupRequest {
+	Group group = 1;
+}
+message CreateGroupReply {
+	Group group = 1;
+}
+
+message DeleteGroupRequest {
+	int64 group_id = 1;
+}
+message DeleteGroupReply {
+	bool result = 1;
+}
+
+message UpdateGroupRequest {
+	Group group = 1;
+}
+message UpdateGroupReply {
+	Group group = 1;
+}
