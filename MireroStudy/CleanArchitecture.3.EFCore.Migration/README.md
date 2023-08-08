@@ -1,10 +1,13 @@
 # 키워드
 
+1. Dependency Injection
+2. 의존성 역전 원칙(DIP)
+3. EF Core
+4. Repository Pattern
+5. 통합 테스트(Container)
+
 * DI만 조정하며, Postgresql -> Oracle -> MsSQL-> MongoDB를 자유롭게 변경 가능
 * Docker를 사용해서 IntegratedTest를 사용 할 때 Database를 자동으로 구축해서 사용하도록 함
-
-* EF Core, DI, 의존성 역전 원칙(DIP)
-* IntegratedTest(Docker 사용), Migrations(Test data Database에 초기화하기)
 
 ## Database 변경 테스트
 
@@ -13,6 +16,13 @@
 #### 1. Postgresql, MsSQL
 
 * 따로 설정 할 필요 없이 테스트 코드 실행 가능
+* PostgresFactory.cs의 Line 24에서 BreakPoint를 찍고 접속 URL를 확인 가능(Port 바인딩이 랜덤으로 되기 때문)
+* GetConnectionString()를 F12로 들어가보면 
+Database: Postgres
+Username : postgres
+Password : postgres
+로 되어 있음
+Port는 5432이지만 Container가 띄워지면서 랜덤 Port로 포워딩 되기 때문에 확인해서 접속해야함.
 
 #### 2. MongoDB 테스트
 * PersistenceExtension -> services.AddMongoDB(configuration);
@@ -34,6 +44,7 @@
 * 하지만 여기서는 IRepository를 만들고 ApplicationDbContext가 Infrastructure Layer에 존재
 * 이유는 EF Core가 MongoDB를 지원하지 않고, EF Core <-> Dapper를 변경 가능하도록 만들기 위함
 
-## 과제(하고 싶으면 시도 ㄱㄱ)
+
+## 과제(하고 싶으면 시도)
 * Dapper를 추가한다.
 * Migrations(https://fluentmigrator.github.io/) 사용하면 됌

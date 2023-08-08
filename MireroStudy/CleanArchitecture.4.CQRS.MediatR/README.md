@@ -1,8 +1,10 @@
 ## 키워드
 
 * CQRS
+* AOP => Cross-Cutting
+  * 
 * MediatR
-  * MediatR IPipelineBehavior => Decorator Pattern, Proxy Pattern
+  * MediatR IPipelineBehavior => Chain of Responsibility Pattern (유사패턴 => Decorator Pattern, Proxy Pattern)
 * MockQueryable.Moq
 * ITestCaseOrderer
 
@@ -18,7 +20,9 @@ C#에서 CQRS를 편하게 만들어주는 대표적인 라이브러리는 [Medi
 #### MediatR IPipelineBehavior
 
 MediatR에서는 PipeLineBehavior을 통해 Handler 전, 후에 어떠한 작업을 할 수 있습니다.
-이는 Decorator, Proxy 패턴과 유사하게 동작합니다.
+이는 [Chain of Responsibility Pattern을 사용](https://arturkrajewski.silvrback.com/chain-of-responsibility-pattern-for-handling-cross-cutting-concerns)해서 Cross-Cutting 문제를 해결 할 수 있습니다.
+
+* [참고](https://learn.microsoft.com/en-us/dotnet/architecture/microservices/microservice-ddd-cqrs-patterns/microservice-application-layer-implementation-web-api#use-the-mediator-pattern-in-memory-in-the-command-pipeline)
 
 ## CQRS 테스트
 ## 단위 테스트
