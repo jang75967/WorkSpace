@@ -12,8 +12,8 @@ public class OracleFactory<TProgram, TDbContext> : TestDatabaseFactory<TProgram,
 {
     private static OracleContainer _container = new OracleBuilder()
             .WithEnvironment("APP_USER", "DM80")
-            .WithEnvironment("ORACLE_PASSWORD", "DM80")
-            .WithEnvironment("APP_USER_PASSWORD", "DM80")
+            .WithUsername("DM80")
+            .WithPassword("DM80")
             .Build();
 
     public OracleFactory() : base(_container) { }

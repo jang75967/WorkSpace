@@ -1,6 +1,7 @@
 using Api.Users;
 using Application.Mappers;
 using CleanArchitecture.UnitTest.Factories;
+using Common;
 using FluentAssertions;
 using Grpc.Net.Client;
 using Xunit;
@@ -9,7 +10,7 @@ using EntityUser = Domain.Entities.User;
 
 namespace CleanArchitecture.UnitTest;
 
-public class UserServiceTests
+public class UserServiceTests : TestBase<TestFactory<Program>>
 {
     private readonly GrpcChannel _channel;
     private readonly IMapper _mapper;
@@ -32,7 +33,7 @@ public class UserServiceTests
         var user = response.Users.First();
 
         user.GetType().Should().Be(typeof(DtoUser));
-        response.Users.Should().HaveCount(1);
+        response.Users.Should().HaveCount(5);
     }
 
     [Fact]
@@ -46,7 +47,7 @@ public class UserServiceTests
         var entities = _mapper.Map<IEnumerable<EntityUser>>(response.Users);
 
         // Assert
-        entities.Should().HaveCount(1);
+        entities.Should().HaveCount(5);
 
         var user = entities.First();
         user.GetType().Should().Be(typeof(EntityUser));

@@ -4,5 +4,5 @@ namespace CleanArchitecture.Core.Application;
 
 public interface IUserService
 {
-    Task<IEnumerable<DtoUser>> GetAllUsers();
+    Task<IEnumerable<DtoUser>> GetAllUsers(CancellationToken cancellationToken = default);
 }

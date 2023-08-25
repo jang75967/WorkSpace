@@ -15,9 +15,9 @@ public class GroupService : IGroupService
         _groupRepository = groupRepository;
         _mapper = mapper;
     }
-    public async Task<IEnumerable<DtoGroup>> GetAllGroups()
+    public async Task<IEnumerable<DtoGroup>> GetAllGroups(CancellationToken cancellationToken = default)
     {
-        var entities = await _groupRepository.GetAllAsync();
+        var entities = await _groupRepository.GetAllAsync(cancellationToken);
         var dtos = _mapper.Map<IEnumerable<DtoGroup>>(entities);
         return dtos;
     }

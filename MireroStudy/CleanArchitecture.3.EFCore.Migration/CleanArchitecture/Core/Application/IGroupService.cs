@@ -3,5 +3,5 @@ namespace CleanArchitecture.Core.Application;
 
 public interface IGroupService
 {
-    Task<IEnumerable<DtoGroup>> GetAllGroups();
+    Task<IEnumerable<DtoGroup>> GetAllGroups(CancellationToken cancellationToken = default);
 }

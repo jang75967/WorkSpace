@@ -8,7 +8,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Infrastructure\Infrastructure.Mappers\Infrastructure.Mappers.csproj" />
-    <ProjectReference Include="..\Infrastructure\Infrastructure.Protos\Infrastructure.Protos.csproj" />
     <ProjectReference Include="..\Infrastructure\Persistence\Infrastructure.EFCore\Infrastructure.EFCore.csproj" />
     <ProjectReference Include="..\Infrastructure\Persistence\Infrastructure.MongoDB\Infrastructure.MongoDB.csproj" />
   </ItemGroup>

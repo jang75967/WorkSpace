@@ -21,6 +21,7 @@ public class MongoDBFactory<TProgram, TDbContext> : TestDatabaseFactory<TProgram
         builder.ConfigureTestServices(services =>
         {
             services.AddScoped<IUserRepository, Infrastructure.MongoDB.Repositories.UserRepository>();
+
             services.AddSingleton(_ =>
             {
                 var conn = _container.GetConnectionString();
