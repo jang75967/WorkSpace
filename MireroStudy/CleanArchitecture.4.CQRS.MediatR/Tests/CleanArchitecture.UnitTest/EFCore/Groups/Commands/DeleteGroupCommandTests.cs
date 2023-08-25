@@ -27,15 +27,13 @@ public class DeleteGroupCommandTests : TestBase<TestFactory<Program>>
     [Fact]
     public async Task Should_Be_Delete_Group()
     {
-        var groupDto = new DtoGroup { Id = 2, Name = "농구 동아리" };
-
         // Arrange
-        var mockDbContext = MockDbContext.Get();
+        var mockDbContext = new MockDbContext().Get();
         var groupRepository = new GroupRepository(mockDbContext.Object);
         var handler = new DeleteGroupCommandHandler(groupRepository, _mapper);
 
         // Act
-        var result = await handler.Handle(new DeleteGroupCommand(groupDto));
+        var result = await handler.Handle(new DeleteGroupCommand(groupId: 2));
 
         // Assert
         result.Should().BeTrue();

@@ -6,13 +6,11 @@ using EntityGroup = Domain.Entities.Group;
 
 namespace CleanArchitecture.Core.Application.Features.Groups.Commands;
 
-public class DeleteGroupCommand : IRequest<bool>
+public record DeleteGroupCommand : IRequest<bool>
 {
-    public DeleteGroupCommand(DtoGroup group)
-    {
-        Group = group;
-    }
-    public DtoGroup Group { get; private set; }
+    public long GroupId { get; }
+    public DeleteGroupCommand(long groupId)
+        => GroupId = groupId;
 }
 
 public class DeleteGroupCommandHandler : IRequestHandler<DeleteGroupCommand, bool>
@@ -27,8 +25,7 @@ public class DeleteGroupCommandHandler : IRequestHandler<DeleteGroupCommand, boo
 
     public async Task<bool> Handle(DeleteGroupCommand request, CancellationToken cancellationToken = default)
     {
-        var entity = _mapper.Map<EntityGroup>(request.Group);
-        var result = await _groupRepository.DeleteAsync(entity, cancellationToken);
+        var result = await _groupRepository.DeleteAsync(request.GroupId, cancellationToken);
         return result;
     }
 }

@@ -32,7 +32,7 @@ public class GroupController : GroupsGrpc.GroupsGrpcBase
     => new CreateGroupReply() { Group = await _mediator.Send(new CreateGroupCommand(request.Group)) };
 
     public override async Task<DeleteGroupReply> DeleteGroup(DeleteGroupRequest request, ServerCallContext context)
-        => new DeleteGroupReply() { Result = await _mediator.Send(new DeleteGroupCommand(request.Group)) };
+        => new DeleteGroupReply() { Result = await _mediator.Send(new DeleteGroupCommand(request.GroupId)) };
 
     public override async Task<UpdateGroupReply> UpdateGroup(UpdateGroupRequest request, ServerCallContext context)
         => new UpdateGroupReply() { Group = await _mediator.Send(new UpdateGroupCommand(request.Group)) };

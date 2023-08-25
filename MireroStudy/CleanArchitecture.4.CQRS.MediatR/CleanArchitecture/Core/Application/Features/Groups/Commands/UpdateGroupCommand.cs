@@ -6,13 +6,11 @@ using EntityGroup = Domain.Entities.Group;
 
 namespace CleanArchitecture.Core.Application.Features.Groups.Commands;
 
-public class UpdateGroupCommand : IRequest<DtoGroup>
+public record UpdateGroupCommand : IRequest<DtoGroup>
 {
+    public DtoGroup Group { get; }
     public UpdateGroupCommand(DtoGroup group)
-    {
-        Group = group;
-    }
-    public DtoGroup Group { get; private set; }
+        => Group = group;
 }
 
 public class UpdateGroupCommandHandler : IRequestHandler<UpdateGroupCommand, DtoGroup>

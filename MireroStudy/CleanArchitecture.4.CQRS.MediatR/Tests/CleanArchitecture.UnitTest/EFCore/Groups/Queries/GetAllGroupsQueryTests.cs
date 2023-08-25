@@ -22,7 +22,7 @@ public class GetAllGroupsQueryTests : TestBase<TestFactory<Program>>
     public async Task Should_Get_All_Groups()
     {
         // Arrange
-        var groupRepository = new GroupRepository(MockDbContext.Get().Object);
+        var groupRepository = new GroupRepository(new MockDbContext().Get().Object);
         var handler = new GetAllGroupsQueryHandler(groupRepository, _mapper);
 
         // Act

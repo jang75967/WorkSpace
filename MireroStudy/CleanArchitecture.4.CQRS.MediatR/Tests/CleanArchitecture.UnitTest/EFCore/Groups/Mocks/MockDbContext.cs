@@ -1,4 +1,5 @@
-﻿using Domain.Entities;
+﻿using Common;
+using Domain.Entities;
 using Infrastructure.EFCore;
 using Microsoft.EntityFrameworkCore;
 using MockQueryable.Moq;
@@ -8,11 +9,18 @@ namespace CleanArchitecture.UnitTest.EFCore.Groups.Mocks;
 
 public class MockDbContext
 {
-    private static List<User> UserSeed = GetUserSeed();
-    private static List<Group> GroupSeed = GetGroupSeed();
-    private static List<MemberUserGroup> MemberUserGroupSeed = GetMemberUserGroupSeed();
+    private List<User> UserSeed = default!;
+    private List<Group> GroupSeed = default!;
+    private List<MemberUserGroup> MemberUserGroupSeed = default!;
 
-    public static Mock<ApplicationDbContext> Get()
+    public MockDbContext()
+    {
+        UserSeed = GetUserSeed();
+        GroupSeed = GetGroupSeed();
+        MemberUserGroupSeed = GetMemberUserGroupSeed();
+    }
+
+    public Mock<ApplicationDbContext> Get()
     {
         var options = new DbContextOptionsBuilder<ApplicationDbContext>()
             .Options;
@@ -25,68 +33,43 @@ public class MockDbContext
         return dbContext;
     }
 
-    private static DbSet<User> UserDbSet()
+    private DbSet<User> UserDbSet()
     {
-        var userDbSet = UserSeed.AsQueryable().BuildMockDbSet();
-
-        userDbSet.Setup(m => m.FindAsync(It.IsAny<object[]>(), default))
-           .Returns((object[] r, CancellationToken c) =>
-           {
-               return new ValueTask<User?>(UserSeed.ToList().Find(x => x.Id == (long)r[0]));
-           });
-
-        userDbSet.Setup(set => set.AddAsync(It.IsAny<User>(), It.IsAny<CancellationToken>()))
-          .Callback((User entity, CancellationToken _) => UserSeed.Add(entity));
-
-        userDbSet.Setup(set => set.Remove(It.IsAny<User>()))
-          .Callback((User entity) =>
-          {
-              UserSeed.Remove(entity);
-              MemberUserGroupSeed.RemoveAll(m => m.UserId == entity.Id);
-          });
-
-        return userDbSet.Object;
+        return UserSeed.AsQueryable().BuildMockDbSet()
+                .FindAsync(UserSeed)
+                .AddAsync(UserSeed)
+                .Update(UserSeed)
+                .Remove(entity =>
+                {
+                    UserSeed.Remove(entity);
+                    MemberUserGroupSeed.RemoveAll(m => m.UserId == entity.Id);
+                })
+                .Build();
     }
 
-    private static DbSet<Group> GroupDbSet()
+    private DbSet<Group> GroupDbSet()
     {
-        var groupDbSet = GroupSeed.AsQueryable().BuildMockDbSet();
-
-        groupDbSet.Setup(m => m.FindAsync(It.IsAny<object[]>(), default))
-            .Returns((object[] r, CancellationToken c) =>
-            {
-                return new ValueTask<Group?>(GroupSeed.ToList().Find(x => x.Id == (long)r[0]));
-            });
-
-        groupDbSet.Setup(set => set.AddAsync(It.IsAny<Group>(), It.IsAny<CancellationToken>()))
-          .Callback((Group entity, CancellationToken _) => GroupSeed.Add(entity));
-
-        groupDbSet.Setup(set => set.Remove(It.IsAny<Group>()))
-          .Callback((Group entity) =>
-          {
-              GroupSeed.Remove(entity);
-              MemberUserGroupSeed.RemoveAll(m => m.GroupId == entity.Id);
-          });
-
-        return groupDbSet.Object;
+        return GroupSeed.AsQueryable().BuildMockDbSet()
+                .FindAsync(GroupSeed)
+                .AddAsync(GroupSeed)
+                .Update(GroupSeed)
+                .Remove(entity =>
+                {
+                    GroupSeed.Remove(entity);
+                    MemberUserGroupSeed.RemoveAll(m => m.GroupId == entity.Id);
+                })
+                .Build();
     }
 
-    private static DbSet<MemberUserGroup> MemberUserGroupDbSet()
+    private DbSet<MemberUserGroup> MemberUserGroupDbSet()
     {
-        var membersDbSet = MemberUserGroupSeed.AsQueryable().BuildMockDbSet();
-
-        membersDbSet.Setup(m => m.FindAsync(It.IsAny<object[]>(), default))
-            .Returns((object[] r, CancellationToken c) =>
-            {
-                return new ValueTask<MemberUserGroup?>(MemberUserGroupSeed.ToList().Find(x => x.UserId == (int)r[0] && x.GroupId == (int)r[2]));
-            });
-
-        membersDbSet.Setup(set => set.AddAsync(It.IsAny<MemberUserGroup>(), It.IsAny<CancellationToken>()))
-          .Callback((MemberUserGroup entity, CancellationToken _) => MemberUserGroupSeed.Add(entity));
-        return membersDbSet.Object;
+        return MemberUserGroupSeed.AsQueryable().BuildMockDbSet()
+               .FindAsync(MemberUserGroupSeed)
+               .AddAsync(MemberUserGroupSeed)
+               .Build();
     }
 
-    public static List<User> GetUserSeed()
+    public List<User> GetUserSeed()
     {
         return new List<User>()
         {
@@ -95,29 +78,25 @@ public class MockDbContext
             new User() { Id=3, Name = "조범희", Password = "password", Email ="jo@gmail.com"},
             new User() { Id=4, Name = "안성윤", Password = "password", Email ="an@gmail.com"},
             new User() { Id=5, Name = "장동계", Password = "password", Email ="jang@gmail.com"},
-
         };
     }
 
-    public static List<Group> GetGroupSeed()
+    public List<Group> GetGroupSeed()
     {
         return new List<Group>()
         {
             new Group() { Id = 1, Name = "축구 동아리" },
             new Group() { Id = 2, Name = "농구 동아리" }
-
         };
     }
 
-    public static List<MemberUserGroup> GetMemberUserGroupSeed()
+    public List<MemberUserGroup> GetMemberUserGroupSeed()
     {
         return new List<MemberUserGroup>()
         {
             new MemberUserGroup() { Id = 1, UserId = 1, GroupId = 1, User = UserSeed.Where(_ => _.Id == 1).First(), Group = GroupSeed.Where(_ => _.Id == 1).First() },
             new MemberUserGroup() { Id = 2, UserId = 1, GroupId = 2, User = UserSeed.Where(_ => _.Id == 1).First(), Group = GroupSeed.Where(_ => _.Id == 2).First()},
             new MemberUserGroup() { Id = 3, UserId = 2, GroupId = 1, User = UserSeed.Where(_ => _.Id == 2).First(), Group = GroupSeed.Where(_ => _.Id == 1).First()},
-            new MemberUserGroup() { Id = 4, UserId = 3, GroupId = 2, User = UserSeed.Where(_ => _.Id == 3).First(), Group = GroupSeed.Where(_ => _.Id == 2).First()},
-            new MemberUserGroup() { Id = 5, UserId = 4, GroupId = 1, User = UserSeed.Where(_ => _.Id == 5).First(), Group = GroupSeed.Where(_ => _.Id == 1).First()},
         };
     }
 }

@@ -25,7 +25,7 @@ public class UpdateGroupCommandTests : TestBase<TestFactory<Program>>
         var groupDto = new DtoGroup { Id = 1, Name = "updated" };
 
         // Arrange
-        var mockDbContext = MockDbContext.Get();
+        var mockDbContext = new MockDbContext().Get();
         var groupRepository = new GroupRepository(mockDbContext.Object);
         var handler = new UpdateGroupCommandHandler(groupRepository, _mapper);
 

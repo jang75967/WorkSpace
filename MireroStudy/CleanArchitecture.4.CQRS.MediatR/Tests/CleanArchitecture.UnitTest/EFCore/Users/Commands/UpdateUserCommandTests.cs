@@ -24,7 +24,7 @@ public class UpdateUserCommandTests : TestBase<TestFactory<Program>>
         var userDto = new DtoUser { Id = 1, Name = "updated", Email = "updated@gmail.com" };
 
         // Arrange
-        var mockDbContext = MockDbContext.Get();
+        var mockDbContext = new MockDbContext().Get();
         var userRepository = new UserRepository(mockDbContext.Object);
         var handler = new UpdateUserCommandHandler(userRepository, _mapper);
 

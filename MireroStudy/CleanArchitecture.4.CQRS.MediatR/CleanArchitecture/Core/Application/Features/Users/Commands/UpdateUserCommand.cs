@@ -7,11 +7,9 @@ namespace CleanArchitecture.Core.Application.Features.Users.Commands;
 
 public record UpdateUserCommand : IRequest<DtoUser>
 {
-    public UpdateUserCommand(DtoUser user)
-    {
-        User = user;
-    }
     public DtoUser User { get; private set; }
+    public UpdateUserCommand(DtoUser user)
+         => User = user;
 }
 
 public class UpdateUserCommandHandler : IRequestHandler<UpdateUserCommand, DtoUser>

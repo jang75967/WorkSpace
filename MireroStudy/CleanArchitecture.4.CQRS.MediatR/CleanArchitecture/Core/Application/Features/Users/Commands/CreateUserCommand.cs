@@ -7,13 +7,11 @@ using EntityUser = Domain.Entities.User;
 
 namespace CleanArchitecture.Core.Application.Features.Users.Commands;
 
-public class CreateUserCommand : IRequest<DtoUser>
+public record CreateUserCommand : IRequest<DtoUser>
 {
+    public DtoUser User { get; }
     public CreateUserCommand(DtoUser user)
-    {
-        User = user;
-    }
-    public DtoUser User { get; private set; }
+        => User = user;
 }
 
 public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, DtoUser>

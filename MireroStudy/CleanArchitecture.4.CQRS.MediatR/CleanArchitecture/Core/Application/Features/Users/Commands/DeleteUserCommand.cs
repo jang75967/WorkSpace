@@ -6,13 +6,11 @@ using DtoUser = Api.Users.User;
 using EntityUser = Domain.Entities.User;
 namespace CleanArchitecture.Core.Application.Features.Users.Commands;
 
-public class DeleteUserCommand : IRequest<bool>
+public record DeleteUserCommand : IRequest<bool>
 {
-    public DeleteUserCommand(DtoUser user)
-    {
-        User = user ?? throw new ArgumentNullException(nameof(user));
-    }
-    public DtoUser User { get; private set; }
+    public long UserId { get; }
+    public DeleteUserCommand(long userId)
+        => UserId = userId;
 }
 
 public class DeleteUserCommandHandler : IRequestHandler<DeleteUserCommand, bool>
@@ -27,8 +25,7 @@ public class DeleteUserCommandHandler : IRequestHandler<DeleteUserCommand, bool>
 
     public async Task<bool> Handle(DeleteUserCommand request, CancellationToken cancellationToken = default)
     {
-        var entity = _mapper.Map<EntityUser>(request.User);
-        var result = await _userRepository.DeleteAsync(entity, cancellationToken);
+        var result = await _userRepository.DeleteAsync(request.UserId, cancellationToken);
         return result;
     }
 }

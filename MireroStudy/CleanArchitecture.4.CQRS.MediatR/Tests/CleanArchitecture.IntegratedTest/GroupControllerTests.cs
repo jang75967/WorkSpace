@@ -106,14 +106,9 @@ public class GroupControllerTests : TestBase<PostgresFactory<Program, Applicatio
     {
         // Arrange
         var client = new GroupsGrpc.GroupsGrpcClient(_channel);
-        var deleteGroup = new Group
-        {
-            Id = 3,
-            Name = "CreateGroup"
-        };
 
         // Act
-        var response = await client.DeleteGroupAsync(new DeleteGroupRequest { Group = deleteGroup });
+        var response = await client.DeleteGroupAsync(new DeleteGroupRequest { GroupId = 3 });
         var result = response.Result;
 
         // Assert

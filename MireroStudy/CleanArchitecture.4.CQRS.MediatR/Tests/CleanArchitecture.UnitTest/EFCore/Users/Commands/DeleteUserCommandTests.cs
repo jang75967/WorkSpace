@@ -23,15 +23,13 @@ public class DeleteUserCommandTests : TestBase<TestFactory<Program>>
     [Fact]
     public async Task Should_Be_Create_Group()
     {
-        var userDto = new DtoUser { Id = 1 };
-
         // Arrange
-        var mockDbContext = MockDbContext.Get();
+        var mockDbContext = new MockDbContext().Get();
         var userRepository = new UserRepository(mockDbContext.Object);
         var handler = new DeleteUserCommandHandler(userRepository, _mapper);
 
         // Act
-        var result = await handler.Handle(new DeleteUserCommand(userDto));
+        var result = await handler.Handle(new DeleteUserCommand(userId: 1));
 
         // Assert
         result.Should().BeTrue();

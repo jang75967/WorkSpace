@@ -25,7 +25,7 @@ public class CreateUserCommandTests : TestBase<TestFactory<Program>>
         var userDto = new DtoUser { Id = 6, Name = "created", Email = "created@gmail.com" };
 
         // Arrange
-        var mockDbContext = MockDbContext.Get();
+        var mockDbContext = new MockDbContext().Get();
         var userRepository = new UserRepository(mockDbContext.Object);
         var handler = new CreateUserCommandHandler(userRepository, _mapper);
 

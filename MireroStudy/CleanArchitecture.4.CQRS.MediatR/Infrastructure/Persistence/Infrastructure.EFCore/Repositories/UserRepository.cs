@@ -1,5 +1,4 @@
 ﻿using Application.Persistences;
-using Azure.Core;
 using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,16 +14,22 @@ public class UserRepository : IUserRepository
 
     public async Task<User> CreateAsync(User entity, CancellationToken cancellationToken = default)
     {
-        await _dbContext.Users.AddAsync(entity);
-        await this.SaveChanges();
-        return await GetAsync(entity.Id, cancellationToken);
+        var result = await _dbContext.Users.AddAsync(entity);
+        await _dbContext.SaveChangesAsync();
+        return result.Entity;
     }
 
-    public async Task<bool> DeleteAsync(User entity, CancellationToken cancellationToken = default)
+    public async Task<bool> DeleteAsync(long id, CancellationToken cancellationToken = default)
     {
-        var findEntity = await GetAsync(entity.Id, cancellationToken);
-        _dbContext.Remove(findEntity);
-        return await this.SaveChanges() >= 1;
+        var findEntity = await GetAsync(id, cancellationToken);
+
+        if (findEntity != null)
+        {
+            _dbContext.Users.Remove(findEntity);
+            await _dbContext.SaveChangesAsync();
+            return true;
+        }
+        return false;
     }
 
     public async Task<IEnumerable<User>> FindAllAsync(IEnumerable<long> ids, CancellationToken cancellationToken = default)
@@ -35,7 +40,7 @@ public class UserRepository : IUserRepository
 
     public async Task<IEnumerable<User>> GetAllAsync(CancellationToken cancellationToken = default)
     {
-        return await _dbContext.Users.OrderBy(_=> _.Id).ToListAsync();
+        return await _dbContext.Users.OrderBy(_ => _.Id).ToListAsync();
     }
 
     public async Task<User> GetAsync(long id, CancellationToken cancellationToken = default)
@@ -57,21 +62,10 @@ public class UserRepository : IUserRepository
             .OrderBy(_ => _.Id).ToListAsync();
     }
 
-
-    public async Task<int> SaveChanges()
-    {
-        return await _dbContext.SaveChangesAsync();
-    }
-
     public async Task<User> UpdateAsync(User entity, CancellationToken cancellationToken = default)
     {
-        var findEntity = await this.GetAsync(entity.Id, cancellationToken);
-        if (findEntity == null)
-            throw new NullReferenceException(nameof(entity));
-
-        findEntity.Name = entity.Name;
-        _dbContext.Users.Update(findEntity);
+        var result = _dbContext.Users.Update(entity).Entity;
         await _dbContext.SaveChangesAsync();
-        return findEntity;
+        return result;
     }
 }

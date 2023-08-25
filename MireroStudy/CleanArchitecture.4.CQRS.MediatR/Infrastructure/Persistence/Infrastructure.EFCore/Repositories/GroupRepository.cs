@@ -14,16 +14,22 @@ public class GroupRepository : IGroupRepository
 
     public async Task<Group> CreateAsync(Group entity, CancellationToken cancellationToken = default)
     {
-        await _dbContext.Groups.AddAsync(entity);
-        await this.SaveChanges();
-        return await GetAsync(entity.Id, cancellationToken);
+        var result = await _dbContext.Groups.AddAsync(entity);
+        await _dbContext.SaveChangesAsync();
+        return result.Entity;
     }
 
-    public async Task<bool> DeleteAsync(Group entity, CancellationToken cancellationToken = default)
+    public async Task<bool> DeleteAsync(long id, CancellationToken cancellationToken = default)
     {
-        var findEntity = await GetAsync(entity.Id, cancellationToken);
-        _dbContext.Groups.Remove(findEntity);
-        return await this.SaveChanges() >= 1;
+        var findEntity = await GetAsync(id, cancellationToken);
+
+        if (findEntity != null)
+        {
+            _dbContext.Groups.Remove(findEntity);
+            await _dbContext.SaveChangesAsync();
+            return true;
+        }
+        return false;
     }
 
     public async Task<IEnumerable<Group>> FindAllAsync(IEnumerable<long> ids, CancellationToken cancellationToken = default)
@@ -54,11 +60,6 @@ public class GroupRepository : IGroupRepository
             .OrderBy(g => g.Id).ToListAsync();
     }
 
-    public async Task<int> SaveChanges()
-    {
-        return await _dbContext.SaveChangesAsync();
-    }
-
     public async Task<Group> UpdateAsync(Group entity, CancellationToken cancellationToken = default)
     {
         var findEntity = await this.GetAsync(entity.Id, cancellationToken);
@@ -66,8 +67,8 @@ public class GroupRepository : IGroupRepository
             throw new NullReferenceException(nameof(entity));
 
         findEntity.Name = entity.Name;
-        _dbContext.Groups.Update(findEntity);
+        var result = _dbContext.Groups.Update(findEntity).Entity;
         await _dbContext.SaveChangesAsync();
-        return findEntity;
+        return result;
     }
 }

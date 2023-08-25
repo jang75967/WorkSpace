@@ -22,11 +22,11 @@ public class GetGroupsByUserIdQueryTests : TestBase<TestFactory<Program>>
     public async Task Should_Get_Group_By_UserId()
     {
         // Arrange
-        var groupRepository = new GroupRepository(MockDbContext.Get().Object);
+        var groupRepository = new GroupRepository(new MockDbContext().Get().Object);
         var handler = new GetGroupsByUserIdQueryHandler(groupRepository, _mapper);
 
         // Act
-        var result = await handler.Handle(new GetGroupsByUserIdQuery(4));
+        var result = await handler.Handle(new GetGroupsByUserIdQuery(2));
 
         // Assert
         result.Should().HaveCount(1);

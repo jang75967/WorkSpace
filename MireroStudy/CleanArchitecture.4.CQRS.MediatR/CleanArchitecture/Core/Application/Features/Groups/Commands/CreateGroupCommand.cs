@@ -5,13 +5,11 @@ using DtoGroup = Api.Groups.Group;
 using EntityGroup = Domain.Entities.Group;
 namespace CleanArchitecture.Core.Application.Features.Groups.Commands;
 
-public class CreateGroupCommand : IRequest<DtoGroup>
+public record CreateGroupCommand : IRequest<DtoGroup>
 {
+    public DtoGroup Group { get; }
     public CreateGroupCommand(DtoGroup group)
-    {
-        Group = group;
-    }
-    public DtoGroup Group { get; private set; }
+        => Group = group;
 }
 
 public class CreateGroupCommandHandler : IRequestHandler<CreateGroupCommand, DtoGroup>

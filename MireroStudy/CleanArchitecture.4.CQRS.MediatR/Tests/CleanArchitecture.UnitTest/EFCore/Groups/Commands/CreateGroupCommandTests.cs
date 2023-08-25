@@ -25,7 +25,7 @@ public  class CreateGroupCommandTests : TestBase<TestFactory<Program>>
         var groupDto = new DtoGroup { Id = 3, Name = "created" };
 
         // Arrange
-        var mockDbContext = MockDbContext.Get();
+        var mockDbContext = new MockDbContext().Get();
         var groupRepository = new GroupRepository(mockDbContext.Object);
         var handler = new CreateGroupCommandHandler(groupRepository, _mapper);
 

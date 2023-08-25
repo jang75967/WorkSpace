@@ -129,14 +129,9 @@ public class UserControllerTests : TestBase<PostgresFactory<Program, Application
     {
         // Arrange
         var client = new UsersGrpc.UsersGrpcClient(_channel);
-        var deleteUser = new User
-        {
-            Id = 6,
-            Name = "CreateUser"
-        };
 
         // Act
-        var response = await client.DeleteUserAsync(new DeleteUserRequest { User = deleteUser });
+        var response = await client.DeleteUserAsync(new DeleteUserRequest { UserId = 6 });
         var result = response.Result;
 
         // Assert

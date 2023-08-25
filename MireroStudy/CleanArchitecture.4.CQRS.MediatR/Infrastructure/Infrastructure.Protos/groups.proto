@@ -47,7 +47,7 @@ message CreateGroupReply {
 }
 
 message DeleteGroupRequest {
-	Group group = 1;
+	int64 group_id = 1;
 }
 message DeleteGroupReply {
 	bool result = 1;

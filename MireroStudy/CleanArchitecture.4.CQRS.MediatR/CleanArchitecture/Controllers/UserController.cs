@@ -18,21 +18,20 @@ namespace CleanArchitecture.Services
             _logger = logger;
             _mediator = mediator;
         }
-
         public override async Task<GetAllUsersReply> GetAllUsers(GetAllUsersRequest request, ServerCallContext context)
             => new GetAllUsersReply() { Users = { await _mediator.Send(new GetAllUsersQuery()) } };
 
         public override async Task<GetUserByIdReply> GetUserById(GetUserByIdRequest request, ServerCallContext context)
-            => new GetUserByIdReply() { User =  await _mediator.Send(new GetUserByIdQuery( request.Id)) };
+            => new GetUserByIdReply() { User = await _mediator.Send(new GetUserByIdQuery(request.Id)) };
 
         public override async Task<GetMemebersByGroupIdReply> GetMemebersByGroupId(GetMemebersByGroupIdRequest request, ServerCallContext context)
             => new GetMemebersByGroupIdReply() { Users = { await _mediator.Send(new GetAllUsersByGroupIdQuery(request.Id)) } };
 
         public override async Task<CreateUserReply> CreateUser(CreateUserRequest request, ServerCallContext context)
-            => new CreateUserReply() { User = await _mediator.Send(new CreateUserCommand( request.User ))};
+            => new CreateUserReply() { User = await _mediator.Send(new CreateUserCommand(request.User)) };
 
         public override async Task<DeleteUserReply> DeleteUser(DeleteUserRequest request, ServerCallContext context)
-            => new DeleteUserReply() { Result = await _mediator.Send(new DeleteUserCommand(request.User)) };
+            => new DeleteUserReply() { Result = await _mediator.Send(new DeleteUserCommand(request.UserId)) };
 
         public override async Task<UpdateUserReply> UpdateUser(UpdateUserRequest request, ServerCallContext context)
             => new UpdateUserReply() { User = await _mediator.Send(new UpdateUserCommand(request.User)) };

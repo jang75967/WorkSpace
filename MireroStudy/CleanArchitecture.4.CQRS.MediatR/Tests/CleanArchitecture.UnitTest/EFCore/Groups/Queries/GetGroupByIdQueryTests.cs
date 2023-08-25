@@ -22,7 +22,7 @@ public class GetGroupByIdQueryTests : TestBase<TestFactory<Program>>
     public async Task Should_Get_Group_By_GroupId()
     {
         // Arrange
-        var groupRepository = new GroupRepository(MockDbContext.Get().Object);
+        var groupRepository = new GroupRepository(new MockDbContext().Get().Object);
         var handler = new GetGroupByIdQueryHandler(groupRepository, _mapper);
 
         // Act

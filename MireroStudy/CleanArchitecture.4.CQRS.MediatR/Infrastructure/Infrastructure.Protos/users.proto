@@ -50,7 +50,7 @@ message CreateUserReply{
 }
 
 message DeleteUserRequest {
-	User user = 1;
+	int64 user_id = 1;
 }
 message DeleteUserReply {
 	bool result = 1;
