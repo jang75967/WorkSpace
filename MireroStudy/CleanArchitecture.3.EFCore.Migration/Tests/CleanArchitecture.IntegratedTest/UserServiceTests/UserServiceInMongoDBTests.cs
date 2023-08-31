@@ -23,8 +23,6 @@ public class UserServiceInMongoDBTests : TestBase<MongoDBFactory<Program, Applic
     [Fact]
     public async Task Should_Be_User_Count_Is_Five()
     {
-        // RepositoryExtension.AddRepositories() MongoDB용 Repository로 변경해줘야 함.
-
         // Arrange
         var client = new UsersGrpc.UsersGrpcClient(_channel);
 

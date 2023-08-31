@@ -24,11 +24,6 @@ Password : postgres
 ·Î µÇ¾î ÀÖÀ½
 Port´Â 5432ÀÌÁö¸¸ Container°¡ ¶ç¿öÁö¸é¼­ ·£´ı Port·Î Æ÷¿öµù µÇ±â ¶§¹®¿¡ È®ÀÎÇØ¼­ Á¢¼ÓÇØ¾ßÇÔ.
 
-#### 2. MongoDB Å×½ºÆ®
-* PersistenceExtension -> services.AddMongoDB(configuration);
-* RepositoryExtension -> services.AddScoped<IUserRepository, Infrastructure.MongoDB.Repositories.UserRepository>();
-
-* ¿Ö ÀÎÁö ¸ğ¸£°ÚÁö¸¸, ConfigureWebHostÀÌ Á¤»óÀûÀ¸·Î ¸ÔÁö¾ÊÀ½
 
 #### 3. ¿À¶óÅ¬
 
@@ -47,4 +42,4 @@ Port´Â 5432ÀÌÁö¸¸ Container°¡ ¶ç¿öÁö¸é¼­ ·£´ı Port·Î Æ÷¿öµù µÇ±â ¶§¹®¿¡ È®ÀÎÇØ¼­
 
 ## °úÁ¦(ÇÏ°í ½ÍÀ¸¸é ½Ãµµ)
 * Dapper¸¦ Ãß°¡ÇÑ´Ù.
-* Migrations(https://fluentmigrator.github.io/) »ç¿ëÇÏ¸é ‰Î
+* Migrations(https://fluentmigrator.github.io/) »ç¿ëÇÏ¸é ‰?

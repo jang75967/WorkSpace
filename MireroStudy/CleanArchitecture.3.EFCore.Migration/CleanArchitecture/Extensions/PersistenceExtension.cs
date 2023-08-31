@@ -10,8 +10,8 @@ public static class PersistenceExtension
     {
         services.AddPostgreSql(configuration, Assembly.GetExecutingAssembly().GetName().Name!);
         //services.AddOracle(configuration, Assembly.GetExecutingAssembly().GetName().Name!);
-        services.AddMsSql(configuration, Assembly.GetExecutingAssembly().GetName().Name!);
-        services.AddMongoDB(configuration);
+        //services.AddMsSql(configuration, Assembly.GetExecutingAssembly().GetName().Name!);
+        //services.AddMongoDB(configuration);
         return services;
     }
 }
