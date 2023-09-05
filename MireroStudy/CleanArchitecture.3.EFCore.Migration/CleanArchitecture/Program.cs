@@ -10,6 +10,8 @@ builder.Services.AddRepositories();
 builder.Services.AddServices();
 builder.Services.AddEFCore(configuration);
 
+builder.Services.AddDapper(configuration);
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
