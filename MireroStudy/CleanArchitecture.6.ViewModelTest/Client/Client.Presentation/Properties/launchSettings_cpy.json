@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "Client.Presentation": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "API_SERVICE_URL": "http://localhost:4442"
+      }
+    }
+  }
+}

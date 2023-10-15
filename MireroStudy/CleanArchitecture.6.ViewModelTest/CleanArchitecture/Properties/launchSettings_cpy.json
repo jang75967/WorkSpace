@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "CleanArchitecture": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "In-Memory": "true",
+        "ASPNETCORE_URLS": "http://+:4442"
+      }
+    }
+  }
+}

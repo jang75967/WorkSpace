@@ -1,0 +1,57 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net7.0-windows</TargetFramework>
+    <ApplicationManifest></ApplicationManifest>
+    <ApplicationIcon>wpfui-icon.ico</ApplicationIcon>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Resources\Icons\TrayIcon\wpfui-icon-1024.png" />
+    <None Remove="Resources\Icons\TrayIcon\wpfui-icon-256.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="wpfui-icon.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="WPF-UI" Version="3.0.0-preview.4" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.1 " />
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.1 " />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Views\Features\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Client.Business\Client.Business.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Resources\Icons\TrayIcon\wpfui-icon-1024.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Icons\TrayIcon\wpfui-icon-256.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Properties\launchSettings_cpy.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Properties\launchSettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>
