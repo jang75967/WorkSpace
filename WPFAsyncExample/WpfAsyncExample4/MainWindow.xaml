@@ -1,0 +1,43 @@
+﻿<Window x:Class="WpfAsyncExample4.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WpfAsyncExample4"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+    <Grid>
+        <Button x:Name="btnFirst" Content="1. 하나씩 출발" HorizontalAlignment="Left" Margin="47,19,0,0" VerticalAlignment="Top" Height="59" Width="84" Click="btnFirst_Click"/>
+        <Button x:Name="btnSecond" Content="2. A와 B 먼저 출발" HorizontalAlignment="Left" Margin="47,89,0,0" VerticalAlignment="Top" Height="59" Width="84" Click="btnSecond_Click" FontSize="9"/>
+        <Button x:Name="btnThird" Content="3. 같이 출발" HorizontalAlignment="Left" Margin="47,158,0,0" VerticalAlignment="Top" Height="59" Width="84" Click="btnThird_Click"/>
+        <Button x:Name="btnFourth" Content="4. WhenAny)" HorizontalAlignment="Left" Margin="47,230,0,0" VerticalAlignment="Top" Height="59" Width="84" Click="btnFourth_Click"/>
+        <ListBox x:Name="lbLogs" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="47,294,35,10"/>
+        <Label x:Name="bugA" Content="A. 🐜" 
+               HorizontalAlignment="Left" 
+               Margin="143,29,0,0" 
+               VerticalAlignment="Top"
+               FontSize="25"/>
+        <Label x:Name="bugB" Content="B. 🐝" 
+            HorizontalAlignment="Left" 
+            Margin="143,97,0,0" 
+            VerticalAlignment="Top"
+            FontSize="25"/>
+        <Label x:Name="bugC" Content="C. 🐞" 
+            HorizontalAlignment="Left" 
+            Margin="143,166,0,0" 
+            VerticalAlignment="Top"
+            FontSize="25"/>
+        <Label x:Name="bugD" Content="D. 🐌" 
+            HorizontalAlignment="Left" 
+            Margin="143,238,0,0" 
+            VerticalAlignment="Top"
+            FontSize="25"/>
+        <Rectangle x:Name="finishLine"
+                   HorizontalAlignment="Left" 
+                   Height="279" 
+                   Margin="680,10,0,0" 
+                   VerticalAlignment="Top" 
+                   Width="85"
+                   Fill="Blue"/>
+    </Grid>
+</Window>
