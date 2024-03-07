@@ -1,11 +1,13 @@
 ﻿using CQRSExample.Commands;
+using CQRSExample.Models;
 using CQRSExample.Repository;
+using LanguageExt;
 using MediatR;
 
 
 namespace CQRSExample.Handlers;
 
-public class AddProductHandler : IRequestHandler<AddProductCommand, int>
+public class AddProductHandler : IRequestHandler<AddProductCommand, Option<Product>>
 {
     private readonly FakeDataStore _fakeDataStore;
     private readonly IMediator _mediator;
@@ -16,12 +18,12 @@ public class AddProductHandler : IRequestHandler<AddProductCommand, int>
         _fakeDataStore = fakeDataStore;
     }
 
-    async Task<int> IRequestHandler<AddProductCommand, int>.Handle(AddProductCommand request, CancellationToken cancellationToken)
+    async Task<Option<Product>> IRequestHandler<AddProductCommand, Option<Product>>.Handle(AddProductCommand request, CancellationToken cancellationToken)
     {
         await _fakeDataStore.AddProduct(request.Product);
 
         await _mediator.Publish(new ProductCreatedNotification() { Product = request.Product }, CancellationToken.None);
 
-        return request.Product.Id;
+        return Option<Product>.Some(request.Product);
     }
 }

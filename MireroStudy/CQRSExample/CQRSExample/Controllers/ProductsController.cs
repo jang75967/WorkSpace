@@ -3,6 +3,7 @@ using CQRSExample.Models;
 using CQRSExample.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics;
 
 namespace CQRSExample.Controllers;
 
@@ -23,7 +24,8 @@ public class ProductsController : ControllerBase
     [HttpPost]
     public async Task<ActionResult> AddProduct([FromBody] Product product)
     {
-        await _mediator.Send(new AddProductCommand(product));
+        await _mediator.Send(new AddProductCommand(product))
+            .IfSomeAsync(product => { Trace.WriteLine($"{product.Id} 저장 완료"); });
         return StatusCode(201);
     }
 
