@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34408.163
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CancellationTokenExample", "CancellationTokenExample\CancellationTokenExample.csproj", "{1D75D5A6-7E7F-4B22-A509-44E6FD52F991}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CancellationTokenTimeExample", "CancellationTokenTimeExample\CancellationTokenTimeExample.csproj", "{1FFF9B74-66BB-4CF8-92D0-EDA01192310D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1D75D5A6-7E7F-4B22-A509-44E6FD52F991}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1D75D5A6-7E7F-4B22-A509-44E6FD52F991}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1D75D5A6-7E7F-4B22-A509-44E6FD52F991}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1D75D5A6-7E7F-4B22-A509-44E6FD52F991}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1FFF9B74-66BB-4CF8-92D0-EDA01192310D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1FFF9B74-66BB-4CF8-92D0-EDA01192310D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1FFF9B74-66BB-4CF8-92D0-EDA01192310D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1FFF9B74-66BB-4CF8-92D0-EDA01192310D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {09CE1CCB-2F81-490C-BCEB-25EEBB16828C}
+	EndGlobalSection
+EndGlobal
