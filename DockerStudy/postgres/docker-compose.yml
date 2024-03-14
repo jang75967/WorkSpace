@@ -1,0 +1,41 @@
+version: "3"
+services:
+  postgres:
+    image: jang75967/jdg_postgres:latest
+    #build: .
+    restart: always
+    environment:
+      POSTGRES_DB: jdgpostgres
+      POSTGRES_USER: jdg
+      POSTGRES_PASSWORD: 7596
+      PGDATA: /var/lib/postgresql/data
+    volumes:
+      - jdgpostgres_volume:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  pgadmin4:
+    image: elestio/pgadmin:latest
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: jang75967@gmail.com
+      PGADMIN_DEFAULT_PASSWORD: 7596
+      PGADMIN_LISTEN_PORT: 8080
+    ports:
+      - "8080:8080"
+    volumes:
+      - jdgpgadmin_volume:/var/lib/pgadmin
+
+volumes:
+  jdgpostgres_volume:
+    driver: local
+    driver_opts:
+      type: none # 실제 파일 시스템 타입이 아닌 바운드 마운트
+      o: bind # 바인드 마운트 옵션 활성화
+      device: D:/DockerVolume/postgres
+  jdgpgadmin_volume:
+    driver: local
+    driver_opts:
+      type: none # 실제 파일 시스템 타입이 아닌 바운드 마운트
+      o: bind # 바인드 마운트 옵션 활성화
+      device: D:/DockerVolume/pgadmin
