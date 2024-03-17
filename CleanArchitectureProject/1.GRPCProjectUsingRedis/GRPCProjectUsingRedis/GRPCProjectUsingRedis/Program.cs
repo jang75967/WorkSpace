@@ -9,9 +9,12 @@ namespace GRPCProejctUsingRedis
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
+            // grpc 서비스 등록
             builder.Services.AddGrpc();
             builder.Services.AddSingleton<IUserService, UsersService>();
+
+            // 백그라운드 서비스 등록
+            //builder.Services.AddHostedService<Worker>();
 
             var app = builder.Build();
 
