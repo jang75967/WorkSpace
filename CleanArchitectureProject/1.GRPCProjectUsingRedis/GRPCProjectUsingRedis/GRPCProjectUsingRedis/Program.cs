@@ -11,6 +11,9 @@ namespace GRPCProejctUsingRedis
 
             // grpc 서비스 등록
             builder.Services.AddGrpc();
+            // MediatR 등록
+            builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(Program).Assembly));
+            // UserService 등록
             builder.Services.AddSingleton<IUserService, UsersService>();
 
             // 백그라운드 서비스 등록

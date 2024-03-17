@@ -3,15 +3,14 @@ package api.users;
 
 option csharp_namespace = "Api.Users";
 
-// The greeting service definition.
 service UsersGrpc {
-  // Sends a greeting
   rpc GetUsers (GetUserRequest) returns (GetUserReply);
+  rpc AddUser (AddUserRequest) returns (AddUserReply);
+  rpc DeleteUser (DeleteUserRequest) returns (DeleteUserReply);
 }
 
-// The request message containing the user's name.
 message User {
-  int64 id = 1;
+  int32 id = 1;
   string name = 2;
   string email = 3;
 }
@@ -20,7 +19,34 @@ message GetUserRequest {
 
 }
 
-// The response message containing the greetings.
+message AddUserRequest {
+  int32 id = 1;
+  string name = 2;
+  string email = 3;
+}
+
+message DeleteUserRequest {
+	int32 id = 1;
+}
+
 message GetUserReply {
+  repeated User users = 1;
+}
+
+message AddUserReply {
+  // 작업의 성공 여부를 나타내는 상태 코드
+  //int32 status = 1;
+  // 상태 메시지, 예를 들어 "Success" 또는 "Failure: User already exists"
+  //string message = 2;
+  // 성공적으로 추가된 사용자의 ID. 작업이 성공하지 않았다면 이 필드는 무시될 수 있습니다.
+  //int32 userId = 3;
+  repeated User users = 1;
+}
+
+message DeleteUserReply {
+  // 작업의 성공 여부를 나타내는 상태 코드
+  //int32 status = 1;
+  // 상태 메시지, 예를 들어 "Success" 또는 "Failure: User not found"
+  //string message = 2;
   repeated User users = 1;
 }

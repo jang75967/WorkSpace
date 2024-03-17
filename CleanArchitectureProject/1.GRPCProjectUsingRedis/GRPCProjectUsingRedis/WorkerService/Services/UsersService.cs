@@ -7,9 +7,11 @@ namespace WorkerService.Services
 {
     public class UsersService : IUserService
     {
+        private static List<Option<User>> _users = default!;
+
         public async Task<IEnumerable<Option<User>>> GetUsers()
         {
-            return await Task.FromResult(new List<Option<User>>()
+            _users = new List<Option<User>>()
             {
                 Some(new User
                 {
@@ -30,7 +32,40 @@ namespace WorkerService.Services
                     Name = "jdg3",
                 }),
                 None,
+            };
+
+            return await Task.FromResult(_users);
+        }
+
+        public async Task<Option<User>> GetUserById(int id)
+        {
+            // id 일치하면 true, Option이 none이면 false 반환
+            return await Task.FromResult(_users.FirstOrDefault(userOption => userOption.Match(Some: user => user.Id == id, None: () => false)));
+        }
+
+        public async Task AddUser(User user)
+        {
+            _users.Add(user);
+            await Task.CompletedTask;
+        }
+
+        public async Task DeleteUser(int id)
+        {
+            // id 일치하면 true, Option이 none이면 false 반환
+            var userToRemoveOption = _users.FirstOrDefault(userOption => userOption.Match(user => user.Id == id, () => false));
+
+            // userToRemoveOption 이 Some일 경우 _users 리스트에서 해당 User를 제거, None인 경우 예외
+            userToRemoveOption.Match(userToRemove =>
+            {
+                _users.Remove(userToRemoveOption);
+                return Unit.Default;
+            },
+            () =>
+            {
+                throw new KeyNotFoundException($"User with ID {id} not found.");
             });
+
+            await Task.CompletedTask;
         }
     }
 }
