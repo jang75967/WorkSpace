@@ -1,6 +1,7 @@
 ﻿using Api.Users;
 using Application;
 using Grpc.Core;
+using LanguageExt;
 using DtoUser = Api.Users.User;
 using EntityUser = Domain.Entities.User;
 
@@ -22,24 +23,22 @@ namespace GRPCProejctUsingRedis.Services
         public override async Task<GetUserReply> GetUsers(GetUserRequest request, ServerCallContext context)
         {
             var entities = await _userService.GetUsers();
-            var dtos = ConvertToDto(entities);
+            var dtos = ConvertToDto(entities).Somes(); // Some인 경우만 추출
 
             return await Task.FromResult(new GetUserReply()
             {
-                Users = {dtos },
+                Users = { dtos },
             });
         }
 
-        private IEnumerable<DtoUser> ConvertToDto(IEnumerable<EntityUser> users)
+        private IEnumerable<Option<DtoUser>> ConvertToDto(IEnumerable<Option<EntityUser>> users)
         {
-            var dtos = users.Select(x => new DtoUser
+            return users.Select(userOption => userOption.Map(user => new DtoUser
             {
-                Id = x.Id,
-                Name = x.Name,
-                Email = x.Email,
-            });
-
-            return dtos;
+                Id = user.Id,
+                Name = user.Name,
+                Email = user.Email,
+            }));
         }
     }
 }
