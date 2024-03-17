@@ -15,11 +15,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Application", "Application\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RedisLibrary", "RedisLibrary\RedisLibrary.csproj", "{ECE1F1C2-A21C-483D-A143-583084850C8B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GrpcClient", "GrpcClient\GrpcClient.csproj", "{E8C2DDEA-3F56-4521-BFA2-CF2150872F41}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GrpcClientUsingRedis", "GrpcClient\GrpcClientUsingRedis.csproj", "{E8C2DDEA-3F56-4521-BFA2-CF2150872F41}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WorkerService", "WorkerService\WorkerService.csproj", "{F3964D37-33C9-4AFB-B5B2-6C19D3482DD4}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GRPCProjectUsingRedis", "GRPCProjectUsingRedis\GRPCProjectUsingRedis.csproj", "{5D6991A2-E1E2-497B-89F0-E8636299D588}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GrpcServiceUsingRedis", "GRPCProjectUsingRedis\GrpcServiceUsingRedis.csproj", "{5D6991A2-E1E2-497B-89F0-E8636299D588}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
