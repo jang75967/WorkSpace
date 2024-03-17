@@ -1,0 +1,26 @@
+syntax = "proto3";
+package api.users;
+
+option csharp_namespace = "Api.Users";
+
+// The greeting service definition.
+service UsersGrpc {
+  // Sends a greeting
+  rpc GetUsers (GetUserRequest) returns (GetUserReply);
+}
+
+// The request message containing the user's name.
+message User {
+  int64 id = 1;
+  string name = 2;
+  string email = 3;
+}
+
+message GetUserRequest {
+
+}
+
+// The response message containing the greetings.
+message GetUserReply {
+  repeated User users = 1;
+}
