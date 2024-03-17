@@ -3,21 +3,23 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34701.34
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GRPCProejctUsingRedis", "GRPCProejctUsingRedis\GRPCProejctUsingRedis.csproj", "{CC42367B-9204-4E33-B3A3-F6086FDEEBFF}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "InfraStructure", "InfraStructure", "{D5CFAD6C-F4DB-4F1B-A8DF-F45833FC7355}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InfraStructure.Protos", "InfraStructure\InfraStructure.Protos.csproj", "{509D6862-7889-45B0-9F0B-EE0D1F3CE0F1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InfraStructure.Protos", "InfraStructure\InfraStructure.Protos.csproj", "{509D6862-7889-45B0-9F0B-EE0D1F3CE0F1}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{F2479D75-9FBF-4F3B-A018-B5383A59F979}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain", "Domain\Domain.csproj", "{C488B108-D698-4AC6-92E3-A5EC01C40346}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain", "Domain\Domain.csproj", "{C488B108-D698-4AC6-92E3-A5EC01C40346}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application", "Application\Application.csproj", "{9BFBF96B-C596-4748-ABAE-AF2F39263C50}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Application", "Application\Application.csproj", "{9BFBF96B-C596-4748-ABAE-AF2F39263C50}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RedisLibrary", "RedisLibrary\RedisLibrary.csproj", "{ECE1F1C2-A21C-483D-A143-583084850C8B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RedisLibrary", "RedisLibrary\RedisLibrary.csproj", "{ECE1F1C2-A21C-483D-A143-583084850C8B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GrpcClient", "GrpcClient\GrpcClient.csproj", "{E8C2DDEA-3F56-4521-BFA2-CF2150872F41}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GrpcClient", "GrpcClient\GrpcClient.csproj", "{E8C2DDEA-3F56-4521-BFA2-CF2150872F41}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WorkerService", "WorkerService\WorkerService.csproj", "{F3964D37-33C9-4AFB-B5B2-6C19D3482DD4}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GRPCProjectUsingRedis", "GRPCProjectUsingRedis\GRPCProjectUsingRedis.csproj", "{5D6991A2-E1E2-497B-89F0-E8636299D588}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,10 +27,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{CC42367B-9204-4E33-B3A3-F6086FDEEBFF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CC42367B-9204-4E33-B3A3-F6086FDEEBFF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CC42367B-9204-4E33-B3A3-F6086FDEEBFF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CC42367B-9204-4E33-B3A3-F6086FDEEBFF}.Release|Any CPU.Build.0 = Release|Any CPU
 		{509D6862-7889-45B0-9F0B-EE0D1F3CE0F1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{509D6862-7889-45B0-9F0B-EE0D1F3CE0F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{509D6862-7889-45B0-9F0B-EE0D1F3CE0F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -49,6 +47,14 @@ Global
 		{E8C2DDEA-3F56-4521-BFA2-CF2150872F41}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E8C2DDEA-3F56-4521-BFA2-CF2150872F41}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E8C2DDEA-3F56-4521-BFA2-CF2150872F41}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F3964D37-33C9-4AFB-B5B2-6C19D3482DD4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F3964D37-33C9-4AFB-B5B2-6C19D3482DD4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F3964D37-33C9-4AFB-B5B2-6C19D3482DD4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F3964D37-33C9-4AFB-B5B2-6C19D3482DD4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5D6991A2-E1E2-497B-89F0-E8636299D588}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5D6991A2-E1E2-497B-89F0-E8636299D588}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5D6991A2-E1E2-497B-89F0-E8636299D588}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5D6991A2-E1E2-497B-89F0-E8636299D588}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
