@@ -12,7 +12,7 @@ namespace GRPCProejctUsingRedis
             _logger = logger;
 
             IAddress address = new Address("redis-redis-1", "6379");
-            RedisLibrary.IConfiguration configuration = new Configuration(address, "test-queue");
+            IConfig configuration = new Configuration(address, "test-queue");
             IConnectionFactory connectionFactory = new ConnectionFactory(configuration);
             _queue = new Queue(connectionFactory);
         }

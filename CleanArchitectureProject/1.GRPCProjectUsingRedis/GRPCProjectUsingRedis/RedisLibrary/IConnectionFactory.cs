@@ -4,7 +4,7 @@ namespace RedisLibrary
 {
     public interface IConnectionFactory
     {
-        public IConfiguration Configuration { get; set; }
+        public IConfig Configuration { get; set; }
         public IConnectionMultiplexer CreateConnection();
     }
 }

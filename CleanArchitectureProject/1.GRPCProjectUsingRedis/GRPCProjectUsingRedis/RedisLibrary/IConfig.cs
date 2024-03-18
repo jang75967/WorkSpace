@@ -1,6 +1,6 @@
 ﻿namespace RedisLibrary
 {
-    public interface IConfiguration
+    public interface IConfig
     {
         IAddress Address { get; set; }
         string QueueName { get; set; }

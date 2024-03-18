@@ -1,6 +1,6 @@
 ﻿namespace RedisLibrary
 {
-    public record Configuration : IConfiguration
+    public record Configuration : IConfig
     {
         public IAddress Address { get; set; }
 
