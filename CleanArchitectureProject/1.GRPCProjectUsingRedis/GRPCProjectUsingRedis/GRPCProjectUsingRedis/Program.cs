@@ -1,5 +1,6 @@
 using Application;
 using GRPCProejctUsingRedis.Services;
+using GrpcServiceUsingRedis.Services;
 
 namespace GRPCProejctUsingRedis
 {
@@ -15,6 +16,8 @@ namespace GRPCProejctUsingRedis
             builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(Program).Assembly));
             // UserService 등록
             builder.Services.AddSingleton<IUserService, UsersService>();
+            // RedisManagerService 등록
+            builder.Services.AddSingleton<RedisManagerService>();
 
             // 백그라운드 서비스 등록
             //builder.Services.AddHostedService<Worker>();
