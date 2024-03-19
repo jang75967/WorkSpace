@@ -1,4 +1,5 @@
 using Application;
+using GRPCProejctUsingRedis;
 using Microsoft.AspNetCore.Builder;
 using WorkerService.Controllers;
 using WorkerService.Services;
@@ -9,22 +10,19 @@ namespace WorkerService
     {
         public static void Main(string[] args)
         {
-            //var builder = Host.CreateApplicationBuilder(args);
-            //builder.Services.AddHostedService<Worker>();
-
-            //var host = builder.Build();
-            //host.Run();
-
-
-
             var builder = WebApplication.CreateBuilder(args);
 
             // grpc 서비스 등록
             builder.Services.AddGrpc();
+            // MediatR 등록
+            builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(Program).Assembly));
+            // UserService 등록
             builder.Services.AddSingleton<IUserService, UsersService>();
+            // RedisManagerService 등록
+            builder.Services.AddSingleton<RedisManagerService>();
 
             // 백그라운드 서비스 등록
-            //builder.Services.AddHostedService<Worker>();
+            builder.Services.AddHostedService<Worker>();
 
             var app = builder.Build();
 

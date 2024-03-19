@@ -1,7 +1,9 @@
 ﻿using Api.Users;
-using Application;
 using Grpc.Core;
 using LanguageExt;
+using MediatR;
+using WorkerService.Commands;
+using WorkerService.Queries;
 using DtoUser = Api.Users.User;
 using EntityUser = Domain.Entities.User;
 
@@ -10,22 +12,53 @@ namespace WorkerService.Controllers
     public class UserController : UsersGrpc.UsersGrpcBase
     {
         private readonly ILogger<UserController> _logger;
-        private readonly IUserService _userService;
+        private readonly IMediator _mediator;
 
         public UserController(
             ILogger<UserController> logger,
-            IUserService userService)
+            IMediator mediator)
         {
             _logger = logger;
-            _userService = userService;
+            _mediator = mediator;
         }
 
         public override async Task<GetUserReply> GetUsers(GetUserRequest request, ServerCallContext context)
         {
-            var entities = await _userService.GetUsers();
+            var entities = await _mediator.Send(new GetUsersQuery());
             var dtos = ConvertToDto(entities).Somes(); // Some인 경우만 추출
 
             return await Task.FromResult(new GetUserReply()
+            {
+                Users = { dtos },
+            });
+        }
+
+        public override async Task<AddUserReply> AddUser(AddUserRequest request, ServerCallContext context)
+        {
+            await _mediator.Send(new AddUserCommand(new EntityUser
+            {
+                Id = request.Id,
+                Name = request.Name,
+                Email = request.Email,
+            }));
+
+            var entities = await _mediator.Send(new GetUsersQuery());
+            var dtos = ConvertToDto(entities).Somes(); // Some인 경우만 추출
+
+            return await Task.FromResult(new AddUserReply()
+            {
+                Users = { dtos },
+            });
+        }
+
+        public override async Task<DeleteUserReply> DeleteUser(DeleteUserRequest request, ServerCallContext context)
+        {
+            await _mediator.Send(new DeleteUserCommand(request.Id));
+
+            var entities = await _mediator.Send(new GetUsersQuery());
+            var dtos = ConvertToDto(entities).Somes(); // Some인 경우만 추출
+
+            return await Task.FromResult(new DeleteUserReply()
             {
                 Users = { dtos },
             });

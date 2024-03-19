@@ -9,7 +9,7 @@ namespace WorkerService.Services
     {
         private static List<Option<User>> _users = default!;
 
-        public async Task<IEnumerable<Option<User>>> GetUsers()
+        public UsersService()
         {
             _users = new List<Option<User>>()
             {
@@ -33,7 +33,10 @@ namespace WorkerService.Services
                 }),
                 None,
             };
+        }
 
+        public async Task<IEnumerable<Option<User>>> GetUsers()
+        {
             return await Task.FromResult(_users);
         }
 
