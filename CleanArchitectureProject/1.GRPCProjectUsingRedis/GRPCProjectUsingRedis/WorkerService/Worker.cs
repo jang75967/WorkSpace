@@ -11,7 +11,8 @@ namespace GRPCProejctUsingRedis
         {
             _logger = logger;
 
-            IAddress address = new Address("127.0.0.1", "6379");
+            //IAddress address = new Address("127.0.0.1", "6379");
+            IAddress address = new Address("192.168.100.142", "6379");
             IConfig configuration = new Configuration(address, "test-queue");
             IConnectionFactory connectionFactory = new ConnectionFactory(configuration);
             _queue = new Queue(connectionFactory);
