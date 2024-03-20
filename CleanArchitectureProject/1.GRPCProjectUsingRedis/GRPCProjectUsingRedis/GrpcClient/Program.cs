@@ -13,21 +13,17 @@ namespace GrpcClient
             Console.WriteLine();
 
             // gRPC 클라이언트 생성 시 HttpClientHandler를 사용하여 SSL 인증을 무시
-            // 경고: 보안상의 이유로 실제 환경에서는 권장하지 않음
             //var httpHandler = new HttpClientHandler();
             //httpHandler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
             //using var channel = GrpcChannel.ForAddress("http://192.168.100.142:7066", new GrpcChannelOptions { HttpHandler = httpHandler });
             //using var channel = GrpcChannel.ForAddress("http://localhost:7066", new GrpcChannelOptions { HttpHandler = httpHandler });
 
 
+            // 외부 네트워크를 통해 포워딩했을 때 사용 (도커 네트워크 생성했으므로 자신의 PC IP 사용)
+            using var channel = GrpcChannel.ForAddress("https://192.168.100.142:7066");
 
-            //using var channel = GrpcChannel.ForAddress("https://192.168.100.142:7066");
-
-            // 디버깅 테스트 시
-            using var channel = GrpcChannel.ForAddress("https://localhost:7066");
-
-            // 컨테이너 서비스 명
-            //using var channel = GrpcChannel.ForAddress("https://jdgworkerservice-1:7066");
+            // 클라이언트, 서버가 같은 환경에서 실행중일 때 사용 (디버깅 테스트 시)
+            //using var channel = GrpcChannel.ForAddress("https://localhost:7066");
 
             var client = new UsersGrpc.UsersGrpcClient(channel);
 
