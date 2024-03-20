@@ -20,10 +20,10 @@ namespace GrpcClient
 
 
             // 외부 네트워크를 통해 포워딩했을 때 사용 (도커 네트워크 생성했으므로 자신의 PC IP 사용)
-            using var channel = GrpcChannel.ForAddress("https://192.168.100.142:7066");
+            //using var channel = GrpcChannel.ForAddress("https://192.168.100.142:7066");
 
             // 클라이언트, 서버가 같은 환경에서 실행중일 때 사용 (디버깅 테스트 시)
-            //using var channel = GrpcChannel.ForAddress("https://localhost:7066");
+            using var channel = GrpcChannel.ForAddress("https://localhost:7066");
 
             var client = new UsersGrpc.UsersGrpcClient(channel);
 
