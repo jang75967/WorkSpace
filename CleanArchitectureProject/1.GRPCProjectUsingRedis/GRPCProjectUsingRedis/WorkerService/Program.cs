@@ -12,6 +12,8 @@ namespace WorkerService
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            //AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", true);
+
             // grpc 서비스 등록
             builder.Services.AddGrpc();
             // MediatR 등록
