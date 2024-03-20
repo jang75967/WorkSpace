@@ -16,8 +16,10 @@ namespace GrpcClient
             //using var channel = GrpcChannel.ForAddress("https://jdgworkerservice-1:7066");
 
             // 도커 외부에서 실행되는 경우 (ex : 로컬 개발 환경)
-            //using var channel = GrpcChannel.ForAddress("https://192.168.100.142:7066");
-            using var channel = GrpcChannel.ForAddress("https://localhost:7066");
+            using var channel = GrpcChannel.ForAddress("https://192.168.100.142:7066");
+
+            // 로컬 디버깅 테스트 시
+            //using var channel = GrpcChannel.ForAddress("https://localhost:7066");
             var client = new UsersGrpc.UsersGrpcClient(channel);
 
             var getUserReply = await client.GetUsersAsync(new GetUserRequest { });
