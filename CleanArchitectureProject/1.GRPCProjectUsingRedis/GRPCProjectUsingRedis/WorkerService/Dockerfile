@@ -20,4 +20,5 @@ RUN dotnet publish "./WorkerService.csproj" -c $BUILD_CONFIGURATION -o /app/publ
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+#COPY ["WorkerService/private.pfx", "./"] # 인증서 파일을 컨테이너의 작업 디렉토리로 복사
 ENTRYPOINT ["dotnet", "WorkerService.dll"]

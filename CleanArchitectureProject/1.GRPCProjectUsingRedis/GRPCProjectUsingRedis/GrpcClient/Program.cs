@@ -12,11 +12,6 @@ namespace GrpcClient
 
             Console.WriteLine();
 
-            //var httpHandler = new HttpClientHandler();
-            //// 경고: 실제 운영 환경에서는 보안상 매우 위험할 수 있으니 사용하지 마세요.
-            //httpHandler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
-            //var channel = GrpcChannel.ForAddress("https://192.168.100.142:7066", new GrpcChannelOptions { HttpHandler = httpHandler });
-
             using var channel = GrpcChannel.ForAddress("https://192.168.100.142:7066");
             var client = new UsersGrpc.UsersGrpcClient(channel);
 

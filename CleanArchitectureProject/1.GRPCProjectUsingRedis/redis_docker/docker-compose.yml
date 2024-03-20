@@ -4,10 +4,18 @@ services:
   jdgworkerservice:
     image: jdgworkerservice
     restart: always
+    depends_on:
+      - redis
     networks:
       - local-dev
     ports:
       - "7066:7066" # 외부포트:내부포트
+    # environment:
+    #   - ASPNETCORE_Kestrel__Certificates__Default__Path=/app/private.pfx
+    #   - ASPNETCORE_Kestrel__Certificates__Default__Password=7596
+    # # 인증서 파일을 컨테이너 내부로 복사하는 Dockerfile의 해당 명령어 참조
+    # volumes:
+    #  - ./private.pfx:/app/private.pfx
 
   redis: # container name
     image: redis:latest
