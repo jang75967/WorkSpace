@@ -10,7 +10,14 @@ namespace GrpcClient
             Console.WriteLine("Press any Key to contiune...");
             Console.ReadLine();
 
-            using var channel = GrpcChannel.ForAddress("https://localhost:7066");
+            Console.WriteLine();
+
+            //var httpHandler = new HttpClientHandler();
+            //// 경고: 실제 운영 환경에서는 보안상 매우 위험할 수 있으니 사용하지 마세요.
+            //httpHandler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
+            //var channel = GrpcChannel.ForAddress("https://192.168.100.142:7066", new GrpcChannelOptions { HttpHandler = httpHandler });
+
+            using var channel = GrpcChannel.ForAddress("https://192.168.100.142:7066");
             var client = new UsersGrpc.UsersGrpcClient(channel);
 
             var getUserReply = await client.GetUsersAsync(new GetUserRequest { });
@@ -28,6 +35,8 @@ namespace GrpcClient
                 Email = "jdg4@gmail.com"
             });
 
+            Console.WriteLine("Add user jdg4...");
+
             getUserReply = await client.GetUsersAsync(new GetUserRequest { }); // User 목록 최신화
             await Console.Out.WriteLineAsync();
 
@@ -40,6 +49,8 @@ namespace GrpcClient
             { 
                 Id = 1 
             });
+
+            Console.WriteLine("Add user jdg1...");
 
             getUserReply = await client.GetUsersAsync(new GetUserRequest { }); // User 목록 최신화
             await Console.Out.WriteLineAsync();
