@@ -8,16 +8,16 @@ namespace WorkerService.Core.Handlers
 {
     public class GetUsersHandler : IRequestHandler<GetUsersQuery, IEnumerable<Option<User>>>
     {
-        private readonly IUserRepository _userService;
+        private readonly IUserRepository _userRepository;
 
-        public GetUsersHandler(IUserRepository userService)
+        public GetUsersHandler(IUserRepository userRepository)
         {
-            _userService = userService;
+            _userRepository = userRepository;
         }
 
         public async Task<IEnumerable<Option<User>>> Handle(GetUsersQuery request, CancellationToken cancellationToken)
         {
-            return await _userService.GetUsersAsync();
+            return await _userRepository.GetUsersAsync();
         }
     }
 }

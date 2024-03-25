@@ -8,19 +8,19 @@ namespace WorkerService.Core.Handlers
 {
     public class AddUserHandler : IRequestHandler<AddUserCommand, Option<User>>
     {
-        private readonly IUserRepository _usersService;
+        private readonly IUserRepository _userRepository;
         private readonly IQueueService _redisService;
 
-        public AddUserHandler(IUserRepository usersService, IQueueService redisService)
+        public AddUserHandler(IUserRepository userRepository, IQueueService redisService)
         {
-            _usersService = usersService;
+            _userRepository = userRepository;
             _redisService = redisService;
         }
 
         public async Task<Option<User>> Handle(AddUserCommand request, CancellationToken cancellationToken)
         {
             // grpc response
-            await _usersService.AddUserAsync(request.User);
+            await _userRepository.AddUserAsync(request.User);
 
             // redis service
             await _redisService.Push(request.User.Name);

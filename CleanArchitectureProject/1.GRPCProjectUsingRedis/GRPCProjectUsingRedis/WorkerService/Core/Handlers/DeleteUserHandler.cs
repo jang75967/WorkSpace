@@ -6,22 +6,22 @@ namespace WorkerService.Core.Handlers
 {
     public class DeleteUserHandler : IRequestHandler<DeleteUserCommand, int>
     {
-        private readonly IUserRepository _usersService;
+        private readonly IUserRepository _userRepository;
         private readonly IQueueService _redisService;
 
-        public DeleteUserHandler(IUserRepository usersService, IQueueService redisService)
+        public DeleteUserHandler(IUserRepository userRepository, IQueueService redisService)
         {
-            _usersService = usersService;
+            _userRepository = userRepository;
             _redisService = redisService;
         }
 
         public async Task<int> Handle(DeleteUserCommand request, CancellationToken cancellationToken)
         {
-            var result = await _usersService.GetUserByIdAsync(request.Id).MatchAsync(
+            var result = await _userRepository.GetUserByIdAsync(request.Id).MatchAsync(
                 Some: async user =>
                 {
                     // grpc response
-                    await _usersService.DeleteUserAsync(user.Id);
+                    await _userRepository.DeleteUserAsync(user.Id);
 
                     // redis service
                     await _redisService.Pop();
