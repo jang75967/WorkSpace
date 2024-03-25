@@ -15,10 +15,10 @@ namespace WorkerService.Handlers
 
         public async Task<int> Handle(DeleteUserCommand request, CancellationToken cancellationToken)
         {
-            var result = await _usersService.GetUserById(request.Id).MatchAsync(
+            var result = await _usersService.GetUserByIdAsync(request.Id).MatchAsync(
                 Some: async user =>
                 {
-                    await _usersService.DeleteUser(user.Id);
+                    await _usersService.DeleteUserAsync(user.Id);
                     return user.Id;
                 },
                 None: () =>

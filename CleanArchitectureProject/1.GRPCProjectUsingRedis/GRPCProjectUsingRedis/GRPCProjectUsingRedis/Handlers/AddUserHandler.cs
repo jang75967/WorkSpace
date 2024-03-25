@@ -21,7 +21,7 @@ namespace GrpcServiceUsingRedis.Handlers
         public async Task<Option<User>> Handle(AddUserCommand request, CancellationToken cancellationToken)
         {
             // grpc response
-            await _usersService.AddUser(request.User);
+            await _usersService.AddUserAsync(request.User);
 
             // redis service
             await _redisManagerService.Push(request.User.Name);

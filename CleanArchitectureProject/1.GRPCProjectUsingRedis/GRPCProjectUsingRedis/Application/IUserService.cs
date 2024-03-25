@@ -5,9 +5,9 @@ namespace Application
 {
     public interface IUserService
     {
-        public Task<IEnumerable<Option<User>>> GetUsers();
-        public Task<Option<User>> GetUserById(int id);
-        public Task AddUser(User user);
-        public Task DeleteUser(int id);
+        public Task<IEnumerable<Option<User>>> GetUsersAsync();
+        public Task<Option<User>> GetUserByIdAsync(int id);
+        public Task AddUserAsync(User user);
+        public Task DeleteUserAsync(int id);
     }
 }

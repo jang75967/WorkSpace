@@ -13,22 +13,22 @@ namespace WorkerService.Services
             _fakeRepository = fakeRepository;
         }
 
-        public async Task<IEnumerable<Option<User>>> GetUsers()
+        public async Task<IEnumerable<Option<User>>> GetUsersAsync()
         {
             return await _fakeRepository.GetUsersAsync();
         }
 
-        public async Task<Option<User>> GetUserById(int id)
+        public async Task<Option<User>> GetUserByIdAsync(int id)
         {
             return await _fakeRepository.GetUserByIdAsync(id);
         }
 
-        public async Task AddUser(User user)
+        public async Task AddUserAsync(User user)
         {
             await _fakeRepository.AddUserAsync(user);
         }
 
-        public async Task DeleteUser(int id)
+        public async Task DeleteUserAsync(int id)
         {
             await _fakeRepository.DeleteUserAsync(id);
         }

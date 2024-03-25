@@ -5,11 +5,11 @@ using static LanguageExt.Prelude;
 
 namespace GRPCProejctUsingRedis.Services
 {
-    public class UsersService : IUserService
+    public class UserService : IUserService
     {
         private static List<Option<User>> _users = default!;
 
-        public UsersService()
+        public UserService()
         {
             _users = new List<Option<User>>()
             {
@@ -35,24 +35,24 @@ namespace GRPCProejctUsingRedis.Services
             };
         }
 
-        public async Task<IEnumerable<Option<User>>> GetUsers()
+        public async Task<IEnumerable<Option<User>>> GetUsersAsync()
         {
             return await Task.FromResult(_users);
         }
 
-        public async Task<Option<User>> GetUserById(int id)
+        public async Task<Option<User>> GetUserByIdAsync(int id)
         {
             // id 일치하면 true, Option이 none이면 false 반환
             return await Task.FromResult(_users.FirstOrDefault(userOption => userOption.Match(Some: user => user.Id == id, None: () => false)));
         }
 
-        public async Task AddUser(User user)
+        public async Task AddUserAsync(User user)
         {
             _users.Add(user);
             await Task.CompletedTask;
         }
 
-        public async Task DeleteUser(int id)
+        public async Task DeleteUserAsync(int id)
         {
             // id 일치하면 true, Option이 none이면 false 반환
             var userToRemoveOption = _users.FirstOrDefault(userOption => userOption.Match(user => user.Id == id, () => false));
