@@ -42,6 +42,7 @@ namespace GrpcClient
                 Email = "jdg4@gmail.com"
             });
 
+            Console.WriteLine();
             Console.WriteLine("Add user jdg4...");
 
             getUserReply = await client.GetUsersAsync(new GetUserRequest { }); // User 목록 최신화
@@ -57,7 +58,8 @@ namespace GrpcClient
                 Id = 1 
             });
 
-            Console.WriteLine("Add user jdg1...");
+            Console.WriteLine();
+            Console.WriteLine("Remove user jdg1...");
 
             getUserReply = await client.GetUsersAsync(new GetUserRequest { }); // User 목록 최신화
             await Console.Out.WriteLineAsync();

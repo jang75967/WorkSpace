@@ -21,6 +21,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WorkerService", "WorkerServ
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GrpcServiceUsingRedis", "GRPCProjectUsingRedis\GrpcServiceUsingRedis.csproj", "{5D6991A2-E1E2-497B-89F0-E8636299D588}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InfraStructrue.Data", "InfraStructrue.Data\InfraStructrue.Data.csproj", "{6CA4C454-AB29-4713-A429-B748B22B6669}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -55,6 +57,10 @@ Global
 		{5D6991A2-E1E2-497B-89F0-E8636299D588}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5D6991A2-E1E2-497B-89F0-E8636299D588}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5D6991A2-E1E2-497B-89F0-E8636299D588}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6CA4C454-AB29-4713-A429-B748B22B6669}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6CA4C454-AB29-4713-A429-B748B22B6669}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6CA4C454-AB29-4713-A429-B748B22B6669}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6CA4C454-AB29-4713-A429-B748B22B6669}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -63,6 +69,7 @@ Global
 		{509D6862-7889-45B0-9F0B-EE0D1F3CE0F1} = {D5CFAD6C-F4DB-4F1B-A8DF-F45833FC7355}
 		{C488B108-D698-4AC6-92E3-A5EC01C40346} = {F2479D75-9FBF-4F3B-A018-B5383A59F979}
 		{9BFBF96B-C596-4748-ABAE-AF2F39263C50} = {F2479D75-9FBF-4F3B-A018-B5383A59F979}
+		{6CA4C454-AB29-4713-A429-B748B22B6669} = {D5CFAD6C-F4DB-4F1B-A8DF-F45833FC7355}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {7412F962-3753-4D67-B4E2-50F536F2EB78}

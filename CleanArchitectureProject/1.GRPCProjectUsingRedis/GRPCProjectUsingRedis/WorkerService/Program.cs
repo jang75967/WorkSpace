@@ -1,5 +1,6 @@
 using Application;
 using GRPCProejctUsingRedis;
+using InfraStructrue.Data.Repositories;
 using Microsoft.AspNetCore.Builder;
 using WorkerService.Controllers;
 using WorkerService.Services;
@@ -18,8 +19,10 @@ namespace WorkerService
             builder.Services.AddGrpc();
             // MediatR 등록
             builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(Program).Assembly));
+            // Repository 등록
+            builder.Services.AddSingleton<IFakeRepository, FakeRepsitory>();
             // UserService 등록
-            builder.Services.AddSingleton<IUserService, UsersService>();
+            builder.Services.AddSingleton<IUserService, UserService>();
             // RedisManagerService 등록
             builder.Services.AddSingleton<RedisManagerService>();
 
