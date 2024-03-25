@@ -7,6 +7,7 @@ namespace RedisLibrary
         private IConnectionFactory _connectionFactory;
         private IConnectionMultiplexer _connection;
         private string _queueName;
+        private ITransaction _transaction = default!;
 
         public Queue(IConnectionFactory connectionFactory)
         {
@@ -15,15 +16,25 @@ namespace RedisLibrary
             _queueName = _connectionFactory.Configuration.GetQueueName();
         }
 
-        public string Dequeue()
+        public void BeginTranscation()
         {
-            var result = _connection.GetDatabase().ListRightPop(_queueName);
-            return result.ToString();
+            _transaction = _connection.GetDatabase().CreateTransaction();
+        }
+
+        public bool Execute()
+        {
+            return _transaction.Execute();
         }
 
         public void Enqueue(string value)
         {
-            _connection.GetDatabase().ListLeftPush(_queueName, value.ToString());
+            _connection.GetDatabase().ListLeftPush(_queueName, value);
+        }
+
+        public string Dequeue()
+        {
+            var result = _connection.GetDatabase().ListRightPop(_queueName);
+            return result.ToString();
         }
 
         public IList<string> GetAllItems()
@@ -32,7 +43,6 @@ namespace RedisLibrary
             var result = redisValues.Select(x => x.ToString()).ToList();
             return result;
         }
-
 
         public long GetQueueLength()
         {
