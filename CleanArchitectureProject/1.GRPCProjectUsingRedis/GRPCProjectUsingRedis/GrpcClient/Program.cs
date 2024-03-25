@@ -35,15 +35,15 @@ namespace GrpcClient
                 Console.WriteLine($"{user.Id}, {user.Name}, {user.Email}");
             }
 
+            Console.WriteLine();
+            Console.WriteLine("Add user jdg4...");
+
             var addUserReply = await client.AddUserAsync(new AddUserRequest
             {
                 Id = 4,
                 Name = "jdg4",
                 Email = "jdg4@gmail.com"
             });
-
-            Console.WriteLine();
-            Console.WriteLine("Add user jdg4...");
 
             getUserReply = await client.GetUsersAsync(new GetUserRequest { }); // User 목록 최신화
             await Console.Out.WriteLineAsync();
@@ -53,13 +53,13 @@ namespace GrpcClient
                 Console.WriteLine($"{user.Id}, {user.Name}, {user.Email}");
             }
 
+            Console.WriteLine();
+            Console.WriteLine("Remove user jdg1...");
+
             var deleteUserReply = await client.DeleteUserAsync(new DeleteUserRequest 
             { 
                 Id = 1 
             });
-
-            Console.WriteLine();
-            Console.WriteLine("Remove user jdg1...");
 
             getUserReply = await client.GetUsersAsync(new GetUserRequest { }); // User 목록 최신화
             await Console.Out.WriteLineAsync();
