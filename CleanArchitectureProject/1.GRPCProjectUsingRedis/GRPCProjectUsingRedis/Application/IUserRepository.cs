@@ -3,7 +3,7 @@ using LanguageExt;
 
 namespace Application
 {
-    public interface IFakeRepository
+    public interface IUserRepository
     {
         public Task<IEnumerable<Option<User>>> GetUsersAsync();
         public Task<Option<User>> GetUserByIdAsync(int id);

@@ -6,9 +6,9 @@ namespace GrpcServiceUsingRedis.Handlers
 {
     public class DeleteUserHandler : IRequestHandler<DeleteUserCommand, int>
     {
-        private readonly IUserService _usersService;
+        private readonly IUserRepository _usersService;
 
-        public DeleteUserHandler(IUserService usersService)
+        public DeleteUserHandler(IUserRepository usersService)
         {
             _usersService = usersService;
         }

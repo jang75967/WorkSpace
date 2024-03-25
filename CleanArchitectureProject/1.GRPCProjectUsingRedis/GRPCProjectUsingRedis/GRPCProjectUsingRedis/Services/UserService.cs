@@ -5,7 +5,7 @@ using static LanguageExt.Prelude;
 
 namespace GRPCProejctUsingRedis.Services
 {
-    public class UserService : IUserService
+    public class UserService : IUserRepository
     {
         private static List<Option<User>> _users = default!;
 

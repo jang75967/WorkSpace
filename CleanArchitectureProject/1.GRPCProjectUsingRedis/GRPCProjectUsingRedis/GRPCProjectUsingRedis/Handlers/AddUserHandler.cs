@@ -9,13 +9,13 @@ namespace GrpcServiceUsingRedis.Handlers
 {
     public class AddUserHandler : IRequestHandler<AddUserCommand, Option<User>>
     {
-        private readonly IUserService _usersService;
-        private readonly RedisManagerService _redisManagerService;
+        private readonly IUserRepository _usersService;
+        private readonly RedisManagerService _redisService;
 
-        public AddUserHandler(IUserService usersService, RedisManagerService redisManagerService)
+        public AddUserHandler(IUserRepository usersService, RedisManagerService redisService)
         {
             _usersService = usersService;
-            _redisManagerService = redisManagerService;
+            _redisService = redisService;
         }
 
         public async Task<Option<User>> Handle(AddUserCommand request, CancellationToken cancellationToken)
@@ -24,7 +24,7 @@ namespace GrpcServiceUsingRedis.Handlers
             await _usersService.AddUserAsync(request.User);
 
             // redis service
-            await _redisManagerService.Push(request.User.Name);
+            await _redisService.Push(request.User.Name);
 
             return Option<User>.Some(request.User);
         }

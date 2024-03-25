@@ -1,12 +1,13 @@
-﻿using RedisLibrary;
+﻿using Application;
+using RedisLibrary;
 
-namespace WorkerService.Services
+namespace InfraStructrue.Data.Persistence
 {
-    public class RedisManagerService
+    public class RedisService : IQueueService
     {
         private IQueue _queue = default!;
 
-        public RedisManagerService()
+        public RedisService()
         {
             IAddress address = new Address("127.0.0.1", "6379");
             IConfig configuration = new Configuration(address, "test-queue");
@@ -17,6 +18,12 @@ namespace WorkerService.Services
         public async Task Push(string input)
         {
             _queue.Enqueue(input);
+            await Task.FromResult(0);
+        }
+
+        public async Task Pop()
+        {
+            _queue.Dequeue();
             await Task.FromResult(0);
         }
     }

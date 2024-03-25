@@ -1,6 +1,6 @@
 ﻿using MediatR;
 
-namespace WorkerService.Commands
+namespace WorkerService.Core.Commands
 {
     public record DeleteUserCommand : IRequest<int>
     {

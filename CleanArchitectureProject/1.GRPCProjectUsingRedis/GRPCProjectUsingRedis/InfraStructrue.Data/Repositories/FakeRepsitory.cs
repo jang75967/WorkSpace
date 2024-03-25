@@ -5,7 +5,7 @@ using static LanguageExt.Prelude;
 
 namespace InfraStructrue.Data.Repositories
 {
-    public class FakeRepsitory : IFakeRepository
+    public class FakeRepsitory : IUserRepository
     {
         private List<Option<User>> _users = new List<Option<User>>()
         {

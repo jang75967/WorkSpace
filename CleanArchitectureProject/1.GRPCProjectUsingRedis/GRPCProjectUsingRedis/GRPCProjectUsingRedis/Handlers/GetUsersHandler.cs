@@ -8,9 +8,9 @@ namespace GrpcServiceUsingRedis.Handlers
 {
     public class GetUsersHandler : IRequestHandler<GetUsersQuery, IEnumerable<Option<User>>>
     {
-        private readonly IUserService _userService;
+        private readonly IUserRepository _userService;
 
-        public GetUsersHandler(IUserService userService)
+        public GetUsersHandler(IUserRepository userService)
         {
             _userService = userService;
         }

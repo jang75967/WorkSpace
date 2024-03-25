@@ -2,7 +2,7 @@
 using LanguageExt;
 using MediatR;
 
-namespace WorkerService.Queries
+namespace WorkerService.Core.Queries
 {
     public record GetUsersQuery() : IRequest<IEnumerable<Option<User>>>;
 }
