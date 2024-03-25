@@ -24,7 +24,7 @@ namespace WorkerService.Core.Handlers
                     await _userRepository.DeleteUserAsync(user.Id);
 
                     // redis service
-                    await _redisService.Pop();
+                    await _redisService.PopAsync();
                     return user.Id;
                 },
                 None: () =>

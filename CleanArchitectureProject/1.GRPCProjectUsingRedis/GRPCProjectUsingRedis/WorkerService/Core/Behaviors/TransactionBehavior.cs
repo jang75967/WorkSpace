@@ -22,7 +22,7 @@ namespace WorkerService.Core.Behaviors
 
             try
             {
-                using (var transaction = _redisService.BeginTranscation())
+                using (var transaction = _redisService.BeginTranscationAsync())
                 {
                     if (transaction == null)
                         throw new ArgumentNullException(nameof(transaction));
@@ -33,7 +33,7 @@ namespace WorkerService.Core.Behaviors
 
                     _logger.LogInformation("----- Commit transaction {TransactionId} for {CommandName}", transaction.Id, typeName);
 
-                    await _redisService.Execute();
+                    await _redisService.ExecuteAsync();
 
                     return nextResult;
                 }

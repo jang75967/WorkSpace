@@ -2,8 +2,8 @@
 {
     public interface IQueue : IDisposable
     {
-        void BeginTranscation();
-        bool Execute();
+        public void BeginTranscation();
+        public bool Execute();
         long GetQueueLength();
         void Enqueue(string value);
         string Dequeue();

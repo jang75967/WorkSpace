@@ -2,7 +2,9 @@
 {
     public interface IQueueService
     {
-        public Task Push(string input);
-        public Task Pop();
+        public Task BeginTranscationAsync();
+        public Task<bool> ExecuteAsync();
+        public Task PushAsync(string input);
+        public Task PopAsync();
     }
 }

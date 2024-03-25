@@ -23,7 +23,7 @@ namespace WorkerService.Core.Handlers
             await _userRepository.AddUserAsync(request.User);
 
             // redis service
-            await _redisService.Push(request.User.Name);
+            await _redisService.PushAsync(request.User.Name);
 
             return Option<User>.Some(request.User);
         }
