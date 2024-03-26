@@ -18,7 +18,7 @@ namespace WorkerService.Core.Behaviors
                 throw new ArgumentNullException(nameof(request));
 
             //Request
-            _logger.LogDebug($"Handling {typeof(TRequest).Name}");
+            _logger.LogInformation($"Handling {typeof(TRequest).Name}");
             Type type = request.GetType();
 
             foreach (PropertyInfo property in type.GetProperties())
@@ -27,13 +27,13 @@ namespace WorkerService.Core.Behaviors
                     continue;
 
                 object propValue = property.GetValue(request, null)!;
-                _logger.LogDebug($"{property.Name}: {propValue}");
+                _logger.LogInformation($"{property.Name}: {propValue}");
             }
 
             var response = await next();
 
             //Response
-            _logger.LogDebug($"Handled {typeof(TResponse).Name}");
+            _logger.LogInformation($"Handled {typeof(TResponse).Name}");
             return response;
         }
     }
