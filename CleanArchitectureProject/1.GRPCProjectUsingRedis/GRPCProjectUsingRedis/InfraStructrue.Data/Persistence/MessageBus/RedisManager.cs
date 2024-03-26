@@ -42,7 +42,12 @@ namespace InfraStructrue.Data.Persistence.MessageBus
 
         public async Task<string> DequeueAsync(CancellationToken cancellationToken = default)
         {
-            return await _connection.GetDatabase().ListRightPopAsync(_queueName);
+            var result = await _connection.GetDatabase().ListRightPopAsync(_queueName);
+
+            if (result.IsNull)
+                throw new InvalidOperationException("Queue is empty.");
+
+            return result.ToString();
         }
 
         public async Task<long> GetQueueLengthAsync(CancellationToken cancellationToken = default)
