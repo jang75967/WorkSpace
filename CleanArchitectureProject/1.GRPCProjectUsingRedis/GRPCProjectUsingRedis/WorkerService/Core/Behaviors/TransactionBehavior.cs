@@ -1,4 +1,4 @@
-﻿using InfraStructrue.Data.Persistence;
+﻿using Application;
 using MediatR;
 
 namespace WorkerService.Core.Behaviors
@@ -6,12 +6,12 @@ namespace WorkerService.Core.Behaviors
     public class TransactionBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse> where TRequest : IRequest<TResponse>
     {
         private readonly ILogger<TransactionBehavior<TRequest, TResponse>> _logger;
-        private readonly RedisService _redisService;
+        private readonly IQueueService _queueService;
 
-        public TransactionBehavior(ILogger<TransactionBehavior<TRequest, TResponse>> logger, RedisService redisService)
+        public TransactionBehavior(ILogger<TransactionBehavior<TRequest, TResponse>> logger, IQueueService queueService)
         {
             _logger = logger;
-            _redisService = redisService;
+            _queueService = queueService;
         }
 
         public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
@@ -22,7 +22,7 @@ namespace WorkerService.Core.Behaviors
 
             try
             {
-                using (var transaction = _redisService.BeginTranscationAsync())
+                using (var transaction = _queueService.BeginTranscationAsync())
                 {
                     if (transaction == null)
                         throw new ArgumentNullException(nameof(transaction));
@@ -33,7 +33,7 @@ namespace WorkerService.Core.Behaviors
 
                     _logger.LogInformation("----- Commit transaction {TransactionId} for {CommandName}", transaction.Id, typeName);
 
-                    await _redisService.ExecuteAsync();
+                    await _queueService.ExecuteAsync();
 
                     return nextResult;
                 }

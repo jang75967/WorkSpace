@@ -20,9 +20,9 @@ namespace GRPCProejctUsingRedis
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
+            var result = _queue.Dequeue();
             while (!stoppingToken.IsCancellationRequested)
             {
-                var result = _queue.Dequeue();
                 _logger.LogInformation(result);
                 _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
                 await Task.Delay(10000, stoppingToken);
