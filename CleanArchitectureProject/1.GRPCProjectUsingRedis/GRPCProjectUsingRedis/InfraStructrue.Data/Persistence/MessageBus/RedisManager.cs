@@ -1,5 +1,4 @@
 ﻿using Application;
-using Domain.MessageBus;
 using Domain.MessageBus.Address;
 using Domain.MessageBus.Configuration;
 using Domain.MessageBus.Connection;
