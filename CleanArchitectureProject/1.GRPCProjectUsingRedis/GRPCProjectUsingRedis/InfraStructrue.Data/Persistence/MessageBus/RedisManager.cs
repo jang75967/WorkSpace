@@ -1,6 +1,8 @@
 ﻿using Application;
-using Domain;
 using Domain.MessageBus;
+using Domain.MessageBus.Address;
+using Domain.MessageBus.Configuration;
+using Domain.MessageBus.Connection;
 using StackExchange.Redis;
 
 namespace InfraStructrue.Data.Persistence.MessageBus

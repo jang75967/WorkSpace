@@ -1,4 +1,6 @@
-﻿namespace Domain.MessageBus
+﻿using Domain.MessageBus.Address;
+
+namespace Domain.MessageBus.Configuration
 {
     public record Configuration : IConfig
     {

@@ -1,4 +1,4 @@
-﻿namespace Domain.MessageBus
+﻿namespace Domain.MessageBus.Address
 {
     public record Address : IAddress
     {

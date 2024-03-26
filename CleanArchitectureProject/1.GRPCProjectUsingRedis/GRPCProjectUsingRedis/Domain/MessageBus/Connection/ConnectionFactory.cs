@@ -1,7 +1,8 @@
-﻿using Polly;
+﻿using Domain.MessageBus.Configuration;
+using Polly;
 using StackExchange.Redis;
 
-namespace Domain.MessageBus
+namespace Domain.MessageBus.Connection
 {
     public class ConnectionFactory : IConnectionFactory
     {

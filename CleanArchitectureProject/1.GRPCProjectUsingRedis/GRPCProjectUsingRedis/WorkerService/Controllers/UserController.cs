@@ -2,8 +2,8 @@
 using Grpc.Core;
 using LanguageExt;
 using MediatR;
-using WorkerService.Core.Commands;
-using WorkerService.Core.Queries;
+using WorkerService.Core.Features.Users.Commands;
+using WorkerService.Core.Features.Users.Queries;
 using DtoUser = Api.Users.User;
 using EntityUser = Domain.Entities.User;
 

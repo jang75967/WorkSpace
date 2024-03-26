@@ -1,6 +1,7 @@
-﻿using StackExchange.Redis;
+﻿using Domain.MessageBus.Configuration;
+using StackExchange.Redis;
 
-namespace Domain
+namespace Domain.MessageBus.Connection
 {
     public interface IConnectionFactory
     {

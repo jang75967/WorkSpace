@@ -2,9 +2,9 @@
 using Domain.Entities;
 using LanguageExt;
 using MediatR;
-using WorkerService.Core.Queries;
+using WorkerService.Core.Features.Users.Queries;
 
-namespace WorkerService.Core.Handlers
+namespace WorkerService.Core.Features.Users.Handlers
 {
     public class GetUsersHandler : IRequestHandler<GetUsersQuery, IEnumerable<Option<User>>>
     {

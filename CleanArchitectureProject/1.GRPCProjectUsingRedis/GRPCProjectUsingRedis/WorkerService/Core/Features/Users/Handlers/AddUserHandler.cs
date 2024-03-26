@@ -2,9 +2,9 @@
 using Domain.Entities;
 using LanguageExt;
 using MediatR;
-using WorkerService.Core.Commands;
+using WorkerService.Core.Features.Users.Commands;
 
-namespace WorkerService.Core.Handlers
+namespace WorkerService.Core.Features.Users.Handlers
 {
     public class AddUserHandler : IRequestHandler<AddUserCommand, Option<User>>
     {
