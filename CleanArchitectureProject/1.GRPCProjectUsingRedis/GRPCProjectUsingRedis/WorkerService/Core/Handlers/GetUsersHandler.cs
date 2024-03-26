@@ -17,7 +17,7 @@ namespace WorkerService.Core.Handlers
 
         public async Task<IEnumerable<Option<User>>> Handle(GetUsersQuery request, CancellationToken cancellationToken)
         {
-            return await _userRepository.GetUsersAsync();
+            return await _userRepository.GetUsersAsync(cancellationToken);
         }
     }
 }

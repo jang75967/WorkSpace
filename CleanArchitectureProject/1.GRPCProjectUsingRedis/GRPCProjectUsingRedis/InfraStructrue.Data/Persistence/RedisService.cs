@@ -15,27 +15,27 @@ namespace InfraStructrue.Data.Persistence
             _queue = new Queue(connectionFactory);
         }
 
-        public async Task BeginTranscationAsync()
+        public async Task BeginTranscationAsync(CancellationToken cancellationToken = default)
         {
-            _queue.BeginTranscation();
+            _queue.BeginTranscation(cancellationToken);
             await Task.CompletedTask;
         }
 
-        public async Task<bool> ExecuteAsync()
+        public async Task<bool> ExecuteAsync(CancellationToken cancellationToken = default)
         {
-            bool result = _queue.Execute();
+            bool result = _queue.Execute(cancellationToken);
             return await Task.FromResult(result);
         }
 
-        public async Task PushAsync(string input)
+        public async Task PushAsync(string input, CancellationToken cancellationToken = default)
         {
-            _queue.Enqueue(input);
+            _queue.Enqueue(input, cancellationToken);
             await Task.CompletedTask;
         }
 
-        public async Task PopAsync()
+        public async Task PopAsync(CancellationToken cancellationToken = default)
         {
-            _queue.Dequeue();
+            _queue.Dequeue(cancellationToken);
             await Task.CompletedTask;
         }
     }

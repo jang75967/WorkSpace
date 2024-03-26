@@ -20,10 +20,10 @@ namespace WorkerService.Core.Handlers
         public async Task<Option<User>> Handle(AddUserCommand request, CancellationToken cancellationToken)
         {
             // grpc response
-            await _userRepository.AddUserAsync(request.User);
+            await _userRepository.AddUserAsync(request.User, cancellationToken);
 
             // redis service
-            await _queueService.PushAsync(request.User.Name);
+            await _queueService.PushAsync(request.User.Name, cancellationToken);
 
             return Option<User>.Some(request.User);
         }

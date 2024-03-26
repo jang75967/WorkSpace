@@ -17,14 +17,14 @@ namespace WorkerService.Core.Handlers
 
         public async Task<int> Handle(DeleteUserCommand request, CancellationToken cancellationToken)
         {
-            var result = await _userRepository.GetUserByIdAsync(request.Id).MatchAsync(
+            var result = await _userRepository.GetUserByIdAsync(request.Id, cancellationToken).MatchAsync(
                 Some: async user =>
                 {
                     // grpc response
-                    await _userRepository.DeleteUserAsync(user.Id);
+                    await _userRepository.DeleteUserAsync(user.Id, cancellationToken);
 
                     // redis service
-                    await _queueService.PopAsync();
+                    await _queueService.PopAsync(cancellationToken);
                     return user.Id;
                 },
                 None: () =>

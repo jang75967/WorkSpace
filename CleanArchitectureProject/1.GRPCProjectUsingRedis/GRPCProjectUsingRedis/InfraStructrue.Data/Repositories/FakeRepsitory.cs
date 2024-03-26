@@ -30,24 +30,24 @@ namespace InfraStructrue.Data.Repositories
             None,
         };
 
-        public async Task<IEnumerable<Option<User>>> GetUsersAsync()
+        public async Task<IEnumerable<Option<User>>> GetUsersAsync(CancellationToken cancellationToken = default)
         {
             return await Task.FromResult(_users);
         }
 
-        public async Task<Option<User>> GetUserByIdAsync(int id)
+        public async Task<Option<User>> GetUserByIdAsync(int id, CancellationToken cancellationToken = default)
         {
             // id 일치하면 true, Option이 none이면 false 반환
             return await Task.FromResult(_users.FirstOrDefault(userOption => userOption.Match(Some: user => user.Id == id, None: () => false)));
         }
 
-        public async Task AddUserAsync(User user)
+        public async Task AddUserAsync(User user, CancellationToken cancellationToken = default)
         {
             _users.Add(Some(user));
             await Task.CompletedTask;
         }
 
-        public async Task DeleteUserAsync(int id)
+        public async Task DeleteUserAsync(int id, CancellationToken cancellationToken = default)
         {
             // id 일치하면 true, Option이 none이면 false 반환
             var userToRemoveOption = _users.FirstOrDefault(userOption => userOption.Match(

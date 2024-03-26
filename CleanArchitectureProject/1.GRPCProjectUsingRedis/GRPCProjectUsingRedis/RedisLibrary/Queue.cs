@@ -16,40 +16,40 @@ namespace RedisLibrary
             _queueName = _connectionFactory.Configuration.GetQueueName();
         }
 
-        public void BeginTranscation()
+        public void BeginTranscation(CancellationToken cancellationToken = default)
         {
             _transaction = _connection.GetDatabase().CreateTransaction();
         }
 
-        public bool Execute()
+        public bool Execute(CancellationToken cancellationToken = default)
         {
             return _transaction.Execute();
         }
 
-        public void Enqueue(string value)
+        public void Enqueue(string value, CancellationToken cancellationToken = default)
         {
             _connection.GetDatabase().ListLeftPush(_queueName, value);
         }
 
-        public string Dequeue()
+        public string Dequeue(CancellationToken cancellationToken = default)
         {
             var result = _connection.GetDatabase().ListRightPop(_queueName);
             return result.ToString();
         }
 
-        public IList<string> GetAllItems()
+        public IList<string> GetAllItems(CancellationToken cancellationToken = default)
         {
             var redisValues = _connection.GetDatabase().ListRange(_queueName, 0, -1);
             var result = redisValues.Select(x => x.ToString()).ToList();
             return result;
         }
 
-        public long GetQueueLength()
+        public long GetQueueLength(CancellationToken cancellationToken = default)
         {
             return _connection.GetDatabase().ListLength(_queueName);
         }
 
-        public int Remove(string value, long count = 1)
+        public int Remove(string value, long count = 1, CancellationToken cancellationToken = default)
         {
             var removeItems = _connection.GetDatabase().ListRemove(_queueName, value.ToString(), count);
             return Convert.ToInt32(removeItems);
@@ -58,7 +58,7 @@ namespace RedisLibrary
         #region IDisposable Support
         private bool disposedValue = false; // To detect redundant calls
 
-        protected virtual void Dispose(bool disposing)
+        protected virtual void Dispose(bool disposing, CancellationToken cancellationToken = default)
         {
             if (!disposedValue)
             {
