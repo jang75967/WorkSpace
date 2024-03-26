@@ -7,12 +7,12 @@ namespace WorkerService.Core.Handlers
     public class DeleteUserHandler : IRequestHandler<DeleteUserCommand, int>
     {
         private readonly IUserRepository _userRepository;
-        private readonly IQueueService _queueService;
+        private readonly IQueue _queue;
 
-        public DeleteUserHandler(IUserRepository userRepository, IQueueService queueService)
+        public DeleteUserHandler(IUserRepository userRepository, IQueue queue)
         {
             _userRepository = userRepository;
-            _queueService = queueService;
+            _queue = queue;
         }
 
         public async Task<int> Handle(DeleteUserCommand request, CancellationToken cancellationToken)
@@ -24,7 +24,7 @@ namespace WorkerService.Core.Handlers
                     await _userRepository.DeleteUserAsync(user.Id, cancellationToken);
 
                     // redis service
-                    await _queueService.PopAsync(cancellationToken);
+                    await _queue.DequeueAsync(cancellationToken);
                     return user.Id;
                 },
                 None: () =>

@@ -21,6 +21,5 @@
     <ProjectReference Include="..\Application\Application.csproj" />
     <ProjectReference Include="..\InfraStructrue.Data\InfraStructrue.Data.csproj" />
     <ProjectReference Include="..\InfraStructure\InfraStructure.Protos.csproj" />
-    <ProjectReference Include="..\RedisLibrary\RedisLibrary.csproj" />
   </ItemGroup>
 </Project>

@@ -8,12 +8,12 @@ namespace WorkerService.Core.Behaviors
     public class TransactionBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse> where TRequest : IRequest<TResponse>, ILoggingTransaction
     {
         private readonly ILogger<TransactionBehavior<TRequest, TResponse>> _logger;
-        private readonly IQueueService _queueService;
+        private readonly IQueue _queue;
 
-        public TransactionBehavior(ILogger<TransactionBehavior<TRequest, TResponse>> logger, IQueueService queueService)
+        public TransactionBehavior(ILogger<TransactionBehavior<TRequest, TResponse>> logger, IQueue queue)
         {
             _logger = logger;
-            _queueService = queueService;
+            _queue = queue;
         }
 
         public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
@@ -25,7 +25,7 @@ namespace WorkerService.Core.Behaviors
 
             try
             {
-                using (var transaction = _queueService.BeginTranscationAsync())
+                using (var transaction = _queue.BeginTranscationAsync())
                 {
                     if (transaction is null)
                         throw new ArgumentNullException(nameof(transaction));
@@ -36,7 +36,7 @@ namespace WorkerService.Core.Behaviors
 
                     _logger.LogInformation("----- Commit transaction {TransactionId} for {CommandName}", transaction.Id, typeName);
 
-                    await _queueService.ExecuteAsync();
+                    await _queue.ExecuteAsync();
 
                     return nextResult;
                 }

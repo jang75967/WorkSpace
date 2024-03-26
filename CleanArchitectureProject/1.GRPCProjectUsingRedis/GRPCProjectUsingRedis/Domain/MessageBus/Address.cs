@@ -1,4 +1,4 @@
-﻿namespace RedisLibrary
+﻿namespace Domain.MessageBus
 {
     public record Address : IAddress
     {

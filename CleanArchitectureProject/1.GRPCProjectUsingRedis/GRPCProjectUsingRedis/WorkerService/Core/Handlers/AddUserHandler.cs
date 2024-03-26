@@ -9,12 +9,12 @@ namespace WorkerService.Core.Handlers
     public class AddUserHandler : IRequestHandler<AddUserCommand, Option<User>>
     {
         private readonly IUserRepository _userRepository;
-        private readonly IQueueService _queueService;
+        private readonly IQueue _queue;
 
-        public AddUserHandler(IUserRepository userRepository, IQueueService queueService)
+        public AddUserHandler(IUserRepository userRepository, IQueue queue)
         {
             _userRepository = userRepository;
-            _queueService = queueService;
+            _queue = queue;
         }
 
         public async Task<Option<User>> Handle(AddUserCommand request, CancellationToken cancellationToken)
@@ -23,7 +23,7 @@ namespace WorkerService.Core.Handlers
             await _userRepository.AddUserAsync(request.User, cancellationToken);
 
             // redis service
-            await _queueService.PushAsync(request.User.Name, cancellationToken);
+            await _queue.EnqueueAsync(request.User.Name, cancellationToken);
 
             return Option<User>.Some(request.User);
         }

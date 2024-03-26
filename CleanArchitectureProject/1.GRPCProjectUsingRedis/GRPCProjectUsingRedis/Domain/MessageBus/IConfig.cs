@@ -1,4 +1,4 @@
-﻿namespace RedisLibrary
+﻿namespace Domain
 {
     public interface IConfig
     {

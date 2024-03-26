@@ -1,6 +1,6 @@
 ﻿using StackExchange.Redis;
 
-namespace RedisLibrary
+namespace Domain
 {
     public interface IConnectionFactory
     {

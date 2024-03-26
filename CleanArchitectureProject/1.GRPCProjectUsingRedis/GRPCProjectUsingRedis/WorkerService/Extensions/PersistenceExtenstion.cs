@@ -1,5 +1,5 @@
 ﻿using Application;
-using InfraStructrue.Data.Persistence;
+using InfraStructrue.Data.Persistence.MessageBus;
 
 namespace WorkerService.Extensions
 {
@@ -7,7 +7,7 @@ namespace WorkerService.Extensions
     {
         public static IServiceCollection AddQueue(this IServiceCollection services)
         {
-            services.AddSingleton<IQueueService, RedisService>();
+            services.AddSingleton<IQueue, RedisManager>();
 
             return services;
         }
