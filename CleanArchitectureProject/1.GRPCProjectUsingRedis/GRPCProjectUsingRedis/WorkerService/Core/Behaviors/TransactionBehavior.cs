@@ -3,7 +3,9 @@ using MediatR;
 
 namespace WorkerService.Core.Behaviors
 {
-    public class TransactionBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse> where TRequest : IRequest<TResponse>
+    public interface ILoggingTransaction { }
+
+    public class TransactionBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse> where TRequest : IRequest<TResponse>, ILoggingTransaction
     {
         private readonly ILogger<TransactionBehavior<TRequest, TResponse>> _logger;
         private readonly IQueueService _queueService;
