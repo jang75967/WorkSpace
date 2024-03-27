@@ -17,6 +17,54 @@ namespace InfraStructrue.Data.Persistence.MessageBus.Redis
             _queueName = configuration.GetQueueName();
         }
 
+        #region Synchronous
+
+        public void BeginTranscation(CancellationToken cancellationToken = default)
+        {
+            _transaction = _connection.Connection.GetDatabase().CreateTransaction();
+        }
+
+        public bool Execute(CancellationToken cancellationToken = default)
+        {
+            return _transaction.Execute();
+        }
+
+        public long Enqueue(string value, CancellationToken cancellationToken = default)
+        {
+            return _connection.Connection.GetDatabase().ListLeftPush(_queueName, value);
+        }
+
+        public string Dequeue(CancellationToken cancellationToken = default)
+        {
+            var result = _connection.Connection.GetDatabase().ListRightPop(_queueName);
+
+            if (result.IsNull)
+                throw new InvalidOperationException("Queue is empty.");
+
+            return result.ToString();
+        }
+
+        public long GetQueueLength(CancellationToken cancellationToken = default)
+        {
+            return _connection.Connection.GetDatabase().ListLength(_queueName);
+        }
+
+        public IList<string> GetAllItems(CancellationToken cancellationToken = default)
+        {
+            var redisValues = _connection.Connection.GetDatabase().ListRange(_queueName, 0, -1);
+            return redisValues.Select(x => x.ToString()).ToList();
+        }
+
+        public int Remove(string value, long count = 1, CancellationToken cancellationToken = default)
+        {
+            var removeItems = _connection.Connection.GetDatabase().ListRemove(_queueName, value.ToString(), count);
+            return Convert.ToInt32(removeItems);
+        }
+
+        #endregion
+
+        #region Asynchronous
+
         public async Task BeginTranscationAsync(CancellationToken cancellationToken = default)
         {
             _transaction = _connection.Connection.GetDatabase().CreateTransaction();
@@ -60,6 +108,8 @@ namespace InfraStructrue.Data.Persistence.MessageBus.Redis
             var removeItems = _connection.Connection.GetDatabase().ListRemoveAsync(_queueName, value.ToString(), count);
             return await Task.FromResult(Convert.ToInt32(removeItems));
         }
+
+        #endregion
 
         #region IDisposable Support
         private bool disposedValue = false; // To detect redundant calls
