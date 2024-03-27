@@ -19,7 +19,7 @@ namespace InfraStructrue.Data.Persistence.MessageBus.Redis
 
         #region Synchronous
 
-        public void BeginTranscation(CancellationToken cancellationToken = default)
+        public void BeginTransaction(CancellationToken cancellationToken = default)
         {
             _transaction = _connection.Connection.GetDatabase().CreateTransaction();
         }
@@ -65,7 +65,7 @@ namespace InfraStructrue.Data.Persistence.MessageBus.Redis
 
         #region Asynchronous
 
-        public async Task BeginTranscationAsync(CancellationToken cancellationToken = default)
+        public async Task BeginTransactionAsync(CancellationToken cancellationToken = default)
         {
             _transaction = _connection.Connection.GetDatabase().CreateTransaction();
             await Task.CompletedTask;

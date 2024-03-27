@@ -25,7 +25,7 @@ namespace WorkerService.Core.Behaviors
 
             try
             {
-                using (var transaction = _queue.BeginTranscationAsync())
+                using (var transaction = _queue.BeginTransactionAsync())
                 {
                     if (transaction is null)
                         throw new ArgumentNullException(nameof(transaction));
