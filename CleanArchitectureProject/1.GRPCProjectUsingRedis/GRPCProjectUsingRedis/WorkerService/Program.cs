@@ -13,7 +13,7 @@ namespace WorkerService
             builder.Services.AddRepositories();
             builder.Services.AddQueue();
             builder.Services.AddMediatR();
-            builder.Services.AddBackgroundService();
+            builder.Services.AddWorkerService();
 
             var app = builder.Build();
 

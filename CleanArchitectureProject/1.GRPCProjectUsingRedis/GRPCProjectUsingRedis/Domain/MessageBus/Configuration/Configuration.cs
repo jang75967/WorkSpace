@@ -2,7 +2,7 @@
 
 namespace Domain.MessageBus.Configuration
 {
-    public record Configuration : IConfig
+    public record Configuration : IConfiguration
     {
         public IAddress Address { get; set; }
 

@@ -1,5 +1,4 @@
 using Application;
-using InfraStructrue.Data.Persistence.MessageBus;
 
 namespace GRPCProejctUsingRedis
 {
@@ -8,10 +7,10 @@ namespace GRPCProejctUsingRedis
         private readonly ILogger _logger;
         private readonly IQueue _queue;
 
-        public Worker(ILogger<Worker> logger)
+        public Worker(ILogger<Worker> logger, IQueue queue)
         {
             _logger = logger;
-            _queue = new RedisManager();
+            _queue = queue;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)

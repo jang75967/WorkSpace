@@ -2,7 +2,7 @@
 
 namespace Domain.MessageBus.Configuration
 {
-    public interface IConfig
+    public interface IConfiguration
     {
         IAddress Address { get; set; }
         string QueueName { get; set; }

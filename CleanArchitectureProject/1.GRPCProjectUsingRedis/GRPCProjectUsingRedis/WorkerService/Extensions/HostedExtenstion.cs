@@ -4,7 +4,7 @@ namespace WorkerService.Extensions
 {
     public static class HostedExtenstion
     {
-        public static IServiceCollection AddBackgroundService(this IServiceCollection services)
+        public static IServiceCollection AddWorkerService(this IServiceCollection services)
         {
             services.AddHostedService<Worker>();
 
