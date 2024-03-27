@@ -1,6 +1,6 @@
 ﻿using Api.Users;
+using Application;
 using Grpc.Core;
-using LanguageExt;
 using MediatR;
 using WorkerService.Core.Features.Users.Commands;
 using WorkerService.Core.Features.Users.Queries;
@@ -13,19 +13,23 @@ namespace WorkerService.Controllers
     {
         private readonly ILogger<UserController> _logger;
         private readonly IMediator _mediator;
+        private readonly ICustomMapper _mapper;
 
         public UserController(
             ILogger<UserController> logger,
-            IMediator mediator)
+            IMediator mediator,
+            ICustomMapper mapper)
         {
             _logger = logger;
             _mediator = mediator;
+            _mapper = mapper;
         }
 
         public override async Task<GetUserReply> GetUsers(GetUserRequest request, ServerCallContext context)
         {
             var entities = await _mediator.Send(new GetUsersQuery());
-            var dtos = ConvertToDto(entities).Somes(); // Some인 경우만 추출
+            //var dtos = ConvertToDto(entities).Somes(); // Some인 경우만 추출
+            var dtos = _mapper.Map<IEnumerable<DtoUser>>(entities.Somes()); // Some인 경우만 추출
 
             return await Task.FromResult(new GetUserReply()
             {
@@ -43,7 +47,8 @@ namespace WorkerService.Controllers
             }));
 
             var entities = await _mediator.Send(new GetUsersQuery());
-            var dtos = ConvertToDto(entities).Somes(); // Some인 경우만 추출
+            //var dtos = ConvertToDto(entities).Somes(); // Some인 경우만 추출
+            var dtos = _mapper.Map<IEnumerable<DtoUser>>(entities.Somes()); // Some인 경우만 추출
 
             return await Task.FromResult(new AddUserReply()
             {
@@ -56,7 +61,8 @@ namespace WorkerService.Controllers
             await _mediator.Send(new DeleteUserCommand(request.Id));
 
             var entities = await _mediator.Send(new GetUsersQuery());
-            var dtos = ConvertToDto(entities).Somes(); // Some인 경우만 추출
+            //var dtos = ConvertToDto(entities).Somes(); // Some인 경우만 추출
+            var dtos = _mapper.Map<IEnumerable<DtoUser>>(entities.Somes()); // Some인 경우만 추출
 
             return await Task.FromResult(new DeleteUserReply()
             {
@@ -64,14 +70,14 @@ namespace WorkerService.Controllers
             });
         }
 
-        private IEnumerable<Option<DtoUser>> ConvertToDto(IEnumerable<Option<EntityUser>> users)
-        {
-            return users.Select(userOption => userOption.Map(user => new DtoUser
-            {
-                Id = user.Id,
-                Name = user.Name,
-                Email = user.Email,
-            }));
-        }
+        //private IEnumerable<Option<DtoUser>> ConvertToDto(IEnumerable<Option<EntityUser>> users)
+        //{
+        //    return users.Select(userOption => userOption.Map(user => new DtoUser
+        //    {
+        //        Id = user.Id,
+        //        Name = user.Name,
+        //        Email = user.Email,
+        //    }));
+        //}
     }
 }

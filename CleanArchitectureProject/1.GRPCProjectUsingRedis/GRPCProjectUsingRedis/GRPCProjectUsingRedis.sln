@@ -19,6 +19,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InfraStructrue.Data", "Infr
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InfraStructure.Protos", "InfraStructure.Protos\InfraStructure.Protos.csproj", "{38D88085-3162-45A3-8BFE-44D00980B68F}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InfraStructrue.Mappers", "InfraStructrue.Mappers\InfraStructrue.Mappers.csproj", "{B9010925-D7ED-4533-84F9-DB512B09FEF1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -49,6 +51,10 @@ Global
 		{38D88085-3162-45A3-8BFE-44D00980B68F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{38D88085-3162-45A3-8BFE-44D00980B68F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{38D88085-3162-45A3-8BFE-44D00980B68F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B9010925-D7ED-4533-84F9-DB512B09FEF1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B9010925-D7ED-4533-84F9-DB512B09FEF1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B9010925-D7ED-4533-84F9-DB512B09FEF1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B9010925-D7ED-4533-84F9-DB512B09FEF1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -58,6 +64,7 @@ Global
 		{9BFBF96B-C596-4748-ABAE-AF2F39263C50} = {F2479D75-9FBF-4F3B-A018-B5383A59F979}
 		{6CA4C454-AB29-4713-A429-B748B22B6669} = {D5CFAD6C-F4DB-4F1B-A8DF-F45833FC7355}
 		{38D88085-3162-45A3-8BFE-44D00980B68F} = {D5CFAD6C-F4DB-4F1B-A8DF-F45833FC7355}
+		{B9010925-D7ED-4533-84F9-DB512B09FEF1} = {D5CFAD6C-F4DB-4F1B-A8DF-F45833FC7355}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {7412F962-3753-4D67-B4E2-50F536F2EB78}

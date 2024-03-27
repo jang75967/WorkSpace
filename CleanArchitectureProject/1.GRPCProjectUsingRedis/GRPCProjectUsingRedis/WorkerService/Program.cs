@@ -10,6 +10,7 @@ namespace WorkerService
             var builder = WebApplication.CreateBuilder(args);
 
             builder.Services.AddGrpc();
+            builder.Services.AddMapper();
             builder.Services.AddRepositories();
             builder.Services.AddQueue();
             builder.Services.AddMediatR();

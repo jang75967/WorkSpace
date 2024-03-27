@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Worker">
+﻿<Project Sdk="Microsoft.NET.Sdk.Worker">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
@@ -20,6 +20,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Application\Application.csproj" />
     <ProjectReference Include="..\InfraStructrue.Data\InfraStructrue.Data.csproj" />
+    <ProjectReference Include="..\InfraStructrue.Mappers\InfraStructrue.Mappers.csproj" />
     <ProjectReference Include="..\InfraStructure.Protos\InfraStructure.Protos.csproj" />
   </ItemGroup>
 </Project>
