@@ -12,7 +12,7 @@ namespace WorkerService
             builder.Services.AddGrpc();
             builder.Services.AddMapper();
             builder.Services.AddRepositories();
-            builder.Services.AddMessageBoxOptionConfigure();
+            builder.Services.AddMessageBusOptionConfigure();
             builder.Services.AddMessageBusOptionSetup();
             builder.Services.AddQueue();
             builder.Services.AddMediatR();

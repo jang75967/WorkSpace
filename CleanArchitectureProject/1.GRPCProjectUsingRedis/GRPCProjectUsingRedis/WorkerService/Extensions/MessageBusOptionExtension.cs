@@ -9,7 +9,7 @@ namespace WorkerService.Extensions
 {
     public static class MessageBusOptionExtension
     {
-        public static IServiceCollection AddMessageBoxOptionConfigure(this IServiceCollection services)
+        public static IServiceCollection AddMessageBusOptionConfigure(this IServiceCollection services)
         {
             services.AddOptions<MessageBusOption>()
                 .Configure<IConfiguration>((options, configuration) =>
