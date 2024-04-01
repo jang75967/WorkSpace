@@ -11,9 +11,8 @@ namespace WorkerService
 
             builder.Services.AddGrpc();
             builder.Services.AddMapper();
-            builder.Services.AddRepositories();
-            builder.Services.AddMessageBusOptionConfigure();
-            builder.Services.AddMessageBusOptionSetup();
+            builder.Services.AddRepository();
+            builder.Services.AddMessageBusOption();
             builder.Services.AddQueue();
             builder.Services.AddMediatR();
             builder.Services.AddWorkerService();

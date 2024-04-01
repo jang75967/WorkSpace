@@ -9,7 +9,15 @@ namespace WorkerService.Extensions
 {
     public static class MessageBusOptionExtension
     {
-        public static IServiceCollection AddMessageBusOptionConfigure(this IServiceCollection services)
+        public static IServiceCollection AddMessageBusOption(this IServiceCollection services)
+        {
+            AddMessageBusOptionConfigure(services);
+            AddMessageBusOptionSetup(services);
+
+            return services;
+        }
+
+        private static IServiceCollection AddMessageBusOptionConfigure(this IServiceCollection services)
         {
             services.AddOptions<MessageBusOption>()
                 .Configure<IConfiguration>((options, configuration) =>
@@ -20,12 +28,13 @@ namespace WorkerService.Extensions
             return services;
         }
 
-        public static IServiceCollection AddMessageBusOptionSetup(this IServiceCollection services)
+        private static IServiceCollection AddMessageBusOptionSetup(this IServiceCollection services)
         {
             services.AddSingleton<IMessageBusConfiguration>(provider =>
             {
                 var configuration = provider.GetService<IConfiguration>()!;
                 var options = provider.GetRequiredService<IOptions<MessageBusOption>>().Value;
+
                 var address = new Address(options.HostName, options.Port);
                 return new Configuration(address, options.QueueName);
             });

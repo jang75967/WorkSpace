@@ -5,7 +5,7 @@ namespace WorkerService.Extensions
 {
     public static class ReositoryExtension
     {
-        public static IServiceCollection AddRepositories(this IServiceCollection services)
+        public static IServiceCollection AddRepository(this IServiceCollection services)
         {
             services.AddSingleton<IUserRepository, FakeRepsitory>();
 
