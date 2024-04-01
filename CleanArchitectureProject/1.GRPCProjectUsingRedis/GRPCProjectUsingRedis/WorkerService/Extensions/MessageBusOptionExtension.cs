@@ -27,7 +27,7 @@ namespace WorkerService.Extensions
                 var configuration = provider.GetService<IConfiguration>()!;
                 var options = provider.GetRequiredService<IOptions<MessageBusOption>>().Value;
                 var address = new Address(options.HostName, options.Port);
-                return new Configuration(address, "test-queue");
+                return new Configuration(address, options.QueueName);
             });
 
             return services;
