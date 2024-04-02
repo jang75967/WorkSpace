@@ -18,8 +18,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\InfraStructure\Data\InfraStructrue.Data.csproj" />
-    <ProjectReference Include="..\InfraStructure\Mappers\InfraStructrue.Mappers.csproj" />
+    <ProjectReference Include="..\InfraStructure\Data\InfraStructure.Data.csproj" />
+    <ProjectReference Include="..\InfraStructure\Mappers\InfraStructure.Mappers.csproj" />
     <ProjectReference Include="..\InfraStructure\Protos\InfraStructure.Protos.csproj" />
   </ItemGroup>
 </Project>

@@ -15,9 +15,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GrpcClientUsingRedis", "Grp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WorkerService", "WorkerService\WorkerService.csproj", "{F3964D37-33C9-4AFB-B5B2-6C19D3482DD4}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InfraStructrue.Data", "InfraStructure\Data\InfraStructrue.Data.csproj", "{57EE9DE4-99FD-4724-B02A-AC9E3D781779}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InfraStructure.Data", "InfraStructure\Data\InfraStructure.Data.csproj", "{57EE9DE4-99FD-4724-B02A-AC9E3D781779}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InfraStructrue.Mappers", "InfraStructure\Mappers\InfraStructrue.Mappers.csproj", "{592CE49C-0E21-44B1-BC3E-647C9DA2E7FE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InfraStructure.Mappers", "InfraStructure\Mappers\InfraStructure.Mappers.csproj", "{592CE49C-0E21-44B1-BC3E-647C9DA2E7FE}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InfraStructure.Protos", "InfraStructure\Protos\InfraStructure.Protos.csproj", "{CE8A4D5D-1BAF-41C8-B114-E368F44BB591}"
 EndProject
