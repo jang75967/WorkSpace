@@ -1,0 +1,9 @@
+{
+  "MessageBus": {
+    "HostName": "127.0.0.1",
+    "Port": 6379,
+    "UserName": "jdg",
+    "Password": "7596",
+    "QueueName": "test-queue"
+  }
+}

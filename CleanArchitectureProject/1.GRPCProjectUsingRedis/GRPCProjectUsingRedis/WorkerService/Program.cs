@@ -9,6 +9,8 @@ namespace WorkerService
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            builder.Configuration.AddJsonFiles();
+
             builder.Services.AddGrpc();
             builder.Services.AddMapper();
             builder.Services.AddRepository();
