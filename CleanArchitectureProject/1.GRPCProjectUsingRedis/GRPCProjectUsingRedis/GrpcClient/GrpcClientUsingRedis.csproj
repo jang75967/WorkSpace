@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\InfraStructure.Protos\InfraStructure.Protos.csproj" />
+    <ProjectReference Include="..\InfraStructure\Protos\InfraStructure.Protos.csproj" />
   </ItemGroup>
 
 </Project>

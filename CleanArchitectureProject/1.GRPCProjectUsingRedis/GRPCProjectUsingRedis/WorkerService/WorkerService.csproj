@@ -18,9 +18,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Application\Application.csproj" />
-    <ProjectReference Include="..\InfraStructrue.Data\InfraStructrue.Data.csproj" />
-    <ProjectReference Include="..\InfraStructrue.Mappers\InfraStructrue.Mappers.csproj" />
-    <ProjectReference Include="..\InfraStructure.Protos\InfraStructure.Protos.csproj" />
+    <ProjectReference Include="..\InfraStructure\Data\InfraStructrue.Data.csproj" />
+    <ProjectReference Include="..\InfraStructure\Mappers\InfraStructrue.Mappers.csproj" />
+    <ProjectReference Include="..\InfraStructure\Protos\InfraStructure.Protos.csproj" />
   </ItemGroup>
 </Project>
