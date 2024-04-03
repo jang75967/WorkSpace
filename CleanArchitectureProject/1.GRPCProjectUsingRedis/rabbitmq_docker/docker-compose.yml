@@ -1,0 +1,15 @@
+version: '3'
+
+services:
+  rabbitmq:
+    container_name: rabbitmq
+    image: rabbitmq:3-management
+    restart: always
+    ports:
+      - "${RABBITMQ_BINDING_PORT}:${RABBITMQ_PORT}"
+      - "${RABBITMQ_GUI_BINDING_PORT}:${RABBITMQ_GUI_PORT}"
+    environment:
+      - RABBITMQ_DEFAULT_USER=${RABBITMQ_DEFAULT_USER}
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_DEFAULT_PASS}
+    labels:
+      group: "system"
