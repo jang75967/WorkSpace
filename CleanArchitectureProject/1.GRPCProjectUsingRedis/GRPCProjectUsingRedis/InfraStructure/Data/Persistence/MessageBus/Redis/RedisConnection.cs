@@ -22,13 +22,11 @@ namespace InfraStructrue.Data.Persistence.MessageBus.Redis
 
         public void CreateConnection()
         {
-            // retry 정책 설정 (RedisConnectionException 또는 다른 종류의 Exception 이 발생했을 때 재시도 수행)
             var retryPolicy = Policy
                 .Handle<RedisConnectionException>()
                 .Or<Exception>()
                 .WaitAndRetry(retryCount: _retryOption.RetryCount, sleepDurationProvider: retryAttempt => TimeSpan.FromSeconds(_retryOption.RetryDelayMilliseconds));
 
-            // retry 정책 실행
             Connection = retryPolicy.Execute(() =>
             {
                 return ConnectionMultiplexer.Connect(_configuration.GetAddress());
