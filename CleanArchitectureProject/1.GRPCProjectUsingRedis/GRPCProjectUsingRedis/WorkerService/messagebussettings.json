@@ -1,10 +1,19 @@
 {
   "MessageBus": {
-    "HostName": "127.0.0.1",
-    "Port": 6379,
-    "UserName": "jdg",
-    "Password": "7596",
-    "QueueName": "test-queue"
+    "redis": {
+      "HostName": "127.0.0.1",
+      "Port": 6379,
+      "UserName": "jdg",
+      "Password": "7596",
+      "QueueName": "test-queue"
+    },
+    "rabbitmq": {
+      "HostName": "127.0.0.1",
+      "Port": 5672,
+      "UserName": "jdg",
+      "Password": "7596",
+      "QueueName": "test-queue"
+    }
   },
   "RetryOption": {
     "RetryCount": 5

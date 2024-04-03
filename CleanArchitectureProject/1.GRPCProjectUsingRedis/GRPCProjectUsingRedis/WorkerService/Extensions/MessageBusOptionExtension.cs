@@ -20,10 +20,17 @@ namespace WorkerService.Extensions
 
         private static IServiceCollection AddMessageBusOptionConfigure(this IServiceCollection services)
         {
-            services.AddOptions<MessageBusOption>()
+            services.AddOptions<MessageBusOptions>()
                 .Configure<IConfiguration>((options, configuration) =>
                 {
-                    configuration.GetSection("MessageBus").Bind(options);
+                    var messageBusSections = configuration.GetSection("MessageBus").GetChildren();
+
+                    foreach (var messageBusSection in messageBusSections)
+                    {
+                        var messageBusOption = new MessageBusOption();
+                        messageBusSection.Bind(messageBusOption);
+                        options.Options.Add(messageBusSection.Key, messageBusOption);
+                    }
                 });
             services.AddOptions<RetryOption>()
                 .Configure<IConfiguration>((options, configuration) =>
@@ -38,11 +45,13 @@ namespace WorkerService.Extensions
         {
             services.AddSingleton<IMessageBusConfiguration>(provider =>
             {
-                var configuration = provider.GetService<IConfiguration>()!;
-                var options = provider.GetRequiredService<IOptions<MessageBusOption>>().Value;
+                var options = provider.GetRequiredService<IOptions<MessageBusOptions>>().Value;
 
-                var address = new Address(options.HostName, options.Port);
-                return new Configuration(address, options.QueueName);
+                var redisOption = options.Options["redis"];
+                var rabbitmqOption = options.Options["rabbitmq"];
+
+                var address = new Address(redisOption.HostName, redisOption.Port);
+                return new Configuration(address, redisOption.QueueName);
             });
             services.AddSingleton(provider =>
             {

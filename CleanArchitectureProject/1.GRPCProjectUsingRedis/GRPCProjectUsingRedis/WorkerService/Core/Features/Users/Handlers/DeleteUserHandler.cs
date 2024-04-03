@@ -23,7 +23,7 @@ namespace WorkerService.Core.Features.Users.Handlers
                     // grpc response
                     await _userRepository.DeleteUserAsync(user.Id, cancellationToken);
 
-                    // redis service
+                    // queue service
                     await _queue.DequeueAsync(cancellationToken);
                     return user.Id;
                 },

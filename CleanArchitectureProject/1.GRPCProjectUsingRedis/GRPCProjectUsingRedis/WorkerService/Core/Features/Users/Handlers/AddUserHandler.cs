@@ -22,7 +22,7 @@ namespace WorkerService.Core.Features.Users.Handlers
             // grpc response
             await _userRepository.AddUserAsync(request.User, cancellationToken);
 
-            // redis service
+            // queue service
             await _queue.EnqueueAsync(request.User.Name, cancellationToken);
 
             return Option<User>.Some(request.User);
