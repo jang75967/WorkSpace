@@ -12,9 +12,11 @@ namespace InfraStructure.Data.Persistence.MessageBus.RabbitMQ
     {
         private readonly IConfiguration _configuration;
         private readonly RetryOption _retryOption;
-        public IRabbitMQConnection Connection = default!;
+        private IRabbitMQConnection _connection = default!;
 
-        public bool IsConnected => Connection != null && Connection.IsOpen;
+        public IModel Model { get; private set; } = default!;
+
+        public bool IsConnected => _connection != null && _connection.IsOpen;
 
         public RabbitMQConnection(IConfiguration configuration, RetryOption retryOption)
         {
@@ -29,28 +31,38 @@ namespace InfraStructure.Data.Persistence.MessageBus.RabbitMQ
                 .Or<Exception>()
                 .WaitAndRetry(retryCount: _retryOption.RetryCount, sleepDurationProvider: retryAttempt => TimeSpan.FromSeconds(_retryOption.RetryDelayMilliseconds));
 
-            Connection = retryPolicy.Execute(() =>
+            _connection = retryPolicy.Execute(() =>
             {
                 var connectionFactory = new ConnectionFactory()
                 {
                     HostName = _configuration.Address.IP,
                     Port = Convert.ToInt32(_configuration.Address.Port),
-                    //UserName = "jdg",
-                    //Password = "7596"
+                    UserName = _configuration.Address.UserName,
+                    Password = _configuration.Address.Password,
                 };
 
                 return connectionFactory.CreateConnection();
             });
+
+            Model = _connection.CreateModel();
+
+            Model.QueueDeclare(
+                queue: _configuration.GetQueueName(),
+                durable: true,
+                exclusive: false,
+                autoDelete: false,
+                arguments: null);
         }
 
         public void CloseConnection()
         {
-            Connection?.Close();
+            _connection?.Close();
         }
 
         public void Dispose()
         {
-            Connection?.Dispose();
+            Model?.Dispose();
+            _connection?.Dispose();
         }
     }
 }

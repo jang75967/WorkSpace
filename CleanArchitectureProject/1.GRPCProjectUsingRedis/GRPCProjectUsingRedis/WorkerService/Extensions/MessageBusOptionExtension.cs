@@ -47,11 +47,11 @@ namespace WorkerService.Extensions
             {
                 var options = provider.GetRequiredService<IOptions<MessageBusOptions>>().Value;
 
-                var redisOption = options.Options["redis"];
-                var rabbitmqOption = options.Options["rabbitmq"];
+                //var option = options.Options["redis"];
+                var option = options.Options["rabbitmq"];
 
-                var address = new Address(redisOption.HostName, redisOption.Port);
-                return new Configuration(address, redisOption.QueueName);
+                var address = new Address(option.HostName, option.Port, option.UserName, option.Password);
+                return new Configuration(address, option.QueueName);
             });
             services.AddSingleton(provider =>
             {

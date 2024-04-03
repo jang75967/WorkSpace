@@ -6,7 +6,7 @@ using System.Text;
 
 namespace InfraStructure.Data.Persistence.MessageBus.RabbitMQ
 {
-    internal class RabbitMQQueue : IQueue
+    public class RabbitMQQueue : IQueue
     {
         private readonly RabbitMQConnection _connection;
         private readonly string _queueName;
@@ -17,6 +17,7 @@ namespace InfraStructure.Data.Persistence.MessageBus.RabbitMQ
             _connection = new RabbitMQConnection(configuration, retryOption);
             _connection.CreateConnection();
             _queueName = configuration.GetQueueName();
+            _model = _connection.Model;
         }
 
         #region Synchronous
@@ -61,7 +62,7 @@ namespace InfraStructure.Data.Persistence.MessageBus.RabbitMQ
 
         public async Task BeginTransactionAsync(CancellationToken cancellationToken = default)
         {
-            _model = _connection.Connection.CreateModel();
+            _model.TxSelect();
             await Task.CompletedTask;
         }
 
@@ -73,13 +74,6 @@ namespace InfraStructure.Data.Persistence.MessageBus.RabbitMQ
 
         public async Task<long> EnqueueAsync(string value, CancellationToken cancellationToken = default)
         {
-            _model.QueueDeclare(
-                queue: _queueName,
-                durable: false,
-                exclusive: false,
-                autoDelete: false,
-                arguments: null);
-
             var body = Encoding.UTF8.GetBytes(value);
 
             _model.BasicPublish(
