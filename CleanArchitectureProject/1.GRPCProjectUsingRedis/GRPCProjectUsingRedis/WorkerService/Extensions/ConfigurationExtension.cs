@@ -6,7 +6,7 @@
         {
             return configurationManager
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-                .AddJsonFile("messageBus.json", optional: false, reloadOnChange: true);
+                .AddJsonFile("messagebussettings.json", optional: false, reloadOnChange: true);
         }
     }
 }

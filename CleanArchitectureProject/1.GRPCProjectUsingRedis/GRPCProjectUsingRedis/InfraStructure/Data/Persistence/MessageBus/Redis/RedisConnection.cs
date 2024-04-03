@@ -1,5 +1,6 @@
 ﻿using Domain.MessageBus.Configuration;
 using Domain.MessageBus.Connection;
+using Domain.Resilience;
 using Polly;
 using StackExchange.Redis;
 
@@ -7,14 +8,16 @@ namespace InfraStructrue.Data.Persistence.MessageBus.Redis
 {
     internal class RedisConnection : IConnection, IDisposable
     {
-        private IConfiguration _configuration;
+        private readonly IConfiguration _configuration;
+        private readonly RetryOption _retryOption;
         public IConnectionMultiplexer Connection = default!;
 
         public bool IsConnected => Connection != null && Connection.IsConnected;
 
-        public RedisConnection(IConfiguration configuration)
+        public RedisConnection(IConfiguration configuration, RetryOption retryOption)
         {
             _configuration = configuration;
+            _retryOption = retryOption;
         }
 
         public void CreateConnection()
@@ -23,7 +26,7 @@ namespace InfraStructrue.Data.Persistence.MessageBus.Redis
             var retryPolicy = Policy
                 .Handle<RedisConnectionException>()
                 .Or<Exception>()
-                .WaitAndRetry(retryCount: 3, sleepDurationProvider: retryAttempt => TimeSpan.FromSeconds(retryAttempt));
+                .WaitAndRetry(retryCount: _retryOption.RetryCount, sleepDurationProvider: retryAttempt => TimeSpan.FromSeconds(_retryOption.RetryDelayMilliseconds));
 
             // retry 정책 실행
             Connection = retryPolicy.Execute(() =>

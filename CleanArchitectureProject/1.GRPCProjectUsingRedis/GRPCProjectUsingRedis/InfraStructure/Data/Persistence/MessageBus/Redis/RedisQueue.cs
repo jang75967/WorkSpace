@@ -1,5 +1,6 @@
 ﻿using Application;
 using Domain.MessageBus.Configuration;
+using Domain.Resilience;
 using StackExchange.Redis;
 
 namespace InfraStructrue.Data.Persistence.MessageBus.Redis
@@ -10,9 +11,9 @@ namespace InfraStructrue.Data.Persistence.MessageBus.Redis
         private readonly string _queueName;
         private ITransaction _transaction = default!;
 
-        public RedisQueue(IConfiguration configuration)
+        public RedisQueue(IConfiguration configuration, RetryOption retryOption)
         {
-            _connection = new RedisConnection(configuration);
+            _connection = new RedisConnection(configuration, retryOption);
             _connection.CreateConnection();
             _queueName = configuration.GetQueueName();
         }

@@ -5,5 +5,8 @@
     "UserName": "jdg",
     "Password": "7596",
     "QueueName": "test-queue"
+  },
+  "RetryOption": {
+    "RetryCount": 5
   }
 }
