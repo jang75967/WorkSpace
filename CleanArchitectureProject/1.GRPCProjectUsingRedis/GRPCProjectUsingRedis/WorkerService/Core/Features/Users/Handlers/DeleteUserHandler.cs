@@ -24,6 +24,7 @@ namespace WorkerService.Core.Features.Users.Handlers
                     await _userRepository.DeleteUserAsync(user.Id, cancellationToken);
 
                     // queue service
+                    //_queue.Dequeue(cancellationToken);
                     await _queue.DequeueAsync(cancellationToken);
                     return user.Id;
                 },

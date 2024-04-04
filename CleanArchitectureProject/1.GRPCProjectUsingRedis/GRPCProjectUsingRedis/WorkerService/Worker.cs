@@ -15,6 +15,7 @@ namespace GRPCProejctUsingRedis
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
+            //_queue.Dequeue();
             var result = _queue.DequeueAsync(stoppingToken);
             while (!stoppingToken.IsCancellationRequested)
             {

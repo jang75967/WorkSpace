@@ -23,6 +23,7 @@ namespace WorkerService.Core.Features.Users.Handlers
             await _userRepository.AddUserAsync(request.User, cancellationToken);
 
             // queue service
+            //_queue.Enqueue(request.User.Name, cancellationToken);
             await _queue.EnqueueAsync(request.User.Name, cancellationToken);
 
             return Option<User>.Some(request.User);
