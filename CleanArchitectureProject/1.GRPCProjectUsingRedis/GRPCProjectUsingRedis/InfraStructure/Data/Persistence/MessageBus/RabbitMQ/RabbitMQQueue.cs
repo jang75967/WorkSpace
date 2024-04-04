@@ -59,6 +59,7 @@ namespace InfraStructure.Data.Persistence.MessageBus.RabbitMQ
 
         public string Dequeue(CancellationToken cancellationToken = default)
         {
+            // 메시지 소비 (동기)
             BasicGetResult result = _model.BasicGet(_queueName, autoAck: false);
 
             if (result is null)
@@ -175,14 +176,13 @@ namespace InfraStructure.Data.Persistence.MessageBus.RabbitMQ
                     // 오류 발생 시 TaskCompletionSource를 통해 예외를 설정
                     tcs.TrySetException(ex);
                 }
-                finally
-                {
-                    _model.BasicConsume(
-                        queue: _queueName,
-                        autoAck: false,
-                        consumer: consumer);
-                }
             };
+
+            // 메시지 소비 (비동기)
+            _model.BasicConsume(
+                queue: _queueName,
+                autoAck: false,
+                consumer: consumer);
 
             // 취소 요청이 들어오면 Task가 취소되도록 등록
             cancellationToken.Register(() => tcs.TrySetCanceled());
