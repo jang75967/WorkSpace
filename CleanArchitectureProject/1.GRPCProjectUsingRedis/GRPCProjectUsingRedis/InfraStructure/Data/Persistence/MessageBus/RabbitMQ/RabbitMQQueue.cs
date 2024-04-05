@@ -59,11 +59,10 @@ namespace InfraStructure.Data.Persistence.MessageBus.RabbitMQ
 
         public string Dequeue(CancellationToken cancellationToken = default)
         {
-            // 메시지 소비 (동기)
-            BasicGetResult result = _model.BasicGet(_queueName, autoAck: false);
-
-            if (result is null)
-                throw new InvalidOperationException("Queue is empty.");
+            // 메시지를 수동으로 큐에서 소비
+            // 호출할 때마다 큐에서 메시지를 하나씩 가져옴. (polling 방식으로 큐를 주기적으로 확인하여 메시지 소비)
+            // 단일 메시지 소비 : 한 번의 호출로 한 개의 메시지만 소비 가능
+            BasicGetResult result = _model.BasicGet(_queueName, autoAck: false) ?? throw new InvalidOperationException("Queue is empty.");
 
             try
             {
@@ -178,7 +177,9 @@ namespace InfraStructure.Data.Persistence.MessageBus.RabbitMQ
                 }
             };
 
-            // 메시지 소비 (비동기)
+            // 메시지가 큐에 도착할 때마다 실시간으로 큐에서 연속적 소비 (시간 지연 최소화)
+            // 서버와 연결이 유지되는 동안 메시지를 지속적으로 수신하도록 구독, 메시지를 가져오기 위해 수동으로 호출할 필요가 없음
+            // 메시지가 큐에 도착하면 자동으로 consumer에게 전달되고, 전달된 메시지는 Received 이벤트 핸들러에서 처리 가능
             _model.BasicConsume(
                 queue: _queueName,
                 autoAck: false,
