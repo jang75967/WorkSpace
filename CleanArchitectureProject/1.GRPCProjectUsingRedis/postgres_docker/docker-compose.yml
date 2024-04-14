@@ -1,0 +1,40 @@
+version: "3"
+services:
+  postgres:
+    image: postgres:latest
+    restart: always
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      PGDATA: ${PGDATA}
+    volumes:
+      - jdgpostgres_volume:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  pgadmin4:
+    image: elestio/pgadmin:latest
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+      PGADMIN_LISTEN_PORT: ${PGADMIN_LISTEN_PORT}
+    ports:
+      - "${PGADMIN_LISTEN_PORT}:8080"
+    volumes:
+      - jdgpgadmin_volume:/var/lib/pgadmin
+
+volumes:
+  jdgpostgres_volume:
+    driver: local
+    driver_opts:
+      type: none # 실제 파일 시스템 타입이 아닌 바운드 마운트
+      o: bind # 바인드 마운트 옵션 활성화
+      device: ${VOLUME_PATH_DOCKER}/postgres
+  jdgpgadmin_volume:
+    driver: local
+    driver_opts:
+      type: none # 실제 파일 시스템 타입이 아닌 바운드 마운트
+      o: bind # 바인드 마운트 옵션 활성화
+      device: ${VOLUME_PATH_DOCKER}/pgadmin
