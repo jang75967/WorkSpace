@@ -7,7 +7,7 @@ namespace WorkerService.Extensions
     {
         public static IServiceCollection AddRepository(this IServiceCollection services)
         {
-            services.AddSingleton<IUserRepository, FakeRepsitory>();
+            services.AddSingleton<IUserRepository, FakeUserRepsitory>();
 
             return services;
         }

@@ -1,34 +1,14 @@
 ﻿using Application;
 using Domain.Entities;
+using InfraStructure.Data.EntityDatas;
 using LanguageExt;
 using static LanguageExt.Prelude;
 
 namespace InfraStructrue.Data.Repositories
 {
-    public class FakeRepsitory : IUserRepository
+    public class FakeUserRepsitory : IUserRepository
     {
-        private List<Option<User>> _users = new List<Option<User>>()
-        {
-            Some(new User
-            {
-                Id = 1,
-                Email = "jdg1@gmail.com",
-                Name = "jdg1",
-            }),
-            Some(new User
-            {
-                Id = 2,
-                Email = "jdg2@gmail.com",
-                Name = "jdg2",
-            }),
-            Some(new User
-            {
-                Id = 3,
-                Email = "jdg3@gmail.com",
-                Name = "jdg3",
-            }),
-            None,
-        };
+        private List<Option<User>> _users = UserEntityDatas.Initialize().ToList();
 
         #region Synchronous
 
