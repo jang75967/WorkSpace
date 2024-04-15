@@ -27,10 +27,10 @@ namespace InfraStructrue.Data.Repositories
             _users.Add(Some(user));
         }
 
-        public void UpdateUser(int id, User newUser, CancellationToken cancellationToken = default)
+        public void UpdateUser(User newUser, CancellationToken cancellationToken = default)
         {
             var userToUpdateOption = _users.FirstOrDefault(userOption => userOption.Match(
-                Some: user => user.Id == id,
+                Some: user => user.Id == newUser.Id,
                 None: () => false));
 
             if (userToUpdateOption.IsSome)
@@ -38,7 +38,7 @@ namespace InfraStructrue.Data.Repositories
                 _users = _users.Select(userOption => userOption.Match(
                     Some: user =>
                     {
-                        if (user.Id == id)
+                        if (user.Id == newUser.Id)
                         {
                             return Option<User>.Some(newUser);
                         }
@@ -49,7 +49,7 @@ namespace InfraStructrue.Data.Repositories
             else
             {
                 // None일 경우, 예외를 던짐
-                throw new KeyNotFoundException($"User with ID {id} not found.");
+                throw new KeyNotFoundException($"User with ID {newUser.Id} not found.");
             }
         }
 
@@ -93,10 +93,10 @@ namespace InfraStructrue.Data.Repositories
             await Task.CompletedTask;
         }
 
-        public async Task UpdateUserAsync(int id, User newUser, CancellationToken cancellationToken = default)
+        public async Task UpdateUserAsync(User newUser, CancellationToken cancellationToken = default)
         {
             var userToUpdateOption = _users.FirstOrDefault(userOption => userOption.Match(
-                Some: user => user.Id == id,
+                Some: user => user.Id == newUser.Id,
                 None: () => false));
 
             if (userToUpdateOption.IsSome)
@@ -104,7 +104,7 @@ namespace InfraStructrue.Data.Repositories
                 _users = _users.Select(userOption => userOption.Match(
                     Some: user =>
                     {
-                        if (user.Id == id)
+                        if (user.Id == newUser.Id)
                         {
                             return Option<User>.Some(newUser);
                         }
@@ -115,7 +115,7 @@ namespace InfraStructrue.Data.Repositories
             else
             {
                 // None일 경우, 예외를 던짐
-                throw new KeyNotFoundException($"User with ID {id} not found.");
+                throw new KeyNotFoundException($"User with ID {newUser.Id} not found.");
             }
 
             await Task.CompletedTask;
