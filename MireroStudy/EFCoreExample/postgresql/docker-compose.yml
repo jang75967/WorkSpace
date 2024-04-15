@@ -1,0 +1,38 @@
+version: "3.4"
+
+services:
+    postgres:
+        image: postgres
+        container_name: postgres
+        restart: always
+        environment:
+            - POSTGRES_USER=mirero
+            - POSTGRES_PASSWORD=system
+            - POSTGRES_DB=adc
+        ports:
+            - "5432:5432"
+        networks:
+            - mirero_net
+        volumes:
+            - c:/postgresql/data/:/docker-entrypoint-initdb.d/
+            - c:/postgresql/data/:/var/lib/postgresql/data
+        labels:
+            group: "system"
+
+    pgadmin:
+        container_name: pgadmin
+        image: dpage/pgadmin4
+        restart: always
+        ports:
+            - 8088:80
+        networks:
+            - mirero_net
+        environment:
+            - PGADMIN_DEFAULT_EMAIL=mirero@mail.com
+            - PGADMIN_DEFAULT_PASSWORD=system
+        labels:
+            group: "system"
+
+networks:
+    mirero_net:
+        name: mirero_net
