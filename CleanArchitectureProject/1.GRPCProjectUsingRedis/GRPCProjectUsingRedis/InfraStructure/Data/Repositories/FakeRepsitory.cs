@@ -47,6 +47,32 @@ namespace InfraStructrue.Data.Repositories
             _users.Add(Some(user));
         }
 
+        public void UpdateUser(int id, User newUser, CancellationToken cancellationToken = default)
+        {
+            var userToUpdateOption = _users.FirstOrDefault(userOption => userOption.Match(
+                Some: user => user.Id == id,
+                None: () => false));
+
+            if (userToUpdateOption.IsSome)
+            {
+                _users = _users.Select(userOption => userOption.Match(
+                    Some: user =>
+                    {
+                        if (user.Id == id)
+                        {
+                            return Option<User>.Some(newUser);
+                        }
+                        return Option<User>.Some(user);
+                    },
+                    None: () => Option<User>.None)).ToList();
+            }
+            else
+            {
+                // None일 경우, 예외를 던짐
+                throw new KeyNotFoundException($"User with ID {id} not found.");
+            }
+        }
+
         public void DeleteUser(int id, CancellationToken cancellationToken = default)
         {
             // id 일치하면 true, Option이 none이면 false 반환
@@ -84,6 +110,34 @@ namespace InfraStructrue.Data.Repositories
         public async Task AddUserAsync(User user, CancellationToken cancellationToken = default)
         {
             _users.Add(Some(user));
+            await Task.CompletedTask;
+        }
+
+        public async Task UpdateUserAsync(int id, User newUser, CancellationToken cancellationToken = default)
+        {
+            var userToUpdateOption = _users.FirstOrDefault(userOption => userOption.Match(
+                Some: user => user.Id == id,
+                None: () => false));
+
+            if (userToUpdateOption.IsSome)
+            {
+                _users = _users.Select(userOption => userOption.Match(
+                    Some: user =>
+                    {
+                        if (user.Id == id)
+                        {
+                            return Option<User>.Some(newUser);
+                        }
+                        return Option<User>.Some(user);
+                    },
+                    None: () => Option<User>.None)).ToList();
+            }
+            else
+            {
+                // None일 경우, 예외를 던짐
+                throw new KeyNotFoundException($"User with ID {id} not found.");
+            }
+
             await Task.CompletedTask;
         }
 
