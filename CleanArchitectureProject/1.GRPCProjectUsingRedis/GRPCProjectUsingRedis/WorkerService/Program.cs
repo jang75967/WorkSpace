@@ -16,6 +16,7 @@ namespace WorkerService
             builder.Services.AddRepository();
             builder.Services.AddMessageBusOption();
             builder.Services.AddQueue();
+            builder.Services.AddEFCore();
             builder.Services.AddMediatR();
             builder.Services.AddWorkerService();
 

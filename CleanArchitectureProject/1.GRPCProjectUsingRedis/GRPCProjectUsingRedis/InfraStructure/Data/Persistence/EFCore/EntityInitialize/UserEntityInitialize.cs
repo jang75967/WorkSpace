@@ -8,7 +8,8 @@ namespace InfraStructure.Data.Persistence.EFCore.EntityInitialize
     {
         public static ModelBuilder HasUsers(this ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<User>().HasData(UserEntityDatas.Initialize());
+            var users = UserEntityDatas.Initialize().Somes();
+            modelBuilder.Entity<User>().HasData(users);
             return modelBuilder;
         }
     }

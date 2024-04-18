@@ -8,7 +8,8 @@ namespace InfraStructure.Data.Persistence.EFCore.EntityInitialize
     {
         public static ModelBuilder HasGroups(this ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Group>().HasData(GroupEntityDatas.Initialize());
+            var groups = GroupEntityDatas.Initialize().Somes();
+            modelBuilder.Entity<Group>().HasData(groups);
             return modelBuilder;
         }
     }

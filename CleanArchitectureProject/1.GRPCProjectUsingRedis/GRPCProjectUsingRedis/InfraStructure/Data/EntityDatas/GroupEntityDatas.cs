@@ -1,28 +1,30 @@
 ﻿using Domain.Entities;
+using LanguageExt;
+using static LanguageExt.Prelude;
 
 namespace InfraStructure.Data.EntityDatas
 {
-    public static class GroupEntityDatas
+    public class GroupEntityDatas
     {
-        public static IEnumerable<Group> Initialize()
+        public static IEnumerable<Option<Group>> Initialize()
         {
-            return new List<Group>()
+            return new List<Option<Group>>()
             {
-                new()
+                Some(new Group
                 {
                     Id = 1,
                     Name = "축구"
-                },
-                new()
+                }),
+                Some(new Group
                 {
                     Id= 2,
                     Name = "농구"
-                },
-                new()
+                }),
+                Some(new Group
                 {
                     Id = 3,
                     Name = "야구"
-                }
+                })
             };
         }
     }

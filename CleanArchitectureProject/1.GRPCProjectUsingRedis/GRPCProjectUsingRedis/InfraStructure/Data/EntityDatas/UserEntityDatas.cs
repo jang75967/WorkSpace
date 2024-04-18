@@ -4,7 +4,7 @@ using static LanguageExt.Prelude;
 
 namespace InfraStructure.Data.EntityDatas
 {
-    public static class UserEntityDatas
+    public class UserEntityDatas
     {
         public static IEnumerable<Option<User>> Initialize()
         {
