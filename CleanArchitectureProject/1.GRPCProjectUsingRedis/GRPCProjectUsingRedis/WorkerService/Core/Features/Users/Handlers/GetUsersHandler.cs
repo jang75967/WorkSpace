@@ -1,4 +1,4 @@
-﻿using Application;
+﻿using Application.Persistences;
 using Domain.Entities;
 using LanguageExt;
 using MediatR;
@@ -17,7 +17,7 @@ namespace WorkerService.Core.Features.Users.Handlers
 
         public async Task<IEnumerable<Option<User>>> Handle(GetUsersQuery request, CancellationToken cancellationToken)
         {
-            return await _userRepository.GetUsersAsync(cancellationToken);
+            return await _userRepository.GetAllAsync(cancellationToken);
         }
     }
 }

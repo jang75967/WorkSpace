@@ -1,4 +1,4 @@
-﻿using Application;
+﻿using Application.Mappers;
 using AutoMapper;
 using InfraStructrue.Mappers.AutoMapper.Configuration;
 using Microsoft.Extensions.DependencyInjection;

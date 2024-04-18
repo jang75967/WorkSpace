@@ -1,4 +1,4 @@
-﻿using Application;
+﻿using Application.Mappers;
 using AutoMapper;
 
 namespace InfraStructrue.Mappers.AutoMapper

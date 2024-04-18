@@ -1,4 +1,4 @@
-﻿using Application;
+﻿using Application.Persistences;
 using Domain.Entities;
 using LanguageExt;
 using MediatR;
@@ -20,7 +20,7 @@ namespace WorkerService.Core.Features.Users.Handlers
         public async Task<Option<User>> Handle(AddUserCommand request, CancellationToken cancellationToken)
         {
             // grpc response
-            await _userRepository.AddUserAsync(request.User, cancellationToken);
+            await _userRepository.AddAsync(request.User, cancellationToken);
 
             // queue service
             //_queue.Enqueue(request.User.Name, cancellationToken);

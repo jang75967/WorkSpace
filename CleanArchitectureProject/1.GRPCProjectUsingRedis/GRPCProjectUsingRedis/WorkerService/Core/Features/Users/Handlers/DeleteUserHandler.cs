@@ -1,4 +1,4 @@
-﻿using Application;
+﻿using Application.Persistences;
 using MediatR;
 using WorkerService.Core.Features.Users.Commands;
 
@@ -17,11 +17,11 @@ namespace WorkerService.Core.Features.Users.Handlers
 
         public async Task<int> Handle(DeleteUserCommand request, CancellationToken cancellationToken)
         {
-            var result = await _userRepository.GetUserByIdAsync(request.Id, cancellationToken).MatchAsync(
+            var result = await _userRepository.GetByIdAsync(request.Id, cancellationToken).MatchAsync(
                 Some: async user =>
                 {
                     // grpc response
-                    await _userRepository.DeleteUserAsync(user.Id, cancellationToken);
+                    await _userRepository.DeleteAsync(user.Id, cancellationToken);
 
                     // queue service
                     //_queue.Dequeue(cancellationToken);

@@ -1,4 +1,4 @@
-﻿using Application;
+﻿using Application.Persistences;
 using InfraStructrue.Data.Persistence.MessageBus.Redis;
 using InfraStructure.Data.Persistence.EFCore;
 using InfraStructure.Data.Persistence.MessageBus.RabbitMQ;

@@ -1,4 +1,4 @@
-﻿namespace Application
+﻿namespace Application.Mappers
 {
     public interface ICustomMapper
     {

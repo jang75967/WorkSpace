@@ -1,4 +1,4 @@
-﻿using Application;
+﻿using Application.Persistences;
 using Domain.Entities;
 using InfraStructure.Data.EntityDatas;
 using LanguageExt;
@@ -12,22 +12,22 @@ namespace InfraStructrue.Data.Repositories
 
         #region Synchronous
 
-        public IEnumerable<Option<User>> GetUsers(CancellationToken cancellationToken = default)
+        public IEnumerable<Option<User>> GetAll(CancellationToken cancellationToken = default)
         {
             return _users;
         }
 
-        public Option<User> GetUserById(int id, CancellationToken cancellationToken = default)
+        public Option<User> GetById(int id, CancellationToken cancellationToken = default)
         {
             return _users.FirstOrDefault(userOption => userOption.Match(Some: user => user.Id == id, None: () => false));
         }
 
-        public void AddUser(User user, CancellationToken cancellationToken = default)
+        public void Add(User user, CancellationToken cancellationToken = default)
         {
             _users.Add(Some(user));
         }
 
-        public void UpdateUser(User newUser, CancellationToken cancellationToken = default)
+        public void Update(User newUser, CancellationToken cancellationToken = default)
         {
             var userToUpdateOption = _users.FirstOrDefault(userOption => userOption.Match(
                 Some: user => user.Id == newUser.Id,
@@ -53,7 +53,7 @@ namespace InfraStructrue.Data.Repositories
             }
         }
 
-        public void DeleteUser(int id, CancellationToken cancellationToken = default)
+        public void Delete(int id, CancellationToken cancellationToken = default)
         {
             // id 일치하면 true, Option이 none이면 false 반환
             var userToRemoveOption = _users.FirstOrDefault(userOption => userOption.Match(
@@ -76,24 +76,24 @@ namespace InfraStructrue.Data.Repositories
 
         #region Asynchronous
 
-        public async Task<IEnumerable<Option<User>>> GetUsersAsync(CancellationToken cancellationToken = default)
+        public async Task<IEnumerable<Option<User>>> GetAllAsync(CancellationToken cancellationToken = default)
         {
             return await Task.FromResult(_users);
         }
 
-        public async Task<Option<User>> GetUserByIdAsync(int id, CancellationToken cancellationToken = default)
+        public async Task<Option<User>> GetByIdAsync(int id, CancellationToken cancellationToken = default)
         {
             // id 일치하면 true, Option이 none이면 false 반환
             return await Task.FromResult(_users.FirstOrDefault(userOption => userOption.Match(Some: user => user.Id == id, None: () => false)));
         }
 
-        public async Task AddUserAsync(User user, CancellationToken cancellationToken = default)
+        public async Task AddAsync(User user, CancellationToken cancellationToken = default)
         {
             _users.Add(Some(user));
             await Task.CompletedTask;
         }
 
-        public async Task UpdateUserAsync(User newUser, CancellationToken cancellationToken = default)
+        public async Task UpdateAsync(User newUser, CancellationToken cancellationToken = default)
         {
             var userToUpdateOption = _users.FirstOrDefault(userOption => userOption.Match(
                 Some: user => user.Id == newUser.Id,
@@ -121,7 +121,7 @@ namespace InfraStructrue.Data.Repositories
             await Task.CompletedTask;
         }
 
-        public async Task DeleteUserAsync(int id, CancellationToken cancellationToken = default)
+        public async Task DeleteAsync(int id, CancellationToken cancellationToken = default)
         {
             // id 일치하면 true, Option이 none이면 false 반환
             var userToRemoveOption = _users.FirstOrDefault(userOption => userOption.Match(

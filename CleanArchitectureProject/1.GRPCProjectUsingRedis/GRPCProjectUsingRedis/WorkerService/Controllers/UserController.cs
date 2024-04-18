@@ -1,5 +1,5 @@
 ﻿using Api.Users;
-using Application;
+using Application.Mappers;
 using Grpc.Core;
 using MediatR;
 using WorkerService.Core.Features.Users.Commands;
