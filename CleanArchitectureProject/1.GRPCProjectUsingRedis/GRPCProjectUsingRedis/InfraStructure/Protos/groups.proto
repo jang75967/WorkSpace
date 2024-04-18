@@ -1,0 +1,54 @@
+syntax = "proto3";
+package api.groups;
+
+option csharp_namespace = "Api.Groups";
+
+service GroupsGrpc {
+  rpc GetGroups (GetGroupRequest) returns (GetGroupReply);
+  rpc AddGroup (AddGroupRequest) returns (AddGroupReply);
+  rpc UpdateGroup (UpdateGroupRequest) returns (UpdateGroupReply);
+  rpc DeleteGroup (DeleteGroupRequest) returns (DeleteGroupReply);
+}
+
+message Group {
+  int32 id = 1;
+  string name = 2;
+}
+
+message GetGroupRequest {
+
+}
+
+message AddGroupRequest {
+  int32 id = 1;
+  string name = 2;
+}
+
+message UpdateGroupRequest {
+  int32 id = 1;
+  string name = 2;
+}
+
+message DeleteGroupRequest {
+  int32 id = 1;
+}
+
+message GetGroupReply {
+  repeated Group Groups = 1;
+}
+
+message AddGroupReply {
+  repeated Group Groups = 1;
+}
+
+message UpdateGroupReply {
+  repeated Group Groups = 1;
+}
+
+message DeleteGroupReply {
+  // 작업의 성공 여부를 나타내는 상태 코드
+  //int32 status = 1;
+  // 상태 메시지, 예를 들어 "Success" 또는 "Failure: Group not found"
+  //string message = 2;
+  repeated Group Groups = 1;
+}

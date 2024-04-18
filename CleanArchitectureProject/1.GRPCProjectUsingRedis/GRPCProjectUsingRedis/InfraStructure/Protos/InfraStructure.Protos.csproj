@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="groups.proto" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Google.Protobuf" Version="3.26.0" />
     <PackageReference Include="Grpc.AspNetCore" Version="2.61.0" />
     <PackageReference Include="Grpc.Net.ClientFactory" Version="2.61.0" />
@@ -16,6 +20,11 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
+    <Protobuf Include="groups.proto" Access="Public" GrpcServices="Both" ProtoCompile="True">
+      <OutputDir>obj\Debug\net8.0\</OutputDir>
+      <CompileOutputs>True</CompileOutputs>
+      <Generator>MSBuild:Compile</Generator>
+    </Protobuf>
     <Protobuf Include="users.proto">
       <Access>Public</Access>
       <ProtoCompile>True</ProtoCompile>

@@ -9,6 +9,7 @@ namespace WorkerService.Extensions
         public static IEndpointRouteBuilder AddControllers(this IEndpointRouteBuilder app)
         {
             app.MapGrpcService<UserController>();
+            app.MapGrpcService<GroupController>();
 
             return app;
         }

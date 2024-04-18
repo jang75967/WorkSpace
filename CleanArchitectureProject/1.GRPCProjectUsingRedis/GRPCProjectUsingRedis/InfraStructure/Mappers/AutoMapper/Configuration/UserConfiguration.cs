@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using DtoUser = Api.Users.User;
 using EntityUser = Domain.Entities.User;
+using DtoGroup = Api.Groups.Group;
+using EntityGroup = Domain.Entities.Group;
 
 namespace InfraStructrue.Mappers.AutoMapper.Configuration
 {
@@ -9,6 +11,7 @@ namespace InfraStructrue.Mappers.AutoMapper.Configuration
         public static IMapperConfigurationExpression AddUser(this IMapperConfigurationExpression cfg)
         {
             cfg.CreateMap<EntityUser, DtoUser>().ReverseMap(); // two way
+            cfg.CreateMap<EntityGroup, DtoGroup>().ReverseMap();
 
             //// Option<User> -> DtoUser 변환
             //cfg.CreateMap<Option<EntityUser>, DtoUser>()
