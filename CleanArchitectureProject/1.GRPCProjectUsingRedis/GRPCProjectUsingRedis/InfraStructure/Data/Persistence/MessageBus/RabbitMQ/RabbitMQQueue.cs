@@ -145,15 +145,14 @@ namespace InfraStructure.Data.Persistence.MessageBus.RabbitMQ
         public async Task<string> DequeueAsync(CancellationToken cancellationToken = default)
         {
             var tcs = new TaskCompletionSource<string>();
-            string message = "";
-
             var consumer = new EventingBasicConsumer(_model);
+            
             consumer.Received += (model, eventArgs) =>
             {
                 try
                 {
                     var body = eventArgs.Body.ToArray();
-                    message = Encoding.UTF8.GetString(body);
+                    string message = Encoding.UTF8.GetString(body);
                     Console.WriteLine($"Recevied: {message}");
 
                     // 메시지 처리 후 ack를 보내 큐에서 메시지 제거
@@ -167,6 +166,7 @@ namespace InfraStructure.Data.Persistence.MessageBus.RabbitMQ
                 catch (Exception ex)
                 {
                     Console.WriteLine($"Error processing message: {ex.Message}");
+
                     _model.BasicNack(
                         deliveryTag: eventArgs.DeliveryTag,
                         multiple: false,
@@ -185,10 +185,19 @@ namespace InfraStructure.Data.Persistence.MessageBus.RabbitMQ
                 autoAck: false,
                 consumer: consumer);
 
-            // 취소 요청이 들어오면 Task가 취소되도록 등록
-            cancellationToken.Register(() => tcs.TrySetCanceled());
+            using (cancellationToken.Register(() => tcs.TrySetCanceled())) 
+            {
+                var task = await Task.WhenAny(tcs.Task, Task.Delay(5000, cancellationToken));
 
-            return await tcs.Task;
+                if (task == tcs.Task)
+                {
+                    return await tcs.Task; // 메시지 수신 성공
+                }
+                else
+                {
+                    throw new TimeoutException("The operation has timed out."); // 타임아웃 발생
+                }
+            }
         }
 
         public async Task<long> GetQueueLengthAsync(CancellationToken cancellationToken = default)

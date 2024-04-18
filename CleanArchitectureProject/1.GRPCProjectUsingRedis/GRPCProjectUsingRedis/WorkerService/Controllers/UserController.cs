@@ -56,6 +56,24 @@ namespace WorkerService.Controllers
             });
         }
 
+        public override async Task<UpdateUserReply> UpdateUser(UpdateUserRequest request, ServerCallContext context)
+        {
+            await _mediator.Send(new UpdateUserCommand(new EntityUser
+            {
+                Id = request.Id,
+                Name = request.Name,
+                Email = request.Email,
+            }));
+
+            var entities = await _mediator.Send(new GetUsersQuery());
+            var dtos = _mapper.Map<IEnumerable<DtoUser>>(entities.Somes());
+
+            return await Task.FromResult(new UpdateUserReply()
+            {
+                Users = { dtos },
+            });
+        }
+
         public override async Task<DeleteUserReply> DeleteUser(DeleteUserRequest request, ServerCallContext context)
         {
             await _mediator.Send(new DeleteUserCommand(request.Id));

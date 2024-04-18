@@ -2,18 +2,18 @@
 
 namespace Application.Persistences
 {
-    public interface IBaseRepository<T> where T : class
+    public interface IBaseRepository<TEntity> where TEntity : class
     {
-        IEnumerable<Option<T>> GetAll(CancellationToken cancellationToken = default);
-        Option<T> GetById(int id, CancellationToken cancellationToken = default);
-        void Add(T entity, CancellationToken cancellationToken = default);
-        void Update(T newEntity, CancellationToken cancellationToken = default);
+        IEnumerable<Option<TEntity>> GetAll(CancellationToken cancellationToken = default);
+        Option<TEntity> GetById(int id, CancellationToken cancellationToken = default);
+        void Add(TEntity entity, CancellationToken cancellationToken = default);
+        void Update(TEntity newEntity, CancellationToken cancellationToken = default);
         void Delete(int id, CancellationToken cancellationToken = default);
 
-        Task<IEnumerable<Option<T>>> GetAllAsync(CancellationToken cancellationToken = default);
-        Task<Option<T>> GetByIdAsync(int id, CancellationToken cancellationToken = default);
-        Task AddAsync(T entity, CancellationToken cancellationToken = default);
-        Task UpdateAsync(T newEntity, CancellationToken cancellationToken = default);
+        Task<IEnumerable<Option<TEntity>>> GetAllAsync(CancellationToken cancellationToken = default);
+        Task<Option<TEntity>> GetByIdAsync(int id, CancellationToken cancellationToken = default);
+        Task AddAsync(TEntity entity, CancellationToken cancellationToken = default);
+        Task UpdateAsync(TEntity newEntity, CancellationToken cancellationToken = default);
         Task DeleteAsync(int id, CancellationToken cancellationToken = default);
     }
 }

@@ -8,9 +8,9 @@ namespace WorkerService.Core.Features.Users.Handlers
 {
     public class GetUsersHandler : IRequestHandler<GetUsersQuery, IEnumerable<Option<User>>>
     {
-        private readonly IUserRepository _userRepository;
+        private readonly IBaseRepository<User> _userRepository;
 
-        public GetUsersHandler(IUserRepository userRepository)
+        public GetUsersHandler(IBaseRepository<User> userRepository)
         {
             _userRepository = userRepository;
         }

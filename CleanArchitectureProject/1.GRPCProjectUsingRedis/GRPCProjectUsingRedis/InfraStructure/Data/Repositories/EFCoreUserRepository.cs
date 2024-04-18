@@ -7,6 +7,7 @@ using static LanguageExt.Prelude;
 
 namespace InfraStructure.Data.Repositories
 {
+    // 현재 사용 안함 (EFCoreRepository.cs 에서 공통으로 사용)
     public class EFCoreUserRepository : IUserRepository
     {
         private readonly ApplicationDbContext _dbContext;
@@ -62,14 +63,14 @@ namespace InfraStructure.Data.Repositories
         public async Task AddAsync(User user, CancellationToken cancellationToken = default)
         {
             var result = await _dbContext.Users.AddAsync(user, cancellationToken);
-            await _dbContext.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync(cancellationToken);
             await Task.CompletedTask; 
         }
 
         public async Task UpdateAsync(User newUser, CancellationToken cancellationToken = default)
         {
             var result = _dbContext.Users.Update(newUser).Entity;
-            await _dbContext.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync(cancellationToken);
             await Task.CompletedTask;
         }
 
@@ -81,7 +82,7 @@ namespace InfraStructure.Data.Repositories
                 Some: user =>
                 {
                     _dbContext.Users.Remove(user);
-                    _dbContext.SaveChangesAsync();
+                    _dbContext.SaveChangesAsync(cancellationToken);
                 },
                 None: () =>
                 {

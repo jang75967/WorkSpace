@@ -8,10 +8,10 @@ namespace WorkerService.Core.Features.Users.Handlers
 {
     public class AddUserHandler : IRequestHandler<AddUserCommand, Option<User>>
     {
-        private readonly IUserRepository _userRepository;
+        private readonly IBaseRepository<User> _userRepository;
         private readonly IQueue _queue;
 
-        public AddUserHandler(IUserRepository userRepository, IQueue queue)
+        public AddUserHandler(IBaseRepository<User> userRepository, IQueue queue)
         {
             _userRepository = userRepository;
             _queue = queue;

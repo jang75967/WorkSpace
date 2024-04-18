@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace InfraStructure.Data.Repositories
 {
+    // 현재 사용 안함 (EFCoreRepository.cs 에서 공통으로 사용)
     public class EFCoreGroupRepository : IGroupRepository
     {
         private readonly ApplicationDbContext _dbContext;

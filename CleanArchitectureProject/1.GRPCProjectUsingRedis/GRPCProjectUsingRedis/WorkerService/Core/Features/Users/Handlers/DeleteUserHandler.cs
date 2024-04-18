@@ -1,4 +1,5 @@
 ﻿using Application.Persistences;
+using Domain.Entities;
 using MediatR;
 using WorkerService.Core.Features.Users.Commands;
 
@@ -6,10 +7,10 @@ namespace WorkerService.Core.Features.Users.Handlers
 {
     public class DeleteUserHandler : IRequestHandler<DeleteUserCommand, int>
     {
-        private readonly IUserRepository _userRepository;
+        private readonly IBaseRepository<User> _userRepository;
         private readonly IQueue _queue;
 
-        public DeleteUserHandler(IUserRepository userRepository, IQueue queue)
+        public DeleteUserHandler(IBaseRepository<User> userRepository, IQueue queue)
         {
             _userRepository = userRepository;
             _queue = queue;

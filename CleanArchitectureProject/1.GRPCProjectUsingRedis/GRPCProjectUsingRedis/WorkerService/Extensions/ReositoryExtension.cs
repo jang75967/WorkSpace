@@ -1,5 +1,7 @@
 ﻿using Application.Persistences;
+using Domain.Entities;
 using InfraStructrue.Data.Repositories;
+using InfraStructure.Data.Repositories;
 
 namespace WorkerService.Extensions
 {
@@ -7,7 +9,10 @@ namespace WorkerService.Extensions
     {
         public static IServiceCollection AddRepository(this IServiceCollection services)
         {
-            services.AddSingleton<IUserRepository, FakeUserRepsitory>();
+            //services.AddSingleton<IUserRepository, FakeUserRepsitory>();
+
+            services.AddScoped<IBaseRepository<User>, EFCoreRepository<User>>();
+            services.AddScoped<IBaseRepository<Group>, EFCoreRepository<Group>>();
 
             return services;
         }
