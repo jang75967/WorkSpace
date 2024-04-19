@@ -16,7 +16,7 @@ namespace InfraStructure.Data.Repositories
             _dbContext = dbContext;
             _dbSet = _dbContext.Set<TEntity>();
         }
-        
+
         #region Synchronous
 
         public IEnumerable<Option<TEntity>> GetAll(CancellationToken cancellationToken = default)
@@ -63,13 +63,14 @@ namespace InfraStructure.Data.Repositories
         public async Task AddAsync(TEntity entity, CancellationToken cancellationToken = default)
         {
             await _dbSet.AddAsync(entity, cancellationToken);
-            await _dbContext.SaveChangesAsync(cancellationToken);
+            //await _dbContext.SaveChangesAsync(cancellationToken);
         }
 
         public async Task UpdateAsync(TEntity newEntity, CancellationToken cancellationToken = default)
         {
             _dbSet.Update(newEntity);
-            await _dbContext.SaveChangesAsync(cancellationToken);
+            await Task.CompletedTask;
+            //await _dbContext.SaveChangesAsync(cancellationToken);
         }
 
         public async Task DeleteAsync(int id, CancellationToken cancellationToken = default)
@@ -80,7 +81,7 @@ namespace InfraStructure.Data.Repositories
                 Some: entity =>
                 {
                     _dbSet.Remove(entity);
-                    _dbContext.SaveChangesAsync(cancellationToken);
+                    //_dbContext.SaveChangesAsync(cancellationToken);
                 },
                 None: () => throw new KeyNotFoundException($"No {typeof(TEntity).Name} found with ID {id}")
             );

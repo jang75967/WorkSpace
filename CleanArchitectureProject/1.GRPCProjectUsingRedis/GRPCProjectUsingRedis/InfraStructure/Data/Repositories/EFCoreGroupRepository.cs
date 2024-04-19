@@ -62,14 +62,14 @@ namespace InfraStructure.Data.Repositories
         public async Task AddAsync(Group group, CancellationToken cancellationToken = default)
         {
             var result = await _dbContext.Groups.AddAsync(group, cancellationToken);
-            await _dbContext.SaveChangesAsync();
+            //await _dbContext.SaveChangesAsync();
             await Task.CompletedTask;
         }
 
         public async Task UpdateAsync(Group newGroup, CancellationToken cancellationToken = default)
         {
             var result = _dbContext.Groups.Update(newGroup).Entity;
-            await _dbContext.SaveChangesAsync();
+            //await _dbContext.SaveChangesAsync();
             await Task.CompletedTask;
         }
 
@@ -81,7 +81,7 @@ namespace InfraStructure.Data.Repositories
                 Some: group =>
                 {
                     _dbContext.Groups.Remove(group);
-                    _dbContext.SaveChangesAsync();
+                    //_dbContext.SaveChangesAsync();
                 },
                 None: () =>
                 {

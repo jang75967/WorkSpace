@@ -63,14 +63,14 @@ namespace InfraStructure.Data.Repositories
         public async Task AddAsync(User user, CancellationToken cancellationToken = default)
         {
             var result = await _dbContext.Users.AddAsync(user, cancellationToken);
-            await _dbContext.SaveChangesAsync(cancellationToken);
+            //await _dbContext.SaveChangesAsync(cancellationToken);
             await Task.CompletedTask; 
         }
 
         public async Task UpdateAsync(User newUser, CancellationToken cancellationToken = default)
         {
             var result = _dbContext.Users.Update(newUser).Entity;
-            await _dbContext.SaveChangesAsync(cancellationToken);
+            //await _dbContext.SaveChangesAsync(cancellationToken);
             await Task.CompletedTask;
         }
 
@@ -82,7 +82,7 @@ namespace InfraStructure.Data.Repositories
                 Some: user =>
                 {
                     _dbContext.Users.Remove(user);
-                    _dbContext.SaveChangesAsync(cancellationToken);
+                    //_dbContext.SaveChangesAsync(cancellationToken);
                 },
                 None: () =>
                 {
