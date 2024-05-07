@@ -1,0 +1,3 @@
+﻿DecoratorTest.Test();
+
+Console.ReadLine();
