@@ -1,7 +1,7 @@
 ﻿using Api.Groups;
 using Api.Users;
 using Grpc.Net.Client;
-//rebasetset
+//rebasetset2
 namespace GrpcClient
 {
     internal class Program
