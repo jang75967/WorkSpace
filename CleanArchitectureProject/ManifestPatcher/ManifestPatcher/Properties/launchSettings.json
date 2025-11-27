@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "ManifestPatcher": {
+      "commandName": "Project",
+      "commandLineArgs": "\"D:\\Publish\\Client 배포\\Test2.zip\""
+    }
+  }
+}
