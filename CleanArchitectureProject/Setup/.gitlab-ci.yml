@@ -1,0 +1,326 @@
+variables:
+  ESC: "`e[0m"
+  RED: "`e[91m"
+  YELLOW: "`e[93m"
+  CYAN: "`e[96m"
+  GIT_DEPTH: "0"
+
+stages:
+  - init
+  - test
+  - build
+  - deploy
+
+workflow:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_TAG
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_PIPELINE_SOURCE == "push" && $CI_OPEN_MERGE_REQUESTS == null
+    - when: never
+
+check-info:
+  tags:
+    - build
+  stage: init
+  timeout: 5m
+  before_script:
+    - chcp 65001
+    - $OutputEncoding = [System.Console]::OutputEncoding = [System.Console]::InputEncoding = [System.Text.Encoding]::UTF8
+    - $PSDefaultParameterValues['*:Encoding'] = 'utf8'
+    - $env:LC_ALL='C.UTF-8'
+    - chcp
+    - "dir env:"
+  script:
+    # BUILDTYPE 체크 reference commit의 branch name에서 두 번째 자리의 항목으로 타입 체크
+    # all/server/client 로 반응함
+    # branch name이 feature/server/16-server-ci-dc 와 같은 경우 BUILDTYPE=server
+    - $SPLITS = $CI_COMMIT_REF_NAME -split "/"
+    - $BUILDTYPE = $SPLITS[1]
+    - echo "BUILDTYPE=$BUILDTYPE" > check.env
+    # Git TAG를 통한 Version 확인
+    # Git TAG는 "2024.12.9.1-29-g73b3095" 처럼 <TAG>-<TAG 이후 COMMIT 수>-<현재 COMMIT ID> 형태로 이루어져 있음
+    # TAG와 함께 PUSH 한 0 번째 COMMIT 만 DEPLOY 하도록 TAGGEDVERSION 작성
+    - $VERSION=(& git describe --abbrev=7 --long --tags || $null)
+    - if ( -not $VERSION ) { Write-Host $CYAN"Version tag not found."$ESC; echo "TAGGEDVERSION=$null" >> check.env; Exit 0 }
+    - $VERSION_SPLIT = $VERSION -split "-"
+    - if ($VERSION_SPLIT[1] -ne "0") { Write-Host $CYAN"New tag not detected."$ESC; echo "TAGGEDVERSION=$null" >> check.env; Exit 0 }
+
+    - $TAGGEDVERSION = $VERSION_SPLIT[0]
+    - Write-Host $CYAN"Ver = $TAGGEDVERSION"$ESC
+    - echo "TAGGEDVERSION=$TAGGEDVERSION" >> check.env
+  artifacts:
+    reports:
+      dotenv: check.env
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "push"
+      when: on_success
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      when: on_success
+    - when: never
+
+test-unit:
+  tags:
+    - build
+  stage: test
+  timeout: 10m
+  before_script:
+    - chcp 65001
+    - $OutputEncoding = [System.Console]::OutputEncoding = [System.Console]::InputEncoding = [System.Text.Encoding]::UTF8
+    - $PSDefaultParameterValues['*:Encoding'] = 'utf8'
+    - $env:LC_ALL='C.UTF-8'
+  script:
+    - .\Setup\run-unit-tests.ps1
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "push"
+      when: on_success
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      when: on_success
+    - when: never
+
+test-integrated:
+  tags:
+    - build
+  stage: test
+  timeout: 15m
+  before_script:
+    - chcp 65001
+    - $OutputEncoding = [System.Console]::OutputEncoding = [System.Console]::InputEncoding = [System.Text.Encoding]::UTF8
+    - $PSDefaultParameterValues['*:Encoding'] = 'utf8'
+    - $env:LC_ALL='C.UTF-8'
+  script:
+    - .\Setup\run-integrated-tests.ps1
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "push"
+      when: on_success
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      when: on_success
+    - when: never
+
+test-project-reference:
+  tags:
+    - build
+  stage: test
+  timeout: 10m
+  before_script:
+    - chcp 65001
+    - $OutputEncoding = [System.Console]::OutputEncoding = [System.Console]::InputEncoding = [System.Text.Encoding]::UTF8
+    - $PSDefaultParameterValues['*:Encoding'] = 'utf8'
+    - $env:LC_ALL='C.UTF-8'
+  script:
+    - .\Setup\run-project-reference-tests.ps1
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "push"
+      when: on_success
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      when: on_success
+    - when: never
+
+build-server:
+  tags:
+    - build
+    - server
+  dependencies:
+    - check-info
+    - test-unit
+    - test-integrated
+    - test-project-reference
+  needs:
+    - check-info
+    - test-unit
+    - test-integrated
+    - test-project-reference
+  stage: build
+  interruptible: true
+  timeout: 15m
+  retry:
+    max: 2
+    when:
+      - runner_system_failure
+      - stuck_or_timeout_failure
+      - job_execution_timeout
+      - unknown_failure
+      - data_integrity_failure
+  before_script:
+    - chcp 65001
+    - $OutputEncoding = [System.Console]::OutputEncoding = [System.Console]::InputEncoding = [System.Text.Encoding]::UTF8
+    - $PSDefaultParameterValues['*:Encoding'] = 'utf8'
+    - $env:LC_ALL='C.UTF-8'
+  script:
+    #- if ( $BUILDTYPE -ne "server" -and $BUILDTYPE -ne "all" ) { Write-Host $YELLOW"There are no changes to server code."$ESC; Exit 0 }
+    # 서버 빌드
+    - cd Setup
+    - '& .\build-server.ps1'
+    - if ( $LastExitCode -ne 0 ) { Write-Host $RED"Build-all command has exception"$ESC; Exit 1 }
+    # Deploy 준비 - TAG를 통해 VERSION이 Define 되지 않으면 중단
+    - if ( -not $TAGGEDVERSION -or $TAGGEDVERSION -eq "") { Exit 0 }
+    - $RELEASEDIR = "D:\Build\Server\$TAGGEDVERSION"
+    - if (Test-Path $RELEASEDIR) { Remove-Item $RELEASEDIR -Recurse }
+
+    - New-Item -ItemType Directory -Path $RELEASEDIR
+    - Copy-Item -Force -Recurse -Path ./config -Destination $RELEASEDIR
+    - Copy-Item -Force -Recurse -Path ./dms.* -Destination $RELEASEDIR
+    - echo "RELEASE_SERVER_DIR=$RELEASEDIR" >> buildserver.env
+  artifacts:
+    reports:
+      dotenv: buildserver.env
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "push"
+      when: on_success
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      when: on_success
+    - when: never
+
+build-client:
+  tags:
+    - build
+    - client
+  dependencies:
+    - check-info
+    - test-unit
+    - test-integrated
+    - test-project-reference
+  needs:
+    - check-info
+    - test-unit
+    - test-integrated
+    - test-project-reference
+  stage: build
+  interruptible: true
+  timeout: 15m
+  retry:
+    max: 2
+    when:
+      - runner_system_failure
+      - stuck_or_timeout_failure
+      - job_execution_timeout
+      - unknown_failure
+      - data_integrity_failure
+  before_script:
+    - chcp 65001
+    - $OutputEncoding = [System.Console]::OutputEncoding = [System.Console]::InputEncoding = [System.Text.Encoding]::UTF8
+    - $PSDefaultParameterValues['*:Encoding'] = 'utf8'
+    - $env:LC_ALL='C.UTF-8'
+  script:
+    # 클라이언트 빌드
+    - Write-Host $CYAN"Build stage will be ready soon."$ESC
+    - $BUILDDIR = "D:\DMS25-Client"
+    - if ( Test-Path $BUILDDIR ) { Remove-Item -Recurse $BUILDDIR }
+    - cd Setup
+    - '& .\build-client.ps1 -OutputPath $BUILDDIR'
+    - Write-Host $CYAN"Client build completed. Output -> $BUILDDIR"$ESC
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "push"
+      when: on_success
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      when: on_success
+    - when: never
+
+build-util:
+  tags:
+    - build
+  dependencies:
+    - check-info
+    - test-unit
+    - test-integrated
+    - test-project-reference
+  needs:
+    - check-info
+    - test-unit
+    - test-integrated
+    - test-project-reference
+  stage: build
+  interruptible: true
+  timeout: 10m
+  retry:
+    max: 2
+    when:
+      - runner_system_failure
+      - stuck_or_timeout_failure
+      - job_execution_timeout
+      - unknown_failure
+      - data_integrity_failure
+  before_script:
+    - chcp 65001
+    - $OutputEncoding = [System.Console]::OutputEncoding = [System.Console]::InputEncoding = [System.Text.Encoding]::UTF8
+    - $PSDefaultParameterValues['*:Encoding'] = 'utf8'
+    - $env:LC_ALL='C.UTF-8'
+  script:
+    # Utils 프로젝트 빌드 확인
+    - .\Setup\build-util.ps1
+    - if ( $LastExitCode -ne 0 ) { Write-Host $RED"Build-util command has exception"$ESC; Exit 1 }
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "push"
+      when: on_success
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      when: on_success
+    - when: never
+
+deploy-server:
+  tags:
+    - build
+    - server
+  dependencies:
+    - check-info
+    - build-server
+  needs:
+    - check-info
+    - build-server
+  stage: deploy
+  variables:
+    GIT_STRATEGY: none
+  interruptible: true
+  timeout: 5m
+  retry: 2
+  script:
+    #- if ( $BUILDTYPE -ne "server" -and $BUILDTYPE -ne "all" ) { Write-Host $YELLOW"There are no changes to server code."$ESC; Exit 0 }
+    - if ( -not $TAGGEDVERSION -or $TAGGEDVERSION -eq "") { Write-Host $YELLOW"New version not defected."$ESC; Exit 0 }
+    # 서버 결과 복사
+    - if ( -not (Test-Path $RELEASEDIR) ) { Write-Host $RED"Release files does not exists."$ESC; Exit 1 }
+    - Write-Host $CYAN"Deploy stage will be ready soon."$ESC
+  rules:
+    - if: $CI_PIPELINE_SOURCE != "push" || $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH
+      when: never
+    - when: on_success
+
+# "release_" 또는 "hotfix" 로 시작하는 이름을 가진 브랜치가 push 됐을 때, PublishTest 게시 (운영 게시는 별도의 스크립트에 의해 수동으로 진행)
+deploy-client:
+  tags:
+    - build
+    - client
+  stage: deploy
+  variables:
+    GIT_STRATEGY: fetch
+  interruptible: true
+  timeout: 15m
+  retry: 2
+  script:
+    - |
+      # 테스트용 고정 버전
+       $now = Get-Date
+       $Version = "{0}.{1:D2}.{2:D2}.{3:HHmm}" -f $now.Year, $now.Month, $now.Day, $now
+       $TargetRoot = "\\192.168.170.43\PublishTest"
+       $ProviderBase = "http://192.168.170.43:1234"
+
+      # 필요 시 코드서명:
+      # $PfxPath = $env:CODESIGN_PFX_PATH
+      # $PfxPass = $env:CODESIGN_PFX_PASSWORD
+
+      & ".\Setup\deploy-client.ps1" `
+        -SolutionRoot (Get-Location).Path `
+        -TargetRoot $TargetRoot `
+        -ProviderBaseUrl $ProviderBase `
+        -Apps AdminTool,Client,Configurator `
+        -Version $Version `
+        -UseBootstrapper `
+        -MakeIndexHtml `
+        -DirectToTarget `
+        -NoClean `
+        -SmbUser "mirero" `
+        -SmbPassword "mirero"
+        # 서명까지 하려면:
+        # -PfxPath $PfxPath -PfxPassword $PfxPass
+  rules:
+    # 브랜치 이름이 "release_" 로 시작하거나, "hotfix" 로 시작하는 경우에만 실행
+    - if: '$CI_PIPELINE_SOURCE == "push" && ($CI_COMMIT_BRANCH =~ /^release_/ || $CI_COMMIT_BRANCH =~ /^hotfix/)'
+      when: on_success
+    - when: never

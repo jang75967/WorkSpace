@@ -1,0 +1,35 @@
+services:
+  dms_loader:
+    build: .
+    image: dms/loader:dev
+    container_name: loader
+    restart: always
+    network_mode: bridge
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    ports:
+      - 2092:8080
+    user: "1001:1001"
+    privileged: true
+    volumes:
+      - /etc/passwd:/etc/passwd:ro
+      - /etc/group:/etc/group:ro
+      - /usr/share/zoneinfo/Asia/Seoul:/etc/localtime:ro
+      - /appdata/dms:/appdata/dms
+      - /appdata/dms/volumes/default/share/LinuxIpp:/app/Linux:ro
+    environment:
+      TZ: "Asia/Seoul"
+      DMS_CONFIG_DIR: "/appdata/dms/volumes/default/share/config"
+      HOST_NAME: ${HOSTNAME}
+      GID: "1001"
+      UID: "1001"
+      DMS_RUN_MODE: "" 
+      DMS_SERVICE_VERSION: "" 
+    logging:
+      options:
+        max-size: "5m"
+        max-file: "2"
+    deploy:
+      resources:
+        limits:
+          memory: 10G
