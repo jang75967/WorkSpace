@@ -1,0 +1,33 @@
+build-util:
+  tags:
+    - build
+  stage: build
+  interruptible: true
+  timeout: 10m
+  extends: .default_windows_utf8
+  dependencies:
+    - check-info
+    - test-unit
+    - test-integrated
+  needs:
+    - check-info
+    - test-unit
+    - test-integrated
+  retry:
+    max: 2
+    when:
+      - runner_system_failure
+      - stuck_or_timeout_failure
+      - job_execution_timeout
+      - unknown_failure
+      - data_integrity_failure
+  script:
+    # Utils 프로젝트 빌드 확인
+    - .\Setup\build-util.ps1
+    - if ( $LastExitCode -ne 0 ) { Write-Host $RED"Build-util command has exception"$ESC; Exit 1 }
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "push"
+      when: on_success
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      when: on_success
+    - when: never

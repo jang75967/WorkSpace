@@ -1,0 +1,7 @@
+include:
+  - local: .gitlab-ci/common.yml
+  - local: .gitlab-ci/init.yml
+  - local: .gitlab-ci/test.yml
+  - local: .gitlab-ci/build.server.yml
+  - local: .gitlab-ci/build.client.yml
+  - local: .gitlab-ci/build.util.yml

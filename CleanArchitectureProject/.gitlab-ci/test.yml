@@ -1,0 +1,29 @@
+test-unit:
+  tags:
+    - build
+  stage: test
+  timeout: 10m
+  extends: .default_windows_utf8
+  script:
+    - .\Setup\run-unit-tests.ps1
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "push"
+      when: on_success
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      when: on_success
+    - when: never
+
+test-integrated:
+  tags:
+    - build
+  stage: test
+  timeout: 15m
+  extends: .default_windows_utf8
+  script:
+    - .\Setup\run-integrated-tests.ps1
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "push"
+      when: on_success
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      when: on_success
+    - when: never

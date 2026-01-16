@@ -1,0 +1,81 @@
+build-client:
+  tags:
+    - build
+    - client
+  stage: build
+  interruptible: true
+  timeout: 15m
+  extends: .default_windows_utf8
+  dependencies:
+    - check-info
+    - test-unit
+    - test-integrated
+  needs:
+    - check-info
+    - test-unit
+    - test-integrated
+  retry:
+    max: 2
+    when:
+      - runner_system_failure
+      - stuck_or_timeout_failure
+      - job_execution_timeout
+      - unknown_failure
+      - data_integrity_failure
+  script:
+    # 클라이언트 빌드
+    - Write-Host $CYAN"Build stage will be ready soon."$ESC
+    - $BUILDDIR = "D:\Build\DMS25-Client"
+    - if ( Test-Path $BUILDDIR ) { Remove-Item -Recurse $BUILDDIR }
+    - cd Setup
+    - '& .\build-client.ps1 -OutputPath $BUILDDIR'
+    - Write-Host $CYAN"Client build completed. Output -> $BUILDDIR"$ESC
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "push"
+      when: on_success
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      when: on_success
+    - when: never
+
+# "release_" 또는 "hotfix" 로 시작하는 이름을 가진 브랜치가 push 됐을 때, PublishTest 게시
+deploy-client:
+  tags:
+    - build
+    - client
+  stage: deploy
+  interruptible: true
+  timeout: 15m
+  retry: 2
+  variables:
+    GIT_STRATEGY: fetch
+  extends: .default_windows_utf8
+  script:
+    - |
+      # 테스트용 고정 버전
+      $now = Get-Date
+      $Version = "{0}.{1:D2}.{2:D2}.{3:HHmm}" -f $now.Year, $now.Month, $now.Day, $now
+      $TargetRoot = "\\192.168.170.43\PublishTest"
+      $ProviderBase = "http://192.168.170.43:1234"
+
+      # 필요 시 코드서명:
+      # $PfxPath = $env:CODESIGN_PFX_PATH
+      # $PfxPass = $env:CODESIGN_PFX_PASSWORD
+
+      & ".\Setup\deploy-client.ps1" `
+        -SolutionRoot (Get-Location).Path `
+        -TargetRoot $TargetRoot `
+        -ProviderBaseUrl $ProviderBase `
+        -Apps AdminTool,Client,Configurator `
+        -Version $Version `
+        -UseBootstrapper `
+        -MakeIndexHtml `
+        -DirectToTarget `
+        -NoClean `
+        -SmbUser "mirero" `
+        -SmbPassword "mirero"
+      # 서명까지 하려면:
+      #   -PfxPath $PfxPath -PfxPassword $PfxPass
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "push" && ($CI_COMMIT_BRANCH =~ /^release_/ || $CI_COMMIT_BRANCH =~ /^hotfix/)'
+      when: on_success
+    - when: never

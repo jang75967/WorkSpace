@@ -1,0 +1,75 @@
+build-server:
+  tags:
+    - build
+    - server
+  stage: build
+  interruptible: true
+  timeout: 15m
+  extends: .default_windows_utf8
+  dependencies:
+    - check-info
+    - test-unit
+    - test-integrated
+  needs:
+    - check-info
+    - test-unit
+    - test-integrated
+  retry:
+    max: 2
+    when:
+      - runner_system_failure
+      - stuck_or_timeout_failure
+      - job_execution_timeout
+      - unknown_failure
+      - data_integrity_failure
+  script:
+    # - if ( $BUILDTYPE -ne "server" -and $BUILDTYPE -ne "all" ) { Write-Host $YELLOW"There are no changes to server code."$ESC; Exit 0 }
+    # 서버 빌드
+    - cd Setup
+    - '& .\build-server.ps1'
+    - if ( $LastExitCode -ne 0 ) { Write-Host $RED"Build-all command has exception"$ESC; Exit 1 }
+    # Deploy 준비 - TAG를 통해 VERSION이 Define 되지 않으면 중단
+    - if ( -not $TAGGEDVERSION -or $TAGGEDVERSION -eq "") { Exit 0 }
+    - $RELEASEDIR = "D:\Build\Server\$TAGGEDVERSION"
+    - if (Test-Path $RELEASEDIR) { Remove-Item $RELEASEDIR -Recurse }
+
+    - New-Item -ItemType Directory -Path $RELEASEDIR
+    - Copy-Item -Force -Recurse -Path ./config -Destination $RELEASEDIR
+    - Copy-Item -Force -Recurse -Path ./dms.* -Destination $RELEASEDIR
+    - echo "RELEASE_SERVER_DIR=$RELEASEDIR" >> buildserver.env
+  artifacts:
+    reports:
+      dotenv: buildserver.env
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "push"
+      when: on_success
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      when: on_success
+    - when: never
+
+deploy-server:
+  tags:
+    - build
+    - server
+  stage: deploy
+  interruptible: true
+  timeout: 5m
+  retry: 2
+  variables:
+    GIT_STRATEGY: none
+  dependencies:
+    - check-info
+    - build-server
+  needs:
+    - check-info
+    - build-server
+  script:
+    # - if ( $BUILDTYPE -ne "server" -and $BUILDTYPE -ne "all" ) { Write-Host $YELLOW"There are no changes to server code."$ESC; Exit 0 }
+    - if ( -not $TAGGEDVERSION -or $TAGGEDVERSION -eq "") { Write-Host $YELLOW"New version not defected."$ESC; Exit 0 }
+    # 서버 결과 복사
+    - if ( -not (Test-Path $RELEASEDIR) ) { Write-Host $RED"Release files does not exists."$ESC; Exit 1 }
+    - Write-Host $CYAN"Deploy stage will be ready soon."$ESC
+  rules:
+    - if: $CI_PIPELINE_SOURCE != "push" || $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH
+      when: never
+    - when: on_success

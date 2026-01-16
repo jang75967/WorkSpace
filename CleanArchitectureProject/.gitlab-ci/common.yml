@@ -1,0 +1,36 @@
+variables:
+  ESC: "`e[0m"
+  RED: "`e[91m"
+  YELLOW: "`e[93m"
+  CYAN: "`e[96m"
+  GIT_DEPTH: "0"
+
+stages:
+  - init
+  - test
+  - build
+  - deploy
+
+workflow:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_TAG
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_PIPELINE_SOURCE == "push" && $CI_OPEN_MERGE_REQUESTS == null
+    - when: never
+
+.default_windows_utf8:
+  before_script:
+    - chcp 65001
+    - $OutputEncoding = [System.Console]::OutputEncoding = [System.Console]::InputEncoding = [System.Text.Encoding]::UTF8
+    - $PSDefaultParameterValues['*:Encoding'] = 'utf8'
+    - $env:LC_ALL='C.UTF-8'
+
+.default_env_dump:
+  extends: .default_windows_utf8
+  before_script:
+    - chcp 65001
+    - $OutputEncoding = [System.Console]::OutputEncoding = [System.Console]::InputEncoding = [System.Text.Encoding]::UTF8
+    - $PSDefaultParameterValues['*:Encoding'] = 'utf8'
+    - $env:LC_ALL='C.UTF-8'
+    - chcp
+    - "dir env:"
