@@ -5,7 +5,7 @@ Write-Host "Building Utils projects..."
 $projectRoot = Split-Path -Parent $PSScriptRoot
 Set-Location $projectRoot
 
-$utilProjects = Get-ChildItem -Path "Utils" -Filter "*.csproj" -Recurse
+$utilProjects = @(Get-ChildItem -Path "Utils" -Filter "*.csproj" -Recurse)
 
 if ($utilProjects.Count -eq 0) {
     Write-Host "No util projects found in Utils"
@@ -17,30 +17,54 @@ foreach ($utilProject in $utilProjects) {
     Write-Host "  - $($utilProject.Name)"
 }
 
-# 제외할 프로젝트 이름 (DevExpress 참조 문제로 임시로 제외)
-$excludeProject = "Utils.SharpXmlJsonDBMigrator.csproj"
+$builtCount = 0
 
 foreach ($utilProject in $utilProjects) {
 
-    if ($utilProject.Name -eq $excludeProject) {
-        Write-Host "Skipping excluded project: $($utilProject.Name)"
-        continue
+    Write-Host "Building: $($utilProject.Name)"
+    Write-Host "Project path: $($utilProject.FullName)"
+    
+    # Restore NuGet packages first (especially important for CI environments)
+    Write-Host "Restoring NuGet packages..." -ForegroundColor Cyan
+    $restoreOutput = & dotnet restore $utilProject.FullName --verbosity minimal --nologo 2>&1
+    $restoreExit = $LASTEXITCODE
+
+    if ($restoreExit -ne 0) {
+        Write-Host "Restore failed for $($utilProject.Name)" -ForegroundColor Red
+        $restoreOutput | ForEach-Object { Write-Host $_ }
+        exit 1
+    }
+    
+    # 빌드 실행 및 오류 캡처
+    $buildOutput = & dotnet publish $utilProject.FullName --configuration Release --verbosity minimal --nologo 2>&1
+    $exit = $LASTEXITCODE
+    
+    # 오류만 필터링하여 출력 (경고는 제외)
+    $errors = $buildOutput | Where-Object { 
+        $_ -match ":\s*error\s+"
+    }
+    
+    if ($errors) {
+        Write-Host "Build errors for $($utilProject.Name):" -ForegroundColor Red
+        $errors | ForEach-Object { Write-Host $_ -ForegroundColor Red }
     }
 
-    Write-Host "Building: $($utilProject.Name)"
-    dotnet publish $utilProject.FullName --configuration Release --verbosity quiet --nologo 2>&1 |
-        Where-Object { 
-            $_ -notlike "*warning CS*" -and 
-            $_ -notlike "*.cs(*): warning*"
-        }
-
-    if ($LASTEXITCODE -ne 0) {
-        Write-Host "Build failed for $($utilProject.Name)"
+    if ($exit -ne 0) {
+        Write-Host "Build failed for $($utilProject.Name) with exit code: $exit" -ForegroundColor Red
+        Write-Host "Full build output:" -ForegroundColor Yellow
+        $buildOutput | ForEach-Object { Write-Host $_ }
         exit 1
-    } 
+    }
     else {
         Write-Host "Build succeeded for $($utilProject.Name)"
+        $builtCount++
     }
 }
 
+if ($builtCount -eq 0) {
+    Write-Host "No util projects were built (all projects were excluded)."
+    exit 0
+}
+
 Write-Host "All util projects (except excluded) built successfully"
+exit 0

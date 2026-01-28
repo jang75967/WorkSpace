@@ -1,17 +1,11 @@
-<# 
-deploy-client.ps1 — Direct ClickOnce Publish (no stage), no signing
-- 바로 네트워크 Target에 Publish (DirectToTarget=ON)
-- setup.exe/런타임 폴더는 기본적으로 건드리지 않음(UseBootstrapper=OFF)
-- Clean 생략으로 빠르게(NoClean=ON)
-#>
-
 [CmdletBinding()]
 param(
-  [Parameter(Mandatory=$true)] [string]$SolutionRoot,          # C:\Workspace\DMM25
-  [Parameter(Mandatory=$true)] [string]$TargetRoot,            # \\192.168.170.43\Publish
-  [Parameter(Mandatory=$true)] [string]$ProviderBaseUrl,       # http://192.168.170.43
-  [int]$ProviderPort,                                          # 1234 (테스트 시 - PublishTest)
-  [string[]]$Apps = @('AdminTool','Client','Configurator'),
+  [Parameter(Mandatory=$true)] [string]$SolutionRoot,
+  [Parameter(Mandatory=$true)] [string]$TargetRoot,
+  [Parameter(Mandatory=$true)] [string]$ProviderBaseUrl,
+  [int]$ProviderPort,
+  [string]$Flavor = "Memory",
+  [string[]]$Apps = @(),                                       # Apps 기본값은 Flavor 기반으로 런타임에서 할당
   [string]$Version,                                            
   [string]$PublishProfile = 'ClickOnceProfile',
   [ValidateSet('x64','Any CPU','x86')] [string]$Platform = 'x64',
@@ -19,14 +13,30 @@ param(
   [switch]$UseBootstrapper = $true,                            # setup.exe로 런타임 자동 설치
   [string]$BootstrapperPackagesPath,
   [string]$SmbUser, [string]$SmbPassword,
-
-  # 성능/운영
   [switch]$DirectToTarget = $true,                             # Stage 생략
-  [switch]$NoClean = $true                                     # Clean 생략
+  [switch]$NoClean = $true,                                    # Clean 생략
+
+  # 게시 전용 임시 루트
+  [string]$TempRoot = "D:\ClickOnce_Temp"
 )
 
+# Flavor 검증 및 Apps 기본값 설정
+if ([string]::IsNullOrWhiteSpace($Flavor)) { $Flavor = "Memory" }
+if ($Flavor -ne "Memory" -and $Flavor -ne "Foundry") { throw "Invalid Flavor: $Flavor (expected Memory|Foundry)" }
+
+if (-not $Apps -or $Apps.Count -eq 0) {
+  $Apps = if ($Flavor -eq "Memory") {
+    @('AdminTool','Client','Configurator')
+  } else {
+    @('AdminTool','Client','Configurator','AutoBBT','LotStatusBoard')
+  }
+}
+
+# TempRoot 준비
+if (-not (Test-Path $TempRoot)) { New-Item -ItemType Directory -Force -Path $TempRoot | Out-Null }
+
 $ErrorActionPreference = 'Stop'
-$MSBUILD_FIXED = 'C:\Program Files\Microsoft Visual Studio\2022\Professional\MSBuild\Current\Bin\MSBuild.exe'
+$MSBUILD_FIXED = 'C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\MSBuild\Current\Bin\MSBuild.exe'
 
 function Log([string]$m){ Write-Host "[INFO] $m" -ForegroundColor Cyan }
 function Warn([string]$m){ Write-Warning $m }
@@ -83,17 +93,34 @@ function Invoke-MSBuild([string]$Csproj,[string[]]$MoreArgs,[string]$WorkingDir)
   Push-Location $WorkingDir
   try {
     if ($info.Type -eq 'VS') {
-      $result = & $info.Path $Csproj @MoreArgs
+      $result = & $info.Path $Csproj @MoreArgs 2>&1
     } else {
-      $result = & $info.Path msbuild $Csproj @MoreArgs
+      $result = & $info.Path msbuild $Csproj @MoreArgs 2>&1
     }
     $exitCode = $LASTEXITCODE
     Log ("MSBuild exit code: {0}" -f $exitCode)
     
-    # 오류가 있으면 출력
+    # 실패 시: 에러/핵심 키워드만 추출해서 출력
     if ($exitCode -ne 0) {
-      Log ("MSBuild output:")
-      $result | ForEach-Object { Log ("  {0}" -f $_) }
+      Log ("MSBuild failed. Extracting key error lines...")
+
+      $keyErrors = $result | Where-Object {
+        $_ -match '(?i)\berror\b|MSB\d{4}|NETSDK\d{4}|NU\d{4}|GenerateBootstrapper|Bootstrapper|ClickOnce|setup\.exe|cannot be found|not found|Access is denied|denied|failed'
+      }
+
+      if ($keyErrors -and $keyErrors.Count -gt 0) {
+        Log ("---- KEY ERRORS (last 200 lines) ----")
+        $keyErrors | Select-Object -Last 200 | ForEach-Object {
+          Log ("  {0}" -f $_)
+        }
+        Log ("---- END KEY ERRORS ----")
+      }
+      else {
+        Log ("No key error lines matched. Showing last 200 lines of MSBuild output.")
+        $result | Select-Object -Last 200 | ForEach-Object {
+          Log ("  {0}" -f $_)
+        }
+      }
     }
     
     return $exitCode
@@ -111,7 +138,16 @@ if ($SmbUser -and $SmbPassword) {
   $didNetUse = $true
 }
 
+# SUBST 변수 초기화
+$didSubst = $false
+$substDrive = "X:"
+$originalSolutionRoot = $SolutionRoot
+
 try {
+  $env:NUGET_PACKAGES = "C:\Users\mirero\.nuget\packages"
+  $env:NUGET_HTTP_CACHE_PATH = "C:\Users\mirero\.nuget\v3-cache"
+  $env:DOTNET_CLI_HOME = "C:\Users\mirero"
+  Log ("NUGET_PACKAGES = {0}" -f $env:NUGET_PACKAGES)
   $msbuildInfo = Resolve-MSBuild
   Log ("MSBuild = {0} [{1}]" -f $msbuildInfo.Path, $msbuildInfo.Type)
 
@@ -119,6 +155,28 @@ try {
     $now = Get-Date; $Version = '{0}.{1}.{2}.{3}' -f $now.Year,$now.Month,$now.Day,$now.Hour
   }
   if (-not (Test-Path $SolutionRoot)) { Fail ("SolutionRoot not found: {0}" -f $SolutionRoot) }
+
+   # LONG PATH 문제: SUBST로 SolutionRoot를 짧게 (ProjectMap 생성 전에 적용)
+  $srcRoot = (Resolve-Path $SolutionRoot).Path
+  Log ("[SUBST] Original SolutionRoot: {0}" -f $srcRoot)
+  
+  # X 드라이브로 SUBST 생성
+  $substDrive = "X:"
+  
+  # 기존 SUBST 제거 (혹시 있을 수 있음)
+  cmd /c "subst $substDrive /d" 2>&1 | Out-Null
+  
+  # SUBST 생성
+  $substResult = cmd /c "subst $substDrive `"$srcRoot`"" 2>&1
+  if ($LASTEXITCODE -eq 0) {
+    $didSubst = $true
+    $SolutionRoot = "$substDrive\"
+    Log ("[SUBST] SolutionRoot changed to: {0} (original: {1})" -f $SolutionRoot, $srcRoot)
+  } else {
+    Warn ("[SUBST] Failed to create SUBST drive X:: {0}" -f ($substResult -join "`n"))
+    Log ("[SUBST] Continuing with original path (may hit long path issues)")
+  }
+
   if (-not (Test-Path $TargetRoot)) {
     if ($TargetRoot -like "\\*") { Fail ("TargetRoot not found or not accessible: {0}" -f $TargetRoot) }
     else { New-Item -ItemType Directory -Force -Path $TargetRoot | Out-Null }
@@ -126,14 +184,18 @@ try {
 
   # 프로젝트/어셈블리 매핑
   $ProjectMap = @{
-    'AdminTool'    = Join-Path $SolutionRoot 'Src\Client\Apps\Client.Apps.AdminTool\Client.Apps.AdminTool.csproj'
-    'Client'       = Join-Path $SolutionRoot 'Src\Client\Apps\Client.Apps.Client\Client.Apps.Client.csproj'
-    'Configurator' = Join-Path $SolutionRoot 'Src\Client\Apps\Client.Apps.Configurator\Client.Apps.Configurator.csproj'
+    'AdminTool'      = Join-Path $SolutionRoot 'Src\Client\Apps\Mirero.DMS.Client.Apps.AdminTool\Mirero.DMS.Client.Apps.AdminTool.csproj'
+    'Client'         = Join-Path $SolutionRoot 'Src\Client\Apps\Mirero.DMS.Client.Apps.Client\Mirero.DMS.Client.Apps.Client.csproj'
+    'Configurator'   = Join-Path $SolutionRoot 'Src\Client\Apps\Mirero.DMS.Client.Apps.Configurator\Mirero.DMS.Client.Apps.Configurator.csproj'
+    'AutoBBT'        = Join-Path $SolutionRoot 'Src\Client\Apps\Mirero.DMS.Client.Apps.AutoBBT\Mirero.DMS.Client.Apps.AutoBBT.csproj'
+    'LotStatusBoard' = Join-Path $SolutionRoot 'Src\Client\Apps\Mirero.DMS.Client.Apps.LotStatusBoard\Mirero.DMS.Client.Apps.LotStatusBoard.csproj'
   }
   $AssemblyMap = @{
-    'AdminTool'    = 'Client.Apps.AdminTool'
-    'Client'       = 'Client.Apps.Client'
-    'Configurator' = 'Client.Apps.Configurator'
+    'AdminTool'      = 'Mirero.DMS.Client.Apps.AdminTool'
+    'Client'         = 'Mirero.DMS.Client.Apps.Client'
+    'Configurator'   = 'Mirero.DMS.Client.Apps.Configurator'
+    'AutoBBT'        = 'Mirero.DMS.Client.Apps.AutoBBT'
+    'LotStatusBoard' = 'Mirero.DMS.Client.Apps.LotStatusBoard'
   }
 
   foreach ($app in $Apps) {
@@ -172,7 +234,11 @@ try {
 
      # 로컬 임시 폴더에 ClickOnce 게시
      $projectDir = Split-Path $csproj -Parent
-     $tempPublishDir = Join-Path $env:TEMP "ClickOncePublish_$app"
+     $unique = $env:CI_PIPELINE_ID
+     
+     if (-not $unique) { $unique = [guid]::NewGuid().ToString("N") }
+     $tempPublishDir = Join-Path $TempRoot ("ClickOncePublish_{0}_{1}_{2}" -f $Flavor, $app, $unique)
+
      if (Test-Path $tempPublishDir) {
        Remove-Item -Recurse -Force $tempPublishDir
      }
@@ -187,11 +253,25 @@ try {
 
     # MSBuild 인자
     $targets = if ($NoClean) { '/t:Publish' } else { '/t:Clean;Publish' }
+
+    # dotnet restore 실행
+    Log ("[{0}] Running dotnet restore..." -f $app)
+    $restoreResult = & dotnet restore $csproj -r win-x64 --packages $env:NUGET_PACKAGES 2>&1
+    
+    if ($LASTEXITCODE -ne 0) { 
+      Log ("[{0}] dotnet restore output:" -f $app)
+      $restoreResult | ForEach-Object { Log ("  {0}" -f $_) }
+      Fail ("[{0}] dotnet restore failed (exit={1})." -f $app, $LASTEXITCODE) 
+    }
+
      $moreArgs = @(
        $targets,
        "/p:PublishProfile=$PublishProfile",
        "/p:Configuration=Release",
        "/p:Platform=$Platform",
+       "/p:RestoreDuringBuild=false",
+       "/p:RestoreOnBuild=false",
+       "/p:NoRestore=true",
        "/p:PublishProtocol=ClickOnce",
        "/p:PublishDir=$tempPublishDir",
        "/p:InstallUrl=$installUrl",
@@ -212,21 +292,6 @@ try {
       $moreArgs += "/p:BootstrapperEnabled=false","/p:GenerateBootstrapper=false"
     }
 
-    # obj 폴더 정리 후 dotnet restore
-    $objDir = Join-Path $projectDir "obj"
-    if (Test-Path $objDir) {
-      Log ("[{0}] Cleaning obj directory..." -f $app)
-      Remove-Item -Recurse -Force $objDir
-    }
-    
-    Log ("[{0}] Running dotnet restore..." -f $app)
-    $restoreResult = & dotnet restore $csproj -r win-x64
-    if ($LASTEXITCODE -ne 0) { 
-      Log ("[{0}] dotnet restore output:" -f $app)
-      $restoreResult | ForEach-Object { Log ("  {0}" -f $_) }
-      Fail ("[{0}] dotnet restore failed (exit={1})." -f $app, $LASTEXITCODE) 
-    }
-
     # 로컬 임시 폴더에 ClickOnce 게시
     $exit = Invoke-MSBuild -Csproj $csproj -MoreArgs $moreArgs -WorkingDir $projectDir
     if ($exit -ne 0) { Fail ("[{0}] MSBuild publish failed (exit={1})." -f $app,$exit) }
@@ -239,7 +304,7 @@ try {
     # 1. Application Files\AppName_Version\ 폴더의 내용을 버전 폴더로 복사
     $tempAppFiles = Join-Path $tempPublishDir "Application Files"
     if (Test-Path $tempAppFiles) {
-      $tempVersionDir = Get-ChildItem -Path $tempAppFiles -Directory | Where-Object { $_.Name -like "${assemblyName}_*" } | Select-Object -First 1
+      $tempVersionDir = Get-ChildItem -Path $tempAppFiles -Directory | Where-Object { $_.Name -like "${assemblyName}_*" } | Sort-Object LastWriteTime -Descending | Select-Object -First 1
       if ($tempVersionDir) {
         Log ("[{0}] Copying version files from: {1}" -f $app, $tempVersionDir.FullName)
         
@@ -299,4 +364,8 @@ finally {
     Log "Closing SMB session ..."
     cmd /c ('net use "{0}" /delete /y' -f $TargetRoot) | Out-Null
   }
+  if ($didSubst -and $substDrive) {
+    Log "Removing SUBST drive ..."
+    cmd /c "subst $substDrive /d" 2>&1 | Out-Null
+  }  
 }

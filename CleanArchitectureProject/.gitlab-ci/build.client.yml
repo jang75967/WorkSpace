@@ -23,13 +23,30 @@ build-client:
       - unknown_failure
       - data_integrity_failure
   script:
-    # 클라이언트 빌드
-    - Write-Host $CYAN"Build stage will be ready soon."$ESC
-    - $BUILDDIR = "D:\Build\DMS25-Client"
-    - if ( Test-Path $BUILDDIR ) { Remove-Item -Recurse $BUILDDIR }
-    - cd Setup
-    - '& .\build-client.ps1 -OutputPath $BUILDDIR'
-    - Write-Host $CYAN"Client build completed. Output -> $BUILDDIR"$ESC
+    - |
+      Write-Host $CYAN"Build stage will be ready soon."$ESC
+
+      # DMS_FLAVOR 기본값 설정: 미지정 시 Memory
+      if (-not $env:DMS_FLAVOR -or $env:DMS_FLAVOR -eq "") { $env:DMS_FLAVOR = "Memory" }
+      $flavor = $env:DMS_FLAVOR
+      if ($flavor -ne "Memory" -and $flavor -ne "Foundry") { Write-Host $RED"Invalid DMS_FLAVOR: $flavor (expected Memory|Foundry)"$ESC; Exit 1 }
+
+      # NuGet 패키지 복원 확인 (DevExpress 등)
+      Write-Host $CYAN"Restoring NuGet packages..."$ESC
+      dotnet restore --verbosity minimal --nologo
+      if ( $LastExitCode -ne 0 ) { 
+        Write-Host $RED"NuGet restore failed with exit code: $LastExitCode"$ESC
+        Exit $LastExitCode 
+      }
+
+      .\Setup\build-client.ps1 -Flavor $flavor
+
+      if ( $LastExitCode -ne 0 ) { 
+        Write-Host $RED"Build-client failed with exit code: $LastExitCode"$ESC
+        Exit $LastExitCode 
+      }
+
+      Write-Host $CYAN"Client build completed. Output -> $BUILDDIR"$ESC
   rules:
     - if: $CI_PIPELINE_SOURCE == "push"
       when: on_success
@@ -44,18 +61,24 @@ deploy-client:
     - client
   stage: deploy
   interruptible: true
-  timeout: 15m
+  timeout: 20m
   retry: 2
   variables:
     GIT_STRATEGY: fetch
   extends: .default_windows_utf8
   script:
     - |
+      if (-not $env:DMS_FLAVOR -or $env:DMS_FLAVOR -eq "") { $env:DMS_FLAVOR = "Memory" }
+      $flavor = $env:DMS_FLAVOR
+      if ($flavor -ne "Memory" -and $flavor -ne "Foundry") { Write-Host $RED"Invalid DMS_FLAVOR: $flavor (expected Memory|Foundry)"$ESC; exit 1 }
+
       # 테스트용 고정 버전
       $now = Get-Date
       $Version = "{0}.{1:D2}.{2:D2}.{3:HHmm}" -f $now.Year, $now.Month, $now.Day, $now
-      $TargetRoot = "\\192.168.170.43\PublishTest"
-      $ProviderBase = "http://192.168.170.43:1234"
+      $TargetRoot = if ($flavor -eq "Memory") { "\\192.168.170.43\PublishTest" } else { "\\192.168.170.43\PublishTest_Foundry" }
+      $ProviderBase = "http://192.168.170.43"
+      $ProviderPort = if ($flavor -eq "Memory") { 1234 } else { 1235 }
+      $Apps = if ($flavor -eq "Memory") { "AdminTool,Client,Configurator" } else { "AdminTool,Client,Configurator,AutoBBT,LotStatusBoard" }
 
       # 필요 시 코드서명:
       # $PfxPath = $env:CODESIGN_PFX_PATH
@@ -65,14 +88,16 @@ deploy-client:
         -SolutionRoot (Get-Location).Path `
         -TargetRoot $TargetRoot `
         -ProviderBaseUrl $ProviderBase `
-        -Apps AdminTool,Client,Configurator `
+        -ProviderPort $ProviderPort `
+        -Apps (($Apps -split ",") | ForEach-Object { $_.Trim() }) `
         -Version $Version `
         -UseBootstrapper `
         -MakeIndexHtml `
         -DirectToTarget `
         -NoClean `
         -SmbUser "mirero" `
-        -SmbPassword "mirero"
+        -SmbPassword "mirero" `
+        -Flavor $flavor
       # 서명까지 하려면:
       #   -PfxPath $PfxPath -PfxPassword $PfxPass
   rules:

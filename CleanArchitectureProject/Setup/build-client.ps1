@@ -1,79 +1,37 @@
 # build-client.ps1
 # DMS Client Build Script
-# Usage: .\build-client.ps1 [-OutputPath <path>] [-Mode <Debug|Release>] [-Archive] [-ArchiveOnly] [-ShowLog] [-App <app_name1,app_name2,...>]
+# Usage: .\build-client.ps1 [-Mode <Debug|Release>] [-Flavor <Memory|Foundry>] [-ShowLog] [-App <app_name1,app_name2,...>]
 
 [CmdletBinding()]
 param (
     [Parameter(Position = 0)]
-    [string]$OutputPath,
-    
-    [Parameter(Position = 1)]
     [ValidateSet("Debug", "Release")]
     [string]$Mode = "Release",
-    
-    [switch]$Archive = $false,
-    [switch]$ArchiveOnly = $false,
+
+    [Parameter(Position = 1)]
+    [ValidateSet("Memory", "Foundry")]
+    [string]$Flavor = "Memory",
+
     [switch]$ShowLog = $false,
+
+    # DisplayName 또는 csproj명 일부로 필터링하고 싶을 때 사용 (선택)
     [string[]]$App = @()
 )
 
+$ErrorActionPreference = "Stop"
+Set-StrictMode -Version Latest
+
 # ANSI Color Codes
 $Colors = @{
-    Reset = "`e[0m"
-    Bold = "`e[1m"
-    Red = "`e[91m"
+    Reset  = "`e[0m"
+    Bold   = "`e[1m"
+    Red    = "`e[91m"
     Yellow = "`e[93m"
-    Blue = "`e[94m"
-    Cyan = "`e[96m"
-    Green = "`e[92m"
+    Blue   = "`e[94m"
+    Cyan   = "`e[96m"
+    Green  = "`e[92m"
 }
 
-# Script Configuration
-$ScriptConfig = @{
-    BaseDir = (Get-Location).Path
-    BuildDir = Join-Path (Get-Location).Path "..\Src"
-    Framework = "net8.0-windows"
-    Verbosity = if ($ShowLog) { "normal" } else { "minimal" }
-}
-
-# Client App Definitions
-$ClientApps = @()
-
-# Add client apps one by one
-$ClientApps += @{
-    Name = "Client.Apps.AdminTool"
-    ProjectSubDir = "Apps"
-    OutputDir = ""
-    DisplayName = "AdminTool"
-}
-
-$ClientApps += @{
-    Name = "Client.Apps.Client"
-    ProjectSubDir = "Apps"
-    OutputDir = ""
-    DisplayName = "Client"
-}
-
-$ClientApps += @{
-    Name = "Client.Apps.Configurator"
-    ProjectSubDir = "Apps"
-    OutputDir = ""
-    DisplayName = "Configurator"
-}
-
-$ClientApps += @{
-    Name = "Client.Apps.ManualTrackOutSimulator"
-    ProjectSubDir = "Apps"
-    OutputDir = ""
-    DisplayName = "ManualTrackOutSimulator"
-}
-
-# Initialize OutputPath
-if ([string]::IsNullOrEmpty($OutputPath)) {
-    $OutputPath = Join-Path $ScriptConfig.BaseDir "DMS25-Client"
-}
-
-# Functions
 function Write-Title {
     param([string]$Title)
     Write-Host " "
@@ -90,12 +48,12 @@ function Write-Success {
     Write-Host "$($Colors.Green)$Message$($Colors.Reset)"
 }
 
-function Write-Warning {
+function Write-Warn {
     param([string]$Message)
     Write-Host "$($Colors.Yellow)$Message$($Colors.Reset)"
 }
 
-function Write-Error {
+function Write-Fail {
     param([string]$Message)
     Write-Host "$($Colors.Red)$Message$($Colors.Reset)"
 }
@@ -105,233 +63,130 @@ function Test-Command {
     try {
         Get-Command $Command -ErrorAction Stop | Out-Null
         return $true
-    }
-    catch {
+    } catch {
         return $false
     }
 }
 
-function Remove-DirectoryIfExists {
-    param([string]$Path)
-    if (Test-Path $Path) {
-        Write-Info "Removing directory: $Path"
-        Remove-Item -Recurse -Force $Path -ErrorAction Stop
+# Script paths
+$srcPath = Join-Path $PSScriptRoot "..\Src"
+if (-not (Test-Path $srcPath)) {
+    throw "Src directory not found: $srcPath"
+}
+
+$ScriptConfig = @{
+    BuildDir  = (Resolve-Path $srcPath).Path   # repo\Src
+    Framework = "net8.0-windows"
+    Verbosity = if ($ShowLog) { "normal" } else { "minimal" }
+}
+
+# Client Apps 정의
+$ClientApps = @()
+$ClientApps += @{ Name="Mirero.DMS.Client.Apps.AdminTool"; ProjectSubDir="Apps"; OutputDir=""; DisplayName="AdminTool" }
+$ClientApps += @{ Name="Mirero.DMS.Client.Apps.Client";                 ProjectSubDir="Apps"; DisplayName="Client" }
+$ClientApps += @{ Name="Mirero.DMS.Client.Apps.Configurator";           ProjectSubDir="Apps"; DisplayName="Configurator" }
+$ClientApps += @{ Name="Mirero.DMS.Client.Apps.ManualTrackOutSimulator";ProjectSubDir="Apps"; DisplayName="ManualTrackOutSimulator" }
+
+if ($Flavor -eq "Foundry") {
+  $ClientApps += @{ Name="Mirero.DMS.Client.Apps.AutoBBT";               ProjectSubDir="Apps"; DisplayName="AutoBBT" }
+  $ClientApps += @{ Name="Mirero.DMS.Client.Apps.LotStatusBoard";        ProjectSubDir="Apps"; DisplayName="LotStatusBoard" }
+  $ClientApps += @{ Name="Mirero.DMS.Client.Apps.AutoTrackOutSimulator"; ProjectSubDir="Apps"; DisplayName="AutoTrackOutSimulator" }
+}
+
+function Resolve-TargetApps {
+    param([hashtable[]]$AllApps, [string[]]$Filter)
+
+    if (-not $Filter -or $Filter.Count -eq 0) { return $AllApps }
+
+    $filterLower = $Filter | ForEach-Object { $_.ToLower() }
+
+    $targets = $AllApps | Where-Object {
+        $dn = $_.DisplayName.ToLower()
+        $nm = $_.Name.ToLower()
+        ($filterLower | Where-Object { $dn -eq $_ -or $nm -eq $_ -or $dn.Contains($_) -or $nm.Contains($_) }).Count -gt 0
     }
+
+    return $targets
 }
 
 function Build-ClientApp {
     param(
-        $AppObject,
-        [string]$OutputPath
+        [hashtable]$AppObject
     )
-    
-    Write-Title -Title "Building $($AppObject.DisplayName) App"
 
     $projectName = $AppObject.Name
-    $outputDir = $OutputPath  # 모든 앱의 빌드 산출물을 루트에 배치
-    $projectPath = "$($ScriptConfig.BuildDir)\Client\$($AppObject.ProjectSubDir)\$projectName\$projectName.csproj"
+    $projectPath = Join-Path $ScriptConfig.BuildDir ("Client\{0}\{1}\{1}.csproj" -f $AppObject.ProjectSubDir, $projectName)
 
-    # Output directory는 이미 메인에서 정리되었으므로 여기서는 정리하지 않음
-    
-    # Verify project exists
+    Write-Title "Building $($AppObject.DisplayName)"
+
     if (-not (Test-Path $projectPath)) {
-        Write-Error "Project not found: $projectPath"
-        return $false
+        throw "Project not found: $projectPath"
     }
-    
-    # Publish project to get complete package
-    $publishArgs = @(
-    "publish",
-    $projectPath,
-    "--configuration", $Mode,
-    "--framework", $ScriptConfig.Framework,
-    "--output", $outputDir,
 
-    # 로그 최소화
-    "-v:quiet",                   # minimal 보다 더 조용 (필요시 minimal 로 낮춰도 OK)
-    "-nologo",
-    "-clp:ErrorsOnly;NoSummary;NoItemAndPropertyList"  # 콘솔 로거: 에러만, 요약/아이템 목록 숨김
-
-    # Windows 전용 SDK 경고 방지(비 Windows 환경에서 WPF/WinForms 타겟 시 자주 뜨는 경고)
-    "/p:EnableWindowsTargeting=true"
+    # dotnet build args
+    $buildArgs = @(
+        "build",
+        $projectPath,
+        "--configuration", $Mode,
+        "--framework", $ScriptConfig.Framework,
+        "--nologo",
+        "--verbosity", $ScriptConfig.Verbosity,
+        "/p:EnableWindowsTargeting=true"
     )
-    
-    Write-Info "Running: dotnet $($publishArgs -join ' ')"
-    
-    & dotnet @publishArgs
-    
-    if ($LASTEXITCODE -ne 0) {
-        Write-Error "Publish failed for $projectName"
-        Write-Error "Publish process failed"
-        Write-Error "Script terminated due to publish failure."
-        Exit $LASTEXITCODE
+
+    Write-Info "Running: dotnet $($buildArgs -join ' ')"
+
+    $buildOutput = & dotnet @buildArgs 2>&1
+    $exit = $LASTEXITCODE
+
+    if ($exit -ne 0) {
+        # 실패 로그 저장
+        $logDir = Join-Path "D:\Client_ci_logs" $Flavor
+        New-Item -ItemType Directory -Force -Path $logDir | Out-Null
+        $logFile = Join-Path $logDir ("build_{0}_{1}.log" -f $AppObject.DisplayName, (Get-Date -Format "yyyyMMdd_HHmmss"))
+        $buildOutput | Out-File -FilePath $logFile -Encoding utf8
+
+        Write-Host ""
+        Write-Fail "================ dotnet build FAILED ================"
+        Write-Host "Project : $projectName" -ForegroundColor Yellow
+        Write-Host "Path    : $projectPath" -ForegroundColor Yellow
+        Write-Host "Exit    : $exit" -ForegroundColor Yellow
+        Write-Host "LogFile : $logFile" -ForegroundColor Yellow
+        Write-Fail "====================================================="
+
+        Write-Host ""
+        Write-Host "---- Error lines ----" -ForegroundColor Cyan
+        $buildOutput |
+          Select-String -Pattern ":\s*error\s+", "MSB\d{4}", "NETSDK\d{4}", "NU\d{4}", "fatal", "failed" -CaseSensitive:$false |
+          Select-Object -First 120 |
+          ForEach-Object { Write-Host $_.Line }
+
+        throw "Build failed for $projectName (exit=$exit)"
     }
-    
+
     Write-Success "Successfully built $projectName"
 }
 
+# ---- Main ----
+Write-Title "DMS Client Build Script"
+Write-Info "Mode   : $Mode"
+Write-Info "Flavor : $Flavor"
+if ($App.Count -gt 0) { Write-Info "Target : $($App -join ', ')" }
 
-function Compress-ClientApps {
-    param([string]$SourceDir)
-    
-    $archiveFilename = Join-Path $SourceDir "dms-client.zip"
-    
-    Write-Title -Title "Creating Archive: $archiveFilename"
-    
-    if (Test-Path $archiveFilename) {
-        Remove-Item -Force $archiveFilename
-    }
-    
-    try {
-        # Create archive with all files in the source directory
-        $filesToArchive = Get-ChildItem -Path $SourceDir -File
-        if ($filesToArchive.Count -gt 0) {
-            Compress-Archive -Path $filesToArchive.FullName -DestinationPath $archiveFilename -ErrorAction Stop
-        }
-        
-        Write-Success "Archive created successfully: $archiveFilename"
-    }
-    catch {
-        Write-Error "Failed to create archive: $($_.Exception.Message)"
-        return $false
-    }
-    
-    return $true
+if (-not (Test-Command "dotnet")) {
+    throw ".NET SDK is not installed or not in PATH"
 }
 
-function Test-Prerequisites {
-    if (-not (Test-Command "dotnet")) {
-        Write-Error ".NET SDK is not installed or not in PATH"
-        exit 1
-    }
-    
-    if (-not (Test-Path $ScriptConfig.BuildDir)) {
-        Write-Error "Build directory not found: $($ScriptConfig.BuildDir)"
-        exit 1
-    }
-}
+$targets = Resolve-TargetApps -AllApps $ClientApps -Filter $App
 
-function Get-AppByName {
-    param([string]$AppName)
-    
-    Write-Info "Searching for app: '$AppName'"
-    
-    # Try to find by display name first (case-insensitive)
-    $app = $ClientApps | Where-Object { $_.DisplayName -eq $AppName -or $_.DisplayName.ToLower() -eq $AppName.ToLower() } | Select-Object -First 1
-    if ($app) {
-        Write-Info "Found app by display name: $($app.DisplayName)"
-        return @{
-            Name = $app.Name
-            ProjectSubDir = $app.ProjectSubDir
-            OutputDir = $app.OutputDir
-            DisplayName = $app.DisplayName
-        }
-    }
-    
-    # Try to find by full project name
-    $app = $ClientApps | Where-Object { $_.Name -eq $AppName -or $_.Name.ToLower() -eq $AppName.ToLower() } | Select-Object -First 1
-    if ($app) {
-        Write-Info "Found app by full name: $($app.Name)"
-        return @{
-            Name = $app.Name
-            ProjectSubDir = $app.ProjectSubDir
-            OutputDir = $app.OutputDir
-            DisplayName = $app.DisplayName
-        }
-    }
-    
-    # Try to find by partial name
-    $app = $ClientApps | Where-Object { $_.Name.ToLower().Contains($AppName.ToLower()) -or $_.DisplayName.ToLower().Contains($AppName.ToLower()) } | Select-Object -First 1
-    if ($app) {
-        Write-Info "Found app by partial name: $($app.DisplayName)"
-        return @{
-            Name = $app.Name
-            ProjectSubDir = $app.ProjectSubDir
-            OutputDir = $app.OutputDir
-            DisplayName = $app.DisplayName
-        }
-    }
-    
-    Write-Warning "No app found matching: '$AppName'"
-    return $null
-}
-
-function Show-AvailableApps {
-    Write-Info "Available client apps:"
-    foreach ($app in $ClientApps) {
-        Write-Host "  - $($app.DisplayName) (or '$($app.Name)')"
-    }
-    Write-Host ""
-}
-
-# Main Script Execution
-Write-Title -Title "DMS Client Build Script"
-Write-Info "Mode: $Mode"
-Write-Info "Output Path: $OutputPath"
-Write-Info "Archive: $Archive"
-Write-Info "Archive Only: $ArchiveOnly"
-
-if ($App.Count -gt 0) {
-    Write-Info "Target Apps: $($App -join ', ')"
-}
-
-# Test prerequisites
-Test-Prerequisites
-
-# Archive only mode
-if ($ArchiveOnly) {
-    Compress-ClientApps -SourceDir $OutputPath
+if (-not $targets -or $targets.Count -eq 0) {
+    Write-Warn "No matching apps to build."
     exit 0
 }
 
-# Determine which apps to build
-if ($App.Count -eq 0) {
-    Write-Title -Title "Building All Client Apps"
-} else {
-    Write-Title -Title "Building Apps: $($App -join ', ')"
+foreach ($t in $targets) {
+    Build-ClientApp -AppObject $t
 }
 
-# Clean output directory (only once at the beginning)
-Remove-DirectoryIfExists $OutputPath
-New-Item -ItemType Directory -Path $OutputPath -Force | Out-Null
-
-# Process apps based on whether we're building all or specific apps
-if ($App.Count -eq 0) {
-    # Build all apps
-    foreach ($buildApp in $ClientApps) {
-        Build-ClientApp -AppObject $buildApp -OutputPath $OutputPath
-    }
-} else {
-    # Build specific apps
-    $targetApps = @()
-    $notFoundApps = @()
-    
-    foreach ($appName in $App) {
-        $appName = $appName.Trim()
-        $targetApp = Get-AppByName -AppName $appName
-        
-        if ($null -eq $targetApp) {
-            $notFoundApps += $appName
-        } else {
-            $targetApps += $targetApp
-        }
-    }
-    
-    if ($notFoundApps.Count -gt 0) {
-        Write-Error "Apps not found: $($notFoundApps -join ', ')"
-        Show-AvailableApps
-        exit 1
-    }
-    
-    # Build each target app
-    foreach ($targetApp in $targetApps) {
-        Build-ClientApp -AppObject $targetApp -OutputPath $OutputPath
-    }
-}
-
-# Create archive if requested
-if ($Archive) {
-    Compress-ClientApps -SourceDir $OutputPath
-}
-
-Write-Title -Title "Build Complete"
+Write-Title "Build Complete"
+exit 0

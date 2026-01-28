@@ -1,6 +1,7 @@
 build-util:
   tags:
     - build
+    - client
   stage: build
   interruptible: true
   timeout: 10m
