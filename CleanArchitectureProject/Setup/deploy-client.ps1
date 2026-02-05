@@ -176,7 +176,7 @@ try {
     Warn ("[SUBST] Failed to create SUBST drive X:: {0}" -f ($substResult -join "`n"))
     Log ("[SUBST] Continuing with original path (may hit long path issues)")
   }
-
+  
   if (-not (Test-Path $TargetRoot)) {
     if ($TargetRoot -like "\\*") { Fail ("TargetRoot not found or not accessible: {0}" -f $TargetRoot) }
     else { New-Item -ItemType Directory -Force -Path $TargetRoot | Out-Null }
@@ -253,17 +253,24 @@ try {
 
     # MSBuild 인자
     $targets = if ($NoClean) { '/t:Publish' } else { '/t:Clean;Publish' }
-
-    # dotnet restore 실행
+    
+    # dotnet restore 실행 (DevExpress 24.2 ci 서버의 로컬 소스 사용)
     Log ("[{0}] Running dotnet restore..." -f $app)
-    $restoreResult = & dotnet restore $csproj -r win-x64 --packages $env:NUGET_PACKAGES 2>&1
+    $devExpressSource = "C:\Program Files\DevExpress 24.2\Components\System\Components\packages"
+    if (Test-Path $devExpressSource) {
+      Log ("[{0}] Using DevExpress local source: {1}" -f $app, $devExpressSource)
+      $restoreResult = & dotnet restore $csproj -r win-x64 --packages $env:NUGET_PACKAGES --source "https://api.nuget.org/v3/index.json" --source $devExpressSource 2>&1
+    } else {
+      Log ("[{0}] Warning: DevExpress local source not found" -f $app)
+      $restoreResult = & dotnet restore $csproj -r win-x64 --packages $env:NUGET_PACKAGES 2>&1
+    }
     
     if ($LASTEXITCODE -ne 0) { 
       Log ("[{0}] dotnet restore output:" -f $app)
       $restoreResult | ForEach-Object { Log ("  {0}" -f $_) }
       Fail ("[{0}] dotnet restore failed (exit={1})." -f $app, $LASTEXITCODE) 
     }
-
+    
      $moreArgs = @(
        $targets,
        "/p:PublishProfile=$PublishProfile",
@@ -367,5 +374,5 @@ finally {
   if ($didSubst -and $substDrive) {
     Log "Removing SUBST drive ..."
     cmd /c "subst $substDrive /d" 2>&1 | Out-Null
-  }  
+  }
 }

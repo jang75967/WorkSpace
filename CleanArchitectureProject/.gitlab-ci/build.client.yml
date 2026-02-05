@@ -31,9 +31,16 @@ build-client:
       $flavor = $env:DMS_FLAVOR
       if ($flavor -ne "Memory" -and $flavor -ne "Foundry") { Write-Host $RED"Invalid DMS_FLAVOR: $flavor (expected Memory|Foundry)"$ESC; Exit 1 }
 
-      # NuGet 패키지 복원 확인 (DevExpress 등)
+      # NuGet 패키지 복원 (DevExpress 24.2 ci 서버의 로컬 소스 사용)
       Write-Host $CYAN"Restoring NuGet packages..."$ESC
-      dotnet restore --verbosity minimal --nologo
+      $devExpressSource = "C:\Program Files\DevExpress 24.2\Components\System\Components\packages"
+      if (Test-Path $devExpressSource) {
+        Write-Host $CYAN"Using DevExpress local source: $devExpressSource"$ESC
+        dotnet restore --verbosity minimal --nologo --source "https://api.nuget.org/v3/index.json" --source $devExpressSource
+      } else {
+        Write-Host $YELLOW"Warning: DevExpress local source not found, using default sources"$ESC
+        dotnet restore --verbosity minimal --nologo
+      }
       if ( $LastExitCode -ne 0 ) { 
         Write-Host $RED"NuGet restore failed with exit code: $LastExitCode"$ESC
         Exit $LastExitCode 
