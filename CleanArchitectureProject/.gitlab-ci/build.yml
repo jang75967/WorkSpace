@@ -1,9 +1,13 @@
-test:
+build:
   tags:
     - build
-  stage: test
+  stage: build
+  interruptible: true
   timeout: 10m
   extends: .default_windows_utf8
+  needs:
+    - check-info
+    - test
   retry:
     max: 2
     when:
@@ -14,9 +18,9 @@ test:
       - data_integrity_failure
   script:
     - |
-      & dotnet test dms.sln -c Release --nologo -v minimal 2>&1 |
+      & dotnet build dms.sln -c Release --nologo -v minimal 2>&1 |
         Where-Object { $_ -notmatch 'warning|경고' } | ForEach-Object { Write-Host $_ }
-      if ( $LastExitCode -ne 0 ) { Write-Host $RED"Test failed (exit $LastExitCode)"$ESC; Exit $LastExitCode }
+      if ( $LastExitCode -ne 0 ) { Write-Host $RED"Build failed (exit $LastExitCode)"$ESC; Exit $LastExitCode }
   rules:
     - if: $CI_PIPELINE_SOURCE == "push"
       when: on_success

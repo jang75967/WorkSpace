@@ -1,0 +1,145 @@
+# "release_" 또는 "hotfix" 로 시작하는 이름을 가진 브랜치가 push 됐을 때, PublishTest 게시
+deploy-client:
+  tags:
+    - build
+    - client
+  stage: deploy
+  interruptible: false
+  timeout: 30m
+  retry: 2
+  resource_group: deploy
+  needs:
+    - check-info
+    - build
+  variables:
+    GIT_STRATEGY: fetch
+  extends: .default_windows_utf8
+  script:
+    - |
+      if (-not $env:DMS_FLAVOR -or $env:DMS_FLAVOR -eq "") { $env:DMS_FLAVOR = "Memory" }
+      $flavor = $env:DMS_FLAVOR
+      if ($flavor -ne "Memory" -and $flavor -ne "Foundry") { Write-Host $RED"Invalid DMS_FLAVOR: $flavor (expected Memory|Foundry)"$ESC; exit 1 }
+
+      # 테스트용 고정 버전
+      $now = Get-Date
+      $Version = "{0}.{1:D2}.{2:D2}.{3:HHmm}" -f $now.Year, $now.Month, $now.Day, $now
+      $TargetRoot = if ($flavor -eq "Memory") { "\\192.168.170.43\PublishTest" } else { "\\192.168.170.43\PublishTest_Foundry" }
+      $ProviderBase = "http://192.168.170.43"
+      $ProviderPort = if ($flavor -eq "Memory") { 1234 } else { 1235 }
+
+      # 필요 시 코드서명:
+      # $PfxPath = $env:CODESIGN_PFX_PATH
+      # $PfxPass = $env:CODESIGN_PFX_PASSWORD
+
+      & ".\.gitlab-ci\deploy.client.ps1" `
+        -SolutionRoot (Get-Location).Path `
+        -TargetRoot $TargetRoot `
+        -ProviderBaseUrl $ProviderBase `
+        -ProviderPort $ProviderPort `
+        -Version $Version `
+        -UseBootstrapper `
+        -MakeIndexHtml `
+        -DirectToTarget `
+        -NoClean `
+        -SmbUser "mirero" `
+        -SmbPassword "mirero" `
+        -Flavor $flavor
+      # 서명까지 하려면:
+      #   -PfxPath $PfxPath -PfxPassword $PfxPass
+
+      if ( $LastExitCode -ne 0 ) {
+        Write-Host $RED"Deploy-client failed with exit code: $LastExitCode"$ESC
+        Exit $LastExitCode
+      }
+
+      # deploy-client-prod 가 '이 파이프라인이 만든' 버전폴더를 정확히 집도록 버전 기록 (dotenv → needs 로 전달)
+      "CLIENT_PUBLISH_VERSION=$Version" | Out-File -FilePath client_publish.env -Encoding ascii
+  artifacts:
+    reports:
+      dotenv: client_publish.env
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "push" && ($CI_COMMIT_BRANCH =~ /^release_/ || $CI_COMMIT_BRANCH =~ /^hotfix/)'
+      when: on_success
+    - when: never
+
+# [운영 배포] release_/hotfix 브랜치 + DMSClientVersion.props 변경 시에만, 수동 버튼(allow_failure)으로
+#            test(deploy-client)가 PublishTest 에 만든 산출물 재사용 → zip → 운영 <App>_Patch 이동
+#            → WinRM 으로 170.43 에서 ManifestPatcher 실행(운영 provider 버전 +1)
+deploy-client-prod:
+  tags:
+    - build
+    - client
+  stage: deploy
+  interruptible: false
+  timeout: 30m
+  retry: 2
+  resource_group: deploy
+  needs:
+    - deploy-client
+  variables:
+    GIT_STRATEGY: fetch
+  extends: .default_windows_utf8
+  script:
+    - |
+      if (-not $env:DMS_FLAVOR -or $env:DMS_FLAVOR -eq "") { $env:DMS_FLAVOR = "Memory" }
+      $flavor = $env:DMS_FLAVOR
+      if ($flavor -ne "Memory" -and $flavor -ne "Foundry") { Write-Host $RED"Invalid DMS_FLAVOR: $flavor (expected Memory|Foundry)"$ESC; exit 1 }
+
+      # props 게이트: DMSClientVersion.props 가 변경됐을 때만 운영 배포. props 바꾼 push였으면 진행(배포), 아니면 스킵(exit 0). (버튼은 release_/hotfix 면 항상 떠 있음)
+      $base = $env:CI_COMMIT_BEFORE_SHA
+      if (-not $base -or $base -eq "0000000000000000000000000000000000000000") { $base = "HEAD~1" }   # 새 브랜치면 직전 커밋과 비교
+      $diff = (& git diff --name-only $base $env:CI_COMMIT_SHA -- "Src/Client/Common/DMSClientVersion.props" 2>$null)
+
+      # fail-closed: 변경을 '확인한' 경우에만 배포. 확인 불가(git diff 실패)면 안전하게 스킵.
+      if ($LASTEXITCODE -ne 0) { Write-Host $CYAN"props 변경 확인 불가(git diff 실패) -> 안전하게 운영 배포 스킵(fail-closed)"$ESC; exit 0 }
+      if (-not $diff)          { Write-Host $CYAN"DMSClientVersion.props 변경 없음 -> 운영 배포 스킵"$ESC; exit 0 }
+
+      # PublishVersion: deploy-client(test)이 dotenv 로 넘긴 '이 파이프라인' 버전. 그 버전폴더만.
+      & ".\.gitlab-ci\deploy.client.prod.ps1" -Flavor $flavor -PublishVersion $env:CLIENT_PUBLISH_VERSION -SmbUser "mirero" -SmbPassword "mirero"
+      if ( $LastExitCode -ne 0 ) { Write-Host $RED"Deploy-client-prod failed (exit $LastExitCode)"$ESC; Exit $LastExitCode }
+  rules:
+    # release_/hotfix 면 prod 버튼이 항상 표시됨. 실제 배포 여부는 위 스크립트의 props 변경 검사로 결정: DMSClientVersion.props 바꾼 push였으면 누르면 배포, 아니면 스킵.
+    - if: '$CI_PIPELINE_SOURCE == "push" && ($CI_COMMIT_BRANCH =~ /^release_/ || $CI_COMMIT_BRANCH =~ /^hotfix/)'
+      when: manual
+      allow_failure: true
+    - when: never
+
+# mkdocs 매뉴얼 산출물 배포: deploy-client 성공 후 같은 SMB 타겟의 \Manual\<app>\ 로 동기화
+# (동일 SMB 서버에 net use 세션 충돌을 피하기 위해 deploy-client 와 순차 실행)
+# deploy-manual-client:
+#   tags:
+#     - build
+#     - client
+#   stage: deploy
+#   interruptible: false
+#   timeout: 10m
+#   retry: 2
+#   resource_group: deploy
+#   needs:
+#     - deploy-client
+#   variables:
+#     GIT_STRATEGY: fetch
+#   extends: .default_windows_utf8
+#   script:
+#     - |
+#       if (-not $env:DMS_FLAVOR -or $env:DMS_FLAVOR -eq "") { $env:DMS_FLAVOR = "Memory" }
+#       $flavor = $env:DMS_FLAVOR
+#       if ($flavor -ne "Memory" -and $flavor -ne "Foundry") { Write-Host $RED"Invalid DMS_FLAVOR: $flavor (expected Memory|Foundry)"$ESC; exit 1 }
+#
+#       $TargetRoot = if ($flavor -eq "Memory") { "\\192.168.170.43\PublishTest" } else { "\\192.168.170.43\PublishTest_Foundry" }
+#
+#       & ".\.gitlab-ci\deploy.manual.client.ps1" `
+#         -SolutionRoot (Get-Location).Path `
+#         -TargetRoot $TargetRoot `
+#         -SmbUser "mirero" `
+#         -SmbPassword "mirero" `
+#         -Flavor $flavor
+#
+#       if ( $LastExitCode -ne 0 ) {
+#         Write-Host $RED"Deploy-manual-client failed with exit code: $LastExitCode"$ESC
+#         Exit $LastExitCode
+#       }
+#   rules:
+#     - if: '$CI_PIPELINE_SOURCE == "push" && ($CI_COMMIT_BRANCH =~ /^release_/ || $CI_COMMIT_BRANCH =~ /^hotfix/)'
+#       when: on_success
+#     - when: never

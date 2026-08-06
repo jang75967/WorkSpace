@@ -4,6 +4,14 @@ check-info:
   stage: init
   timeout: 5m
   extends: .default_env_dump
+  retry:
+    max: 2
+    when:
+      - runner_system_failure
+      - stuck_or_timeout_failure
+      - job_execution_timeout
+      - unknown_failure
+      - data_integrity_failure
   script:
     # BUILDTYPE 체크 reference commit의 branch name에서 두 번째 자리의 항목으로 타입 체크
     # all/server/client 로 반응함

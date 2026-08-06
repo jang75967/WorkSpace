@@ -1,0 +1,140 @@
+# "release_" 또는 "hotfix" 로 시작하는 이름을 가진 브랜치가 push 됐을 때, publish
+deploy-server:
+  tags:
+    - build
+    - server
+  stage: deploy
+  interruptible: false
+  timeout: 30m
+  retry: 2
+  resource_group: deploy
+  extends: .default_windows_utf8
+  variables:
+    GIT_STRATEGY: fetch
+  needs:
+    - check-info
+    - build
+  script:
+    # 서버 산출물(Services/dms.*)을 리눅스 서버 docker-service 로 복사
+    - |
+      if (-not $env:DMS_FLAVOR -or $env:DMS_FLAVOR -eq "") { $env:DMS_FLAVOR = "Memory" }
+      $flavor = $env:DMS_FLAVOR
+      if ($flavor -ne "Memory" -and $flavor -ne "Foundry") { Write-Host $RED"Invalid DMS_FLAVOR: $flavor (expected Memory|Foundry)"$ESC; Exit 1 }
+
+      # resource_group(deploy) 으로 deploy 잡은 한 번에 하나만 도므로, 지금 떠 있는 scp/ssh 는 이전 잡의 좀비 세션 정리(타임아웃 강제종료 실패로 남은 좀비가 전송 누적/지연 유발하는 것 방지)
+      Get-Process ssh,scp,pscp -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
+
+      # 이 파이프라인 산출물 버전(스테이징 폴더명). prod 잡이 이 버전을 그대로 집도록 dotenv 로 전달.
+      $now = Get-Date
+      $Version = "{0}.{1:D2}.{2:D2}.{3:HHmm}" -f $now.Year, $now.Month, $now.Day, $now
+
+      # 통합 DEV 서버의 docker-service-<flavor> 로 복사. (운영 배포는 deploy-server-prod 잡이 담당)
+      $remoteHost = "192.168.170.44"
+      if ($flavor -eq "Memory") { $remoteDir = "docker-service-dmm" } else { $remoteDir = "docker-service-dmf" }
+
+      $user = "mireroadmin"
+      Write-Host $CYAN"deploy target -> $user@$remoteHost  dir=$remoteDir  flavor=$flavor"$ESC
+
+      # SSH 개인키: 레포에 커밋된 .gitlab-ci/sshKeyRegister/deploy-server-key 만 사용 (CI 변수 불필요)
+      $keySrc = ".\.gitlab-ci\sshKeyRegister\deploy-server-key"
+      if (-not (Test-Path $keySrc)) { Write-Host $RED"SSH 키 없음: .gitlab-ci\sshKeyRegister\deploy-server-key 를 커밋하세요"$ESC; Exit 1 }
+      $keyPath = Join-Path $env:CI_PROJECT_DIR "deploy-server-key_run"
+      Copy-Item $keySrc $keyPath -Force
+      # OpenSSH(Windows) 키 권한 요구: 상속 제거 + 현재 사용자만 접근 (CI 'bad permissions' 방지)
+      $me = [System.Security.Principal.WindowsIdentity]::GetCurrent().Name
+      $acl = Get-Acl $keyPath
+      $acl.SetAccessRuleProtection($true, $false)
+      foreach ($r in @($acl.Access)) { [void]$acl.RemoveAccessRule($r) }
+      $acl.AddAccessRule((New-Object System.Security.AccessControl.FileSystemAccessRule($me, 'FullControl', 'Allow')))
+      Set-Acl -Path $keyPath -AclObject $acl
+
+      try {
+        & ".\.gitlab-ci\deploy.server.ps1" `
+          -SolutionRoot (Get-Location).Path -Flavor $flavor -Version $Version `
+          -Copy -RemoteHost $remoteHost -RemoteUser $user -RemoteServiceDir $remoteDir -SshKey $keyPath
+      } finally {
+        Remove-Item $keyPath -Force -ErrorAction SilentlyContinue
+      }
+
+      # deploy-server-prod 가 '이 파이프라인이 만든' 스테이징(D:\DeployServer\<Flavor>\<Version>)을 정확히 집도록 버전 기록
+      "SERVER_PUBLISH_VERSION=$Version" | Out-File -FilePath server_publish.env -Encoding ascii
+    - if ( $LastExitCode -ne 0 ) { Write-Host $RED"Deploy-server failed (exit $LastExitCode)"$ESC; Exit $LastExitCode }
+  artifacts:
+    reports:
+      dotenv: server_publish.env
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "push" && ($CI_COMMIT_BRANCH =~ /^release_/ || $CI_COMMIT_BRANCH =~ /^hotfix/)'
+      when: on_success
+    - when: never
+
+# [운영 배포] release_/hotfix 브랜치 + DMSServerVersion.props 변경 시에만, 수동 버튼(allow_failure)으로
+#            deploy-server(test)가 만든 스테이징을 재빌드 없이(-CopyOnly) 실제 운영 서버
+#            (Memory 192.168.70.189 / Foundry 192.168.70.229)의 docker-service 로 복사.
+#            (이미지 빌드/푸시/pod 반영은 별도 — 현재는 복사까지)
+deploy-server-prod:
+  tags:
+    - build
+    - server
+  stage: deploy
+  interruptible: false
+  timeout: 30m
+  retry: 2
+  resource_group: deploy
+  extends: .default_windows_utf8
+  variables:
+    GIT_STRATEGY: fetch
+  needs:
+    - deploy-server
+  script:
+    - |
+      if (-not $env:DMS_FLAVOR -or $env:DMS_FLAVOR -eq "") { $env:DMS_FLAVOR = "Memory" }
+      $flavor = $env:DMS_FLAVOR
+      if ($flavor -ne "Memory" -and $flavor -ne "Foundry") { Write-Host $RED"Invalid DMS_FLAVOR: $flavor (expected Memory|Foundry)"$ESC; Exit 1 }
+
+      # resource_group(deploy) 으로 deploy 잡은 한 번에 하나만 도므로, 지금 떠 있는 scp/ssh 는 이전 잡의 좀비 세션 정리(타임아웃 강제종료 실패로 남은 좀비가 전송 누적/지연 유발하는 것 방지)
+      Get-Process ssh,scp,pscp -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
+
+      # props 게이트: DMSServerVersion.props 가 변경됐을 때만 운영 배포. props 바꾼 push였으면 진행(배포), 아니면 스킵(exit 0). (버튼은 release_/hotfix 면 항상 떠 있음)
+      $base = $env:CI_COMMIT_BEFORE_SHA
+      if (-not $base -or $base -eq "0000000000000000000000000000000000000000") { $base = "HEAD~1" }   # 새 브랜치면 직전 커밋과 비교
+      $diff = (& git diff --name-only $base $env:CI_COMMIT_SHA -- "Src/Server/Common/DMSServerVersion.props" 2>$null)
+
+      # fail-closed: 변경을 '확인한' 경우에만 배포. 확인 불가(git diff 실패)면 안전하게 스킵.
+      if ($LASTEXITCODE -ne 0) { Write-Host $CYAN"props 변경 확인 불가(git diff 실패) -> 안전하게 운영 배포 스킵(fail-closed)"$ESC; Exit 0 }
+      if (-not $diff)          { Write-Host $CYAN"DMSServerVersion.props 변경 없음 -> 운영 배포 스킵"$ESC; Exit 0 }
+
+      # 승격 대상 버전: deploy-server(test)가 dotenv 로 넘긴 '이 파이프라인' 산출물. 없으면 중단.
+      if (-not $env:SERVER_PUBLISH_VERSION) { Write-Host $RED"SERVER_PUBLISH_VERSION 없음(deploy-server dotenv 누락) -> 운영 승격 중단"$ESC; Exit 1 }
+
+      # 운영 호스트: Memory 192.168.70.189 / Foundry 192.168.70.229 의 docker-service 로 복사.
+      if ($flavor -eq "Memory") { $remoteHost = "192.168.70.189" } else { $remoteHost = "192.168.70.229" }
+      $remoteDir = "docker-service"
+      $user = "mireroadmin"
+      Write-Host $CYAN"[PROD] deploy target -> $user@$remoteHost  dir=$remoteDir  flavor=$flavor"$ESC
+
+      $keySrc = ".\.gitlab-ci\sshKeyRegister\deploy-server-key"
+      if (-not (Test-Path $keySrc)) { Write-Host $RED"SSH 키 없음: .gitlab-ci\sshKeyRegister\deploy-server-key"$ESC; Exit 1 }
+      $keyPath = Join-Path $env:CI_PROJECT_DIR "deploy-server-key_run"
+      Copy-Item $keySrc $keyPath -Force
+      $me = [System.Security.Principal.WindowsIdentity]::GetCurrent().Name
+      $acl = Get-Acl $keyPath
+      $acl.SetAccessRuleProtection($true, $false)
+      foreach ($r in @($acl.Access)) { [void]$acl.RemoveAccessRule($r) }
+      $acl.AddAccessRule((New-Object System.Security.AccessControl.FileSystemAccessRule($me, 'FullControl', 'Allow')))
+      Set-Acl -Path $keyPath -AclObject $acl
+
+      # deploy-server 가 만든 스테이징(D:\DeployServer\<Flavor>\<Version>)을 그대로 운영 서버로 copy.
+      try {
+        & ".\.gitlab-ci\deploy.server.prod.ps1" `
+          -Version $env:SERVER_PUBLISH_VERSION -Flavor $flavor `
+          -RemoteHost $remoteHost -RemoteUser $user -RemoteServiceDir $remoteDir -SshKey $keyPath
+      } finally {
+        Remove-Item $keyPath -Force -ErrorAction SilentlyContinue
+      }
+    - if ( $LastExitCode -ne 0 ) { Write-Host $RED"Deploy-server-prod failed (exit $LastExitCode)"$ESC; Exit $LastExitCode }
+  rules:
+    # release_/hotfix 면 prod 버튼이 항상 표시됨. 실제 배포 여부는 위 스크립트의 props 변경 검사로 결정: DMSServerVersion.props 바꾼 push였으면 누르면 배포, 아니면 스킵.
+    - if: '$CI_PIPELINE_SOURCE == "push" && ($CI_COMMIT_BRANCH =~ /^release_/ || $CI_COMMIT_BRANCH =~ /^hotfix/)'
+      when: manual
+      allow_failure: true
+    - when: never
